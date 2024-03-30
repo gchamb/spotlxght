@@ -1,8 +1,8 @@
 FROM golang:1.20
 
-COPY . /home/server
+COPY . /home/app
 
-WORKDIR /home/server
+WORKDIR /home/app
 
 RUN env GOOS=linux \
     go build -o bin/main

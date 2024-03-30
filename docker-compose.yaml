@@ -2,12 +2,11 @@ version: "3.8"
 services:
   backend-dev:
     image: cosmtrek/air
-    # working_dir value has to be the same of mapped volume
-    working_dir: /home/server
+    working_dir: /home/app
     ports:
       - 3000:3000
     volumes:
-      - ./backend/:/home/server
+      - ./backend/:/home/app
   db:
     image: mysql
     # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
