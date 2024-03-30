@@ -1,1 +1,6 @@
-tmp
+# build files
+bin/
+tmp/
+
+# JetBrains
+.idea/
