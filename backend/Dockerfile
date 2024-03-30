@@ -1,15 +1,10 @@
 FROM golang:1.20
 
-WORKDIR /app
+COPY . /home/app
 
-COPY . .
+WORKDIR /home/app
 
-RUN env GOOS=linux GOARCH=arm go build
+RUN env GOOS=linux \
+    go build -o bin/main
 
-# RUN chmod +x /bin/main
-
-# build go application
-CMD [ "./backend" ]
-
-
-
+CMD [ "bin/main" ]
