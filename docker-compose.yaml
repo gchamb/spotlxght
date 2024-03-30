@@ -3,7 +3,6 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     ports:
       - 3000:3000
   db:
@@ -14,3 +13,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+    driver: local
