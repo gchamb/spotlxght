@@ -29,16 +29,17 @@ func main() {
 		user1 := models.User{ID: "3c1242ad-652f-4198-8e9d-18e1e211dfb8", Email: "test@gmail.com", Password: "123", Username: "G", ProfilePic: "123"}
 		user2 := models.User{ID: "c443d920-3886-42d4-a803-ee23ad08d624", Email: "test2@gmail.com", Password: "123", Username: "G", ProfilePic: "123"}
 
-		db.Create(&user1)
-		db.Create(&user2)
-
+		// db.Create(&user1)
+		// db.Create(&user2)
+		followers := db.Model(&user1).Association("Followers")
+		followers.Append(&models.Follow{UserID: user1.ID, FollowerID: user2.ID})
 		// test following
-		fmt.Print("hi")
+		// fmt.Print("hi")
 
 		// db.Create(&models.Follow{FollowingUserID: user1.ID, FollowedUserID: user2.ID})
 
 		write, err := w.Write([]byte("Added User"))
-		if err != nil {
+		if  err != nil {
 			fmt.Println(write)
 		}
 	})

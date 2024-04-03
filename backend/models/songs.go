@@ -27,18 +27,6 @@ type Tag struct {
 	Name string `gorm:"not null"`
 }
 
-// type SongTags struct {
-// 	TagID string `gorm:"primaryKey;many2many:song_tags"`
-// 	Song string `gorm:"primaryKey;many2many:song_tags"`
-// }
-
-// type Vote struct {
-// 	SongID string `gorm:"primaryKey;varchar(100);many2many:song_votes;"`
-// 	UserID string `gorm:"primaryKey;varchar(100);many2many:song_votes"`
-// 	vote int `gorm:"not null"`
-// }
-
-
 
 func (song *Song) BeforeCreate(db *gorm.DB) error {
 	song.ID = uuid.New().String()

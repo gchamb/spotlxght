@@ -23,7 +23,7 @@ func ConnectDB() (db *gorm.DB) {
 	}
 
 	// create tables if not created 
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(&models.User{}, &models.Song{}, &models.Tag{})
 
 	if err != nil {
 		panic("failed to auto migrate")

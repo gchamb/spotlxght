@@ -1,8 +1,6 @@
 package models
 
 import (
-	// "time"
-
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -15,17 +13,15 @@ type User struct {
 	Username   string
 	ProfilePic string
 	Songs      []Song
-	Follow     []User 	`gorm:"many2many:user_follows;ForeignKey:ID; References:ID""`
-	Votes      []Song   `gorm:"many2many:song_votes;"`
-	// User           User   `gorm:"ForeignKey:OrganizationID,UserName;References:OrganizationID,Name"`
+	Votes      []Song   `gorm:"many2many:song_votes;constraint:OnDelete:CASCADE;"`
+	// user_id => followed, follow_id => follower
+	Followers  []*User `gorm:"many2many:user_followers;constraint:OnDelete:CASCADE;"`
 }
 
-// type Follow struct {
-// 	FollowingUserID string `gorm:"primaryKey;"`
-// 	FollowedUserID  string `gorm:"primaryKey;"`
-// 	CreatedAt       *time.Time
-// }
-
+type Follow struct {
+	UserID string
+	FollowerID string
+}
 
 func (user *User) BeforeCreate(db *gorm.DB) error {
 	user.ID = uuid.New().String()
