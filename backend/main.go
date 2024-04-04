@@ -25,20 +25,38 @@ func main() {
 
 	router.Get("/add-user", func(w http.ResponseWriter, r *http.Request) {
 
-		// test create user
-		user1 := models.User{ID: "3c1242ad-652f-4198-8e9d-18e1e211dfb8", Email: "test@gmail.com", Password: "123", Username: "G", ProfilePic: "123"}
-		user2 := models.User{ID: "c443d920-3886-42d4-a803-ee23ad08d624", Email: "test2@gmail.com", Password: "123", Username: "G", ProfilePic: "123"}
+		// test create users
+		user1 := models.User{Email: "test@gmail.com", Username: "G", ProfilePic: "123"}
+		user2 := models.User{Email: "test2@gmail.com", Username: "G", ProfilePic: "123"}
+		db.Create(&user1)
+		db.Create(&user2)
 
-		// db.Create(&user1)
-		// db.Create(&user2)
-		followers := db.Model(&user1).Association("Followers")
-		followers.Append(&models.Follow{UserID: user1.ID, FollowerID: user2.ID})
+		
+		// test if the user has any associations
+		// err := db.Model(models.User{}).Association("Followers").Error
+		
+		// if err != nil {
+		// 	fmt.Println("ERROR", err.Error())
+		// }
+		
+		// query user
+		// var user models.User
+		// var user2 models.User
+		// db.Model(models.User{}).Where("id = ?", "8f5ea79f-3c58-48f7-9d4d-1be52390561d").First(&user)
+		
+	
+		// this is the part that is erroring
+		user1.Followers = append(user1.Followers, &user2)
+		db.Save(&user1)
+		// fmt.Println(user2)
+		// 175d56e8-3836-400c-89a8-5c6ac73b14f1
+		// followers.Append(&models.Follow{UserID: user1.ID, FollowerID: user2.ID})
 		// test following
-		// fmt.Print("hi")
+		// fmt.Print(t)
 
 		// db.Create(&models.Follow{FollowingUserID: user1.ID, FollowedUserID: user2.ID})
 
-		write, err := w.Write([]byte("Added User"))
+		write, err := w.Write([]byte("Testing"))
 		if  err != nil {
 			fmt.Println(write)
 		}
