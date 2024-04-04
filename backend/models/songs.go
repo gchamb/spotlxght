@@ -15,16 +15,17 @@ type Song struct {
 	Cover string
 	AzureBlobID string
 	FileType string
-	UploadedAt *time.Time
+	UploadedAt time.Time
 	IsPublic bool
-	Tags []Tag `gorm:"many2many:song_tags"`
-	Votes []User `gorm:"many2many:song_votes"`
+	Tags []*Tag `gorm:"many2many:song_tags"`
+	Votes []*User `gorm:"many2many:song_votes"`
 }
 
 type Tag struct {
 	gorm.Model
 	ID string `gorm:"primaryKey"`
 	Name string `gorm:"not null"`
+	Songs []*Song `gorm:"many2many:song_tags"`
 }
 
 
