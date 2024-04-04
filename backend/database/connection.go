@@ -9,7 +9,7 @@ import (
 )
 
 func ConnectDB() (db *gorm.DB) {
-	dsn := "root:password@(mysql_db)/tbd"
+	dsn := "root:password@(mysql_db)/tbd?parseTime=true"
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN: dsn,
 		DefaultStringSize: 255,
