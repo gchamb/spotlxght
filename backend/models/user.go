@@ -7,19 +7,13 @@ import (
 
 type User struct {
 	gorm.Model
-	ID         string `gorm:"primaryKey"`
-	Email      string `gorm:"unique; not null"`
-	Password   *string
+	ID         uuid.UUID `gorm:"primarykey;type:varchar(36);default:(uuid())"`
+	Email      string    `gorm:"unique; not null"`
+	Password   string
 	Username   string
 	ProfilePic string
 	Songs      []Song
-	Votes      []*Song   `gorm:"many2many:song_votes;constraint:OnDelete:CASCADE;"`
-	// user_id => followed, follow_id => follower
+	Likes      []*Song `gorm:"many2many:song_votes"`
+	Dislikes   []*Song `gorm:"many2many:song_votes"`
 	Followers  []*User `gorm:"many2many:user_followers;constraint:OnDelete:CASCADE;"`
 }
-
-func (user *User) BeforeCreate(db *gorm.DB) error {
-	user.ID = uuid.New().String()
-	return nil
-}
-
