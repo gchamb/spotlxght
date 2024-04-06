@@ -7,7 +7,16 @@ import (
 
 type Tag struct {
 	gorm.Model
-	ID    uuid.UUID `gorm:"primarykey;type:varchar(36);default:(uuid())"`
-	Name  string    `gorm:"not null"`
+	ID    uuid.UUID `gorm:"primaryKey;type:varchar(36);"`
+	Name  string    `gorm:"not null; unique"`
 	Songs []*Song   `gorm:"many2many:song_tags"`
+}
+
+func (tag *Tag) BeforeCreate(db *gorm.DB) error {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	tag.ID = id
+	return nil
 }

@@ -7,8 +7,8 @@ import (
 
 type User struct {
 	gorm.Model
-	ID         uuid.UUID `gorm:"primarykey;type:varchar(36);default:(uuid())"`
-	Email      string    `gorm:"unique; not null"`
+	ID         uuid.UUID `gorm:"primaryKey;type:varchar(36);"`
+	Email      string    `gorm:"unique;not null"`
 	Password   string
 	Username   string
 	ProfilePic string
@@ -16,4 +16,13 @@ type User struct {
 	Likes      []*Song `gorm:"many2many:song_votes"`
 	Dislikes   []*Song `gorm:"many2many:song_votes"`
 	Followers  []*User `gorm:"many2many:user_followers;constraint:OnDelete:CASCADE;"`
+}
+
+func (user *User) BeforeCreate(db *gorm.DB) error {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	user.ID = id
+	return nil
 }
