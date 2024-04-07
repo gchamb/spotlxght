@@ -12,7 +12,6 @@ type Song struct {
 	Name        string    `gorm:"not null;uniqueIndex:idx_user_id_name"`
 	Cover       string
 	AzureBlobID string
-	FileType    string // TODO: Add enum or many to many table
 	IsPublic    bool
 	Tags        []*Tag  `gorm:"many2many:song_tags"`
 	Votes       []*User `gorm:"many2many:song_votes"`
