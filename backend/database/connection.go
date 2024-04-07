@@ -2,8 +2,6 @@ package database
 
 import (
 	"backend/models"
-	// "encoding/json"
-	// "fmt"
 
 	"os"
 
