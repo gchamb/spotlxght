@@ -7,6 +7,8 @@ services:
       - 3000:3000
     volumes:
       - ./backend/:/home/app
+    environment:
+      - MYSQL_CONNECTION_STRING=root:password@(mysql_db)/tbd?parseTime=true
     depends_on:
       - db
 
