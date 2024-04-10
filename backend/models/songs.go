@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -13,8 +15,23 @@ type Song struct {
 	Cover       string
 	AzureBlobID string
 	IsPublic    bool
-	Tags        []*Tag  `gorm:"many2many:song_tags"`
-	Votes       []*User `gorm:"many2many:song_votes"`
+	User 		User	  `gorm:"foreignKey:UserID;references:ID"`
+}
+
+type SongTag struct {
+	SongID uuid.UUID `gorm:"primaryKey"`
+	TagID  uuid.UUID `gorm:"primaryKey"`
+	Song   Song      `gorm:"foreignKey:SongID;references:ID"`
+	Tag    Tag       `gorm:"foreignKey:TagID;references:ID"`
+}
+
+type SongVote struct {
+	SongID    uuid.UUID `gorm:"primaryKey"`
+	UserID    uuid.UUID `gorm:"primaryKey"`
+	IsLiked   bool
+	Song      Song `gorm:"foreignKey:SongID;references:ID"`
+	User      User `gorm:"foreignKey:UserID;references:ID"`
+	CreatedAt time.Time
 }
 
 func (song *Song) BeforeCreate(db *gorm.DB) error {
