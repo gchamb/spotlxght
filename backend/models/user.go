@@ -12,10 +12,13 @@ type User struct {
 	Password   string
 	Username   string
 	ProfilePic string
-	Songs      []Song
-	Likes      []*Song `gorm:"many2many:song_votes"`
-	Dislikes   []*Song `gorm:"many2many:song_votes"`
-	Followers  []*User `gorm:"many2many:user_followers;constraint:OnDelete:CASCADE;"`
+}
+
+type Follow struct {
+	FollowedID uuid.UUID `gorm:"primaryKey;type:varchar(36);"`
+	FollowerID uuid.UUID `gorm:"primaryKey;type:varchar(36);"`
+	Following  User      `gorm:"foreignKey:FollowedID;references:ID"`
+	Follower   User      `gorm:"foreignKey:FollowerID;references:ID"`
 }
 
 func (user *User) BeforeCreate(db *gorm.DB) error {
