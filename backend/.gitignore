@@ -1,6 +1,7 @@
 # build files
 bin/
 tmp/
+.air.toml
 
 # JetBrains
 .idea/
