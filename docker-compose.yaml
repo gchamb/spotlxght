@@ -9,6 +9,7 @@ services:
       - ./backend/:/home/app
     environment:
       - MYSQL_CONNECTION_STRING=root:password@(mysql_db)/tbd?parseTime=true
+      - PORT=3000
     depends_on:
       - db
 
