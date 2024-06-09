@@ -28,7 +28,9 @@ export const users = createTable("user", {
     fsp: 3,
   }).default(sql`CURRENT_TIMESTAMP(3)`),
   password: varchar("password", { length: 255 }),
-  image: varchar("image", { length: 255 }),
+  location: varchar("location", { length: 255 }),
+  profilePicImage: varchar("profilePicImage", { length: 255 }),
+  profileBannerImage: varchar("profilePicImage", { length: 255 }),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
