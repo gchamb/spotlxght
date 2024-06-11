@@ -126,7 +126,9 @@ export const assets = createTable(
     type: varchar("type", { length: 25 }).notNull(),
     mimetype: varchar("mimetype", { length: 25 }).notNull(),
     azureBlobKey: varchar("azureBlobKey", { length: 191 }).notNull(),
-    uploadedAt: timestamp("uploadedAt", { mode: "date" }).notNull(),
+    uploadedAt: timestamp("uploadedAt", { mode: "date" })
+      .notNull()
+      .defaultNow(),
     userId: varchar("userId", { length: 191 })
       .notNull()
       .references(() => users.id),
