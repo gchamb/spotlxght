@@ -1,6 +1,6 @@
 "use client";
 import GenreSelector from "~/components/genre-selector";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight, Loader2, Star } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +23,7 @@ import { isVenueForm } from "~/lib/utils";
 export default function Onboarding({ type }: { type: "venue" | "musician" }) {
   const [slide, setSlide] = useState<1 | 2 | 3>(1);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const form =
     type === "venue"
@@ -31,6 +32,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           defaultValues: {
             venueName: "Your Venue Name",
             location: "100 Main Street, Chicago IL, 60605",
+            bannerImage: null,
           },
         })
       : useForm<z.infer<typeof musicianFormSchema>>({
@@ -38,15 +40,45 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           defaultValues: {
             name: "Your Name",
             location: "100 Main Street, Chicago IL, 60605",
+            bannerImage: null,
+            profileImage: null,
           },
         });
 
-  function onSubmit(
+  const onSubmit = async (
     values:
       | z.infer<typeof venueFormSchema>
       | z.infer<typeof musicianFormSchema>,
-  ) {
-    // these were already validated by zod
+  ) => {
+    // make sure the user isn't using the default values
+    const isVenue = "venueName" in values;
+    if (
+      isVenue &&
+      isVenueForm(form) &&
+      values.venueName.trim().toLowerCase() ===
+        form.formState.defaultValues?.venueName?.trim().toLowerCase() &&
+      values.location.trim().toLowerCase() ===
+        form.formState.defaultValues?.location?.toLowerCase()
+    ) {
+      form.setError("root", { message: "You can't submit the default values" });
+      return;
+    }
+
+    if (
+      !isVenue &&
+      !isVenueForm(form) &&
+      values.name.trim().toLowerCase() ===
+        form.formState.defaultValues?.name?.trim().toLowerCase() &&
+      values.location.trim().toLowerCase() ===
+        form.formState.defaultValues?.location?.toLowerCase()
+    ) {
+      form.setError("root", { message: "You can't submit the default values" });
+      return;
+    }
+
+    if (form.formState.errors.root?.message) {
+      form.setError("root", { message: undefined });
+    }
 
     const data = new FormData();
     data.set("type", type);
@@ -57,18 +89,27 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
     }
 
     // conditional set based on type
-    if ("venueName" in values) {
+    if (isVenue) {
       data.set("venueName", values.venueName);
     } else if (values.profileImage) {
       data.set("profileImage", values.profileImage);
     }
 
-    createProfile(data);
-  }
+    setLoading(true);
+    try {
+      await createProfile(data);
+    } catch (err) {
+      form.setError("root", {
+        message: err instanceof Error ? err.message : String(err),
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (slide === 1) {
     return (
-      <div className="flex h-full flex-col justify-center gap-y-4">
+      <div className="3xl:gap-y-4 flex h-full flex-col justify-center">
         <GenreSelector
           selectedGenres={selectedGenres}
           setSelectedGenres={setSelectedGenres}
@@ -89,17 +130,22 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
 
   if (slide === 2) {
     return (
-      <div className="max-screen-xl  mx-auto flex h-full items-center gap-x-48 p-4 xl:w-3/4 ">
+      <div className="max-screen-xl  3xl:w-3/4 mx-auto flex h-full items-center gap-x-48  p-4 ">
         <div className=" mx-auto flex max-w-md flex-col gap-y-24">
-          <h1 className="text-center text-3xl font-semibold xl:text-5xl">
+          <h1 className="3xl:text-5xl text-center text-3xl font-semibold">
             Complete Profile
           </h1>
           {isVenueForm(form) ? (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
+                className="space-y-4"
               >
+                {form.formState.errors.root?.message && (
+                  <p className="text-center text-sm text-red-600">
+                    {form.formState.errors.root.message}
+                  </p>
+                )}
                 <FormField
                   control={form.control}
                   name="venueName"
@@ -166,9 +212,11 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                   )}
                 />
                 <Button
-                  className="h-[75px] w-full text-2xl font-semibold"
+                  className="flex h-[75px] w-full items-center gap-x-2 text-2xl font-semibold"
                   type="submit"
+                  disabled={loading}
                 >
+                  {loading && <Loader2 className="animate-spin" />}
                   Complete Profile
                 </Button>
               </form>
@@ -177,8 +225,13 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
+                className="space-y-4"
               >
+                {form.formState.errors.root?.message && (
+                  <p className="text-center text-sm text-red-600">
+                    {form.formState.errors.root.message}
+                  </p>
+                )}
                 <FormField
                   control={form.control}
                   name="name"
@@ -280,9 +333,11 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                   )}
                 />
                 <Button
-                  className="h-[75px] w-full text-2xl font-semibold"
+                  className="flex h-[75px] w-full items-center gap-x-2 text-2xl font-semibold"
                   type="submit"
+                  disabled={loading}
                 >
+                  {loading && <Loader2 className="animate-spin" />}
                   Complete Profile
                 </Button>
               </form>
@@ -291,13 +346,12 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
         </div>
         <div className=" bg-underground-dark-grey flex hidden h-[700px] max-h-[700px] w-[900px] flex-col rounded-xl 2xl:block">
           <div className="h-[200px] w-full rounded-t-xl">
-            {isVenueForm(form) && form.watch("bannerImage") !== undefined ? (
+            {isVenueForm(form) && form.watch("bannerImage") ? (
               <img
                 className="h-full w-full rounded-t-xl object-cover"
                 src={URL.createObjectURL(form.watch("bannerImage")!)}
               />
-            ) : !isVenueForm(form) &&
-              form.watch("bannerImage") !== undefined ? (
+            ) : !isVenueForm(form) && form.watch("bannerImage") ? (
               <img
                 className="h-full w-full rounded-t-xl object-cover"
                 src={URL.createObjectURL(form.watch("bannerImage")!)}
@@ -313,8 +367,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           <div className="flex">
             {type === "musician" && (
               <div className="h-[200px] w-[200px] p-4 ">
-                {!isVenueForm(form) &&
-                form.watch("profileImage") !== undefined ? (
+                {!isVenueForm(form) && form.watch("profileImage") ? (
                   <img
                     className="h-full w-full rounded-full object-cover"
                     src={URL.createObjectURL(form.watch("profileImage")!)}

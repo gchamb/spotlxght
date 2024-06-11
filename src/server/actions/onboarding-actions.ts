@@ -7,7 +7,7 @@ export async function createProfile(data: FormData) {
   const type = data.get("type");
 
   if (type === null || (type !== "venue" && type !== "musician")) {
-    return; // NOTE send error;
+    throw new Error("Invalid Request");
   }
 
   const venueName = data.get("venueName");
@@ -24,21 +24,22 @@ export async function createProfile(data: FormData) {
     });
 
     if (!valid.success) {
-      return; // RETURN ERROR
+      throw new Error(valid.error.errors[0]?.message);
     }
 
     // validate location
 
     // update
   } else {
-    const valid = venueFormSchema.safeParse({
-      venueName,
+    const valid = musicianFormSchema.safeParse({
+      name,
       location,
+      profileImage,
       bannerImage,
     });
 
     if (!valid.success) {
-      return; // RETURN ERROR
+      throw new Error(valid.error.message);
     }
 
     // validate location
