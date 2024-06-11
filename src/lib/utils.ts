@@ -12,7 +12,7 @@ export function isVenueForm(
         {
           venueName: string;
           location: string;
-          bannerImage?: File | undefined;
+          bannerImage: File | null;
         },
         any,
         undefined
@@ -21,8 +21,8 @@ export function isVenueForm(
         {
           name: string;
           location: string;
-          bannerImage?: File | undefined;
-          profileImage?: File | undefined;
+          bannerImage: File | null;
+          profileImage: File | null;
         },
         any,
         undefined
@@ -31,7 +31,7 @@ export function isVenueForm(
   {
     venueName: string;
     location: string;
-    bannerImage?: File | undefined;
+    bannerImage: File | null;
   },
   any,
   undefined

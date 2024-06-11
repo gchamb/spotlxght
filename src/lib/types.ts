@@ -5,7 +5,6 @@ export const ACCEPTED_IMAGE_TYPES = ["image/jpg", "image/jpeg", "image/png"];
 
 export const imageZodSchema = z
   .instanceof(File)
-
   .refine((file) => file !== null, "An upload is required.")
   .refine(
     (file) => file.size <= MAX_FILE_SIZE,
@@ -14,7 +13,7 @@ export const imageZodSchema = z
   .refine((file) => {
     return ACCEPTED_IMAGE_TYPES.includes(file.type);
   }, "Only JPG, JPEG, and PNG are allowed to be uploaded.")
-  .optional();
+  .nullable();
 
 export const venueFormSchema = z.object({
   venueName: z
