@@ -1,6 +1,14 @@
 "use client";
 import GenreSelector from "~/components/genre-selector";
-import { ArrowRight, Loader2, Star } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarCheck,
+  HandCoins,
+  Link,
+  Loader2,
+  LucideLockKeyhole,
+  Star,
+} from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +26,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { createProfile } from "~/server/actions/onboarding-actions";
-import { isVenueForm } from "~/lib/utils";
+import { isVenueForm, shortenOrNot } from "~/lib/utils";
 
 export default function Onboarding({ type }: { type: "venue" | "musician" }) {
   const [slide, setSlide] = useState<1 | 2 | 3>(1);
@@ -31,7 +39,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           resolver: zodResolver(venueFormSchema),
           defaultValues: {
             venueName: "Your Venue Name",
-            location: "100 Main Street, Chicago IL, 60605",
+            address: "100 Main Street, Chicago IL, 60605",
             bannerImage: null,
           },
         })
@@ -39,7 +47,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           resolver: zodResolver(musicianFormSchema),
           defaultValues: {
             name: "Your Name",
-            location: "100 Main Street, Chicago IL, 60605",
+            address: "100 Main Street, Chicago IL, 60605",
             bannerImage: null,
             profileImage: null,
           },
@@ -57,8 +65,8 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
       isVenueForm(form) &&
       values.venueName.trim().toLowerCase() ===
         form.formState.defaultValues?.venueName?.trim().toLowerCase() &&
-      values.location.trim().toLowerCase() ===
-        form.formState.defaultValues?.location?.toLowerCase()
+      values.address.trim().toLowerCase() ===
+        form.formState.defaultValues?.address?.toLowerCase()
     ) {
       form.setError("root", { message: "You can't submit the default values" });
       return;
@@ -69,8 +77,8 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
       !isVenueForm(form) &&
       values.name.trim().toLowerCase() ===
         form.formState.defaultValues?.name?.trim().toLowerCase() &&
-      values.location.trim().toLowerCase() ===
-        form.formState.defaultValues?.location?.toLowerCase()
+      values.address.trim().toLowerCase() ===
+        form.formState.defaultValues?.address?.toLowerCase()
     ) {
       form.setError("root", { message: "You can't submit the default values" });
       return;
@@ -82,7 +90,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
 
     const data = new FormData();
     data.set("type", type);
-    data.set("location", values.location);
+    data.set("address", values.address);
 
     if (values.bannerImage) {
       data.set("bannerImage", values.bannerImage);
@@ -91,13 +99,18 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
     // conditional set based on type
     if (isVenue) {
       data.set("venueName", values.venueName);
-    } else if (values.profileImage) {
-      data.set("profileImage", values.profileImage);
+    } else {
+      data.set("name", values.name);
+
+      if (values.profileImage) {
+        data.set("profileImage", values.profileImage);
+      }
     }
 
     setLoading(true);
     try {
       await createProfile(data);
+      setSlide(3);
     } catch (err) {
       form.setError("root", {
         message: err instanceof Error ? err.message : String(err),
@@ -163,11 +176,11 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                 />
                 <FormField
                   control={form.control}
-                  name="location"
+                  name="address"
                   rules={{ required: true }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location</FormLabel>
+                      <FormLabel>Address</FormLabel>
                       <FormControl>
                         <Input className="bg-white text-black" {...field} />
                       </FormControl>
@@ -258,13 +271,16 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                 />
                 <FormField
                   control={form.control}
-                  name="location"
+                  name="address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location</FormLabel>
+                      <FormLabel>Address</FormLabel>
                       <FormControl>
                         <Input className="bg-white text-black" {...field} />
                       </FormControl>
+                      <FormDescription className="text-sm">
+                        Only City and State will show on profile
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -414,13 +430,13 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                 </div>
                 <h2 className="text-4xl font-semibold">
                   {isVenueForm(form)
-                    ? form.watch("venueName")
-                    : form.watch("name")}
+                    ? shortenOrNot(form.watch("venueName"))
+                    : shortenOrNot(form.watch("name"), 20)}
                 </h2>
                 <span>
                   {isVenueForm(form)
-                    ? form.watch("location")
-                    : form.watch("location")}
+                    ? shortenOrNot(form.watch("address"), 50)
+                    : shortenOrNot(form.watch("address"), 50)}
                 </span>
               </div>
               <div className="flex gap-x-2">
@@ -476,8 +492,73 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
   }
 
   return (
-    <div className="flex h-full flex-col justify-center gap-y-4">
-      <h2>slide 3</h2>
+    <div className="max-screen-xl xl:gap-y-none mx-auto  flex h-full flex-col gap-y-8 ">
+      <div className="mt-8 flex flex-col items-center gap-y-2 xl:mt-16 ">
+        <h1 className="text-4xl font-semibold">Link Account</h1>
+        <span className="text-sm">Securely fund your account</span>
+      </div>
+
+      <div className="max-screen-xl flex flex-col flex-wrap gap-8 md:my-auto md:flex-row">
+        <div className="mx-auto flex max-w-[300px] flex-col items-center gap-y-8  text-center">
+          <Link size={48} />
+
+          <div className="flex flex-col gap-y-4">
+            <h2 className="text-2xl font-semibold">Link Bank Account</h2>
+            <p className="text-sm">
+              {type === "venue"
+                ? "Link your bank account via Plaid to fund your events quickly and securely."
+                : "Link your bank account via Plaid to receive funds for your completed events while ensuring your information remains protected."}
+            </p>
+          </div>
+        </div>
+        <div className="mx-auto flex max-w-[300px] flex-col items-center gap-y-8  text-center">
+          <CalendarCheck size={48} />
+
+          <div className="flex flex-col gap-y-4">
+            <h2 className="text-2xl font-semibold">
+              {type === "venue" ? "Create" : "Browse"} Event
+            </h2>
+            <p className="text-sm">
+              {type === "venue"
+                ? "Create and list your events with the available time slots and necessary details for musicians to apply"
+                : "Browse the list of events and apply based on your availability within the provided time slots created by the venue."}
+            </p>
+          </div>
+        </div>
+        <div className="mx-auto flex max-w-[300px] flex-col items-center gap-y-8  text-center">
+          <LucideLockKeyhole size={48} />
+
+          <div className="flex flex-col gap-y-4">
+            <h2 className="text-2xl font-semibold">Escrow Funds</h2>
+            <p className="text-sm">
+              {type === "venue"
+                ? "After you accept the qualified musician, funds are placed in escrow for security for both the venue and musician."
+                : "After the venue accepts you, funds are placed in escrow for security for both the venue and musician."}
+            </p>
+          </div>
+        </div>
+        <div className="mx-auto flex max-w-[300px] flex-col items-center gap-y-8  text-center">
+          <HandCoins size={48} />
+
+          <div className="flex flex-col gap-y-4">
+            <h2 className="text-2xl font-semibold">Musicians are paid</h2>
+            <p className="text-sm">
+              {type === "venue"
+                ? "Upon the successful completion of an event, you can release the payment to the musician for their excellent performance."
+                : "Upon the successful completion of an event, the venue can release the payment to the musician for their excellent performance."}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-auto flex h-36 justify-center pb-4 ">
+        <Button
+          variant="default"
+          className=" h-full max-h-[60px] w-full max-w-[600px]  text-3xl font-semibold"
+        >
+          Link
+        </Button>
+      </div>
     </div>
   );
 }
