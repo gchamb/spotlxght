@@ -197,6 +197,13 @@ export const applications = createTable(
     appliedAt: timestamp("endDate", { mode: "date" }).notNull(),
   },
   (application) => ({
+    pk: primaryKey({
+      columns: [
+        application.timeslotId,
+        application.eventId,
+        application.userId,
+      ],
+    }),
     userIdIdx: index("application_userId_idx").on(application.userId),
     eventIdIdx: index("application_eventId_idx").on(application.eventId),
     timeslotIdIdx: index("application_timeslotId_idx").on(
