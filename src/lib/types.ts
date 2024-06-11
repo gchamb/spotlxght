@@ -20,9 +20,7 @@ export const venueFormSchema = z.object({
     .string()
     .min(5, "Venue name should be at least 5 characters")
     .max(20, "Venue name should be at most 20 characters"),
-  address: z
-    .string()
-    .min(10, "Location should be at least 10 characters long"),
+  address: z.string().min(10, "Location should be at least 10 characters long"),
   bannerImage: imageZodSchema,
 });
 
@@ -31,9 +29,9 @@ export const musicianFormSchema = z.object({
     .string()
     .min(3, "Venue name should be at least 3 characters")
     .max(20, "Venue name should be at most 20 characters"),
-  address: z
-    .string()
-    .min(10, "Location should be at least 10 characters long"),
+  address: z.string().min(10, "Location should be at least 10 characters long"),
   profileImage: imageZodSchema,
   bannerImage: imageZodSchema,
 });
+// this file will include zod schemas and typescript types
+export type UserType = "venue" | "musician";
