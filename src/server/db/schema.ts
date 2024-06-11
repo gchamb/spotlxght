@@ -102,7 +102,9 @@ export const reviews = createTable(
       .notNull()
       .references(() => users.id),
     message: varchar("message", { length: 255 }),
-    reviewedAt: timestamp("reviewedAt", { mode: "date" }).notNull(),
+    reviewedAt: timestamp("reviewedAt", { mode: "date" })
+      .notNull()
+      .defaultNow(),
     rate: int("rate").notNull(),
     userId: varchar("userId", { length: 191 })
       .notNull()
