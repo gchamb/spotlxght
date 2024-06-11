@@ -191,7 +191,9 @@ export const applications = createTable(
     timeslotId: varchar("timeslotId", { length: 191 }).notNull(),
     eventId: varchar("eventId", { length: 191 }).notNull(),
     userId: varchar("userId", { length: 191 }).notNull(),
-    status: int("status").notNull(),
+    status: varchar("status", { length: 15 })
+      .$type<ApplicationStatus>()
+      .notNull(),
     appliedAt: timestamp("endDate", { mode: "date" }).notNull(),
   },
   (application) => ({
