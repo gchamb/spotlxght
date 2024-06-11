@@ -131,7 +131,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
   if (slide === 2) {
     return (
       <div className="max-screen-xl  3xl:w-3/4 mx-auto flex h-full items-center gap-x-48  p-4 ">
-        <div className=" mx-auto flex max-w-md flex-col gap-y-24">
+        <div className=" 3xl:gap-y-24 mx-auto flex max-w-md flex-col gap-y-8">
           <h1 className="3xl:text-5xl text-center text-3xl font-semibold">
             Complete Profile
           </h1>
@@ -218,6 +218,15 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                 >
                   {loading && <Loader2 className="animate-spin" />}
                   Complete Profile
+                </Button>
+                <Button
+                  className="w-full "
+                  variant="ghost"
+                  type="button"
+                  disabled={loading}
+                  onClick={() => setSlide(1)}
+                >
+                  Back
                 </Button>
               </form>
             </Form>
@@ -340,11 +349,21 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                   {loading && <Loader2 className="animate-spin" />}
                   Complete Profile
                 </Button>
+
+                <Button
+                  className="w-full"
+                  variant="ghost"
+                  type="button"
+                  disabled={loading}
+                  onClick={() => setSlide(1)}
+                >
+                  Back
+                </Button>
               </form>
             </Form>
           )}
         </div>
-        <div className=" bg-underground-dark-grey flex hidden h-[700px] max-h-[700px] w-[900px] flex-col rounded-xl 2xl:block">
+        <div className=" bg-underground-dark-grey flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl 2xl:block">
           <div className="h-[200px] w-full rounded-t-xl">
             {isVenueForm(form) && form.watch("bannerImage") ? (
               <img
@@ -452,24 +471,6 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
             </div>
           )}
         </div>
-        {/* <div className="justify-right mx-auto flex w-11/12 ">
-          <Button
-            onClick={() => setSlide(1)}
-            variant="ghost"
-            className="ml-auto flex items-center gap-x-4"
-          >
-            <ArrowLeft />
-            <span>Back</span>
-          </Button>
-          <Button
-            onClick={() => setSlide(3)}
-            variant="ghost"
-            className="ml-auto flex items-center gap-x-4"
-          >
-            <span>Next</span>
-            <ArrowRight />
-          </Button>
-        </div> */}
       </div>
     );
   }
