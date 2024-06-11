@@ -92,7 +92,7 @@ export default function GenreSelector({
   };
 
   return (
-    <div className="mx-auto flex w-11/12 flex-col gap-y-16 xl:gap-10">
+    <div className="mx-auto flex w-11/12 flex-col gap-y-16 xl:gap-4">
       <div>
         <h2 className="text-center text-xl">Select your genre</h2>
       </div>
