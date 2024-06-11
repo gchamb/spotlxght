@@ -29,6 +29,8 @@ export async function createProfile(data: FormData) {
 
     // validate location
 
+    // upload images to azure
+
     // update
   } else {
     const valid = musicianFormSchema.safeParse({
@@ -43,6 +45,8 @@ export async function createProfile(data: FormData) {
     }
 
     // validate location
+
+    // upload images to azure
 
     // update
   }
