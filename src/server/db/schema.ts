@@ -147,7 +147,7 @@ export const events = createTable(
   {
     id: varchar("id", { length: 191 }).notNull().primaryKey(),
     name: varchar("name", { length: 100 }).notNull(),
-    status: int("mimetype").notNull(),
+    status: varchar("status", { length: 15 }).$type<EventStatus>().notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
     venueId: varchar("venueId", { length: 191 })
       .notNull()
