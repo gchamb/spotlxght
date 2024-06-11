@@ -20,7 +20,7 @@ export const venueFormSchema = z.object({
     .string()
     .min(5, "Venue name should be at least 5 characters")
     .max(20, "Venue name should be at most 20 characters"),
-  location: z
+  address: z
     .string()
     .min(10, "Location should be at least 10 characters long"),
   bannerImage: imageZodSchema,
@@ -29,9 +29,9 @@ export const venueFormSchema = z.object({
 export const musicianFormSchema = z.object({
   name: z
     .string()
-    .min(5, "Venue name should be at least 5 characters")
+    .min(3, "Venue name should be at least 3 characters")
     .max(20, "Venue name should be at most 20 characters"),
-  location: z
+  address: z
     .string()
     .min(10, "Location should be at least 10 characters long"),
   profileImage: imageZodSchema,

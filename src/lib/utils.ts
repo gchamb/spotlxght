@@ -11,7 +11,7 @@ export function isVenueForm(
     | UseFormReturn<
         {
           venueName: string;
-          location: string;
+          address: string;
           bannerImage: File | null;
         },
         any,
@@ -20,7 +20,7 @@ export function isVenueForm(
     | UseFormReturn<
         {
           name: string;
-          location: string;
+          address: string;
           bannerImage: File | null;
           profileImage: File | null;
         },
@@ -30,11 +30,19 @@ export function isVenueForm(
 ): form is UseFormReturn<
   {
     venueName: string;
-    location: string;
+    address: string;
     bannerImage: File | null;
   },
   any,
   undefined
 > {
   return "venueName" in form.getValues();
+}
+
+export function shortenOrNot(word: string, maxLength = 25) {
+  if (word.length < maxLength) {
+    return word;
+  }
+
+  return `${word.substring(0, maxLength)}...`;
 }

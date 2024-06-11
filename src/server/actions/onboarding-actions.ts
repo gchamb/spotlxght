@@ -11,7 +11,7 @@ export async function createProfile(data: FormData) {
   }
 
   const venueName = data.get("venueName");
-  const location = data.get("location");
+  const address = data.get("address");
   const bannerImage = data.get("bannerImage");
   const profileImage = data.get("profileImage");
   const name = data.get("name");
@@ -19,7 +19,7 @@ export async function createProfile(data: FormData) {
   if (type === "venue") {
     const valid = venueFormSchema.safeParse({
       venueName,
-      location,
+      address,
       bannerImage,
     });
 
@@ -27,7 +27,7 @@ export async function createProfile(data: FormData) {
       throw new Error(valid.error.errors[0]?.message);
     }
 
-    // validate location
+    // validate address
 
     // upload images to azure
 
@@ -35,16 +35,16 @@ export async function createProfile(data: FormData) {
   } else {
     const valid = musicianFormSchema.safeParse({
       name,
-      location,
+      address,
       profileImage,
       bannerImage,
     });
 
     if (!valid.success) {
-      throw new Error(valid.error.message);
+      throw new Error(valid.error.errors[0]?.message);
     }
 
-    // validate location
+    // validate address
 
     // upload images to azure
 
