@@ -27,7 +27,7 @@ export const users = createTable("user", {
   emailVerified: timestamp("emailVerified", {
     mode: "date",
     fsp: 3,
-  }).default(sql`CURRENT_TIMESTAMP(3)`),
+  }).defaultNow(),
   password: varchar("password", { length: 255 }),
   address: varchar("address", { length: 255 }),
   profilePicImage: varchar("profilePicImage", { length: 255 }),
