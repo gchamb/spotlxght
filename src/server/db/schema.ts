@@ -22,14 +22,14 @@ export const createTable = mysqlTableCreator((name) => `underground_${name}`);
 
 export const users = createTable("user", {
   id: varchar("id", { length: 191 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).unique().notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",
     fsp: 3,
   }).default(sql`CURRENT_TIMESTAMP(3)`),
   password: varchar("password", { length: 255 }),
-  location: varchar("location", { length: 255 }),
+  address: varchar("address", { length: 255 }),
   profilePicImage: varchar("profilePicImage", { length: 255 }),
   profileBannerImage: varchar("profilePicImage", { length: 255 }),
   type: varchar("type", { length: 10 }).$type<UserType>().notNull(),
