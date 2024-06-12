@@ -1,7 +1,17 @@
-import { relations } from "drizzle-orm";
-import { index, int, mysqlTableCreator, primaryKey, text, timestamp, varchar, } from "drizzle-orm/mysql-core";
+import { relations, sql } from "drizzle-orm";
+import {
+  bigint,
+  float,
+  index,
+  int,
+  mysqlTableCreator,
+  primaryKey,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/mysql-core";
 import { type AdapterAccount } from "next-auth/adapters";
-import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/types";
+import { ApplicationStatus, EventStatus, UserType } from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -12,10 +22,7 @@ import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/
 export const createTable = mysqlTableCreator((name) => `underground_${name}`);
 
 export const users = createTable("user", {
-  id: varchar("id", { length: 191 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+  id: varchar("id", { length: 191 }).notNull().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).unique().notNull(),
   emailVerified: timestamp("emailVerified", {
@@ -23,9 +30,6 @@ export const users = createTable("user", {
     fsp: 3,
   }).defaultNow(),
   password: varchar("password", { length: 255 }),
-  timestamp: timestamp("timestamp", { mode: "date" }).defaultNow(),
-  image: varchar("image", { length: 255 }),
-  // profilePicImage: varchar("profilePicImage", { length: 255 }),
   address: varchar("address", { length: 255 }).notNull(),
   profilePicImage: varchar("profilePicImage", { length: 255 }),
   profileBannerImage: varchar("profilePicImage", { length: 255 }),
@@ -38,6 +42,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   reviews: many(reviews),
   assets: many(assets),
   applications: many(applications),
+  genres: many(genres),
 }));
 
 export const accounts = createTable(
@@ -89,6 +94,24 @@ export const sessions = createTable(
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
+
+export const genres = createTable(
+  "genre",
+  {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    genre: varchar("genre", { length: 25 }).notNull(),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (genre) => ({
+    userIdIdx: index("genres_userId_idx").on(genre.userId),
+  }),
+);
+
+export const genresRelations = relations(genres, ({ one }) => ({
+  user: one(users, { fields: [genres.userId], references: [users.id] }),
 }));
 
 export const reviews = createTable(
@@ -145,6 +168,7 @@ export const events = createTable(
     id: varchar("id", { length: 191 }).notNull().primaryKey(),
     name: varchar("name", { length: 100 }).notNull(),
     status: varchar("status", { length: 15 }).$type<EventStatus>().notNull(),
+    amount: float("amount").notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
     venueId: varchar("venueId", { length: 191 })
       .notNull()
@@ -209,7 +233,7 @@ export const applications = createTable(
   }),
 );
 
-export const applicantsRelations = relations(applications, ({ one }) => ({
+export const applicantsRelations = relations(applications, ({ one, many }) => ({
   timeslot: one(timeslots, {
     fields: [applications.timeslotId],
     references: [timeslots.id],
