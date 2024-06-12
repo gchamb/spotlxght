@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import {
   bigint,
+  float,
   index,
   int,
   mysqlTableCreator,
@@ -41,6 +42,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   reviews: many(reviews),
   assets: many(assets),
   applications: many(applications),
+  genres: many(genres),
 }));
 
 export const accounts = createTable(
@@ -92,6 +94,24 @@ export const sessions = createTable(
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
+
+export const genres = createTable(
+  "genre",
+  {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    genre: varchar("genre", { length: 25 }).notNull(),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (genre) => ({
+    userIdIdx: index("genres_userId_idx").on(genre.userId),
+  }),
+);
+
+export const genresRelations = relations(genres, ({ one }) => ({
+  user: one(users, { fields: [genres.userId], references: [users.id] }),
 }));
 
 export const reviews = createTable(
@@ -148,6 +168,7 @@ export const events = createTable(
     id: varchar("id", { length: 191 }).notNull().primaryKey(),
     name: varchar("name", { length: 100 }).notNull(),
     status: varchar("status", { length: 15 }).$type<EventStatus>().notNull(),
+    amount: float("amount").notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
     venueId: varchar("venueId", { length: 191 })
       .notNull()
