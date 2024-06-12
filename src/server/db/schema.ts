@@ -48,7 +48,7 @@ export const accounts = createTable(
   {
     userId: varchar("userId", { length: 191 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     type: varchar("type", { length: 255 })
       .$type<AdapterAccount["type"]>()
       .notNull(),
@@ -82,7 +82,7 @@ export const sessions = createTable(
       .primaryKey(),
     userId: varchar("userId", { length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (session) => ({
@@ -108,7 +108,7 @@ export const reviews = createTable(
     rate: int("rate").notNull(),
     userId: varchar("userId", { length: 191 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   (review) => ({
     userIdIdx: index("reviews_userId_idx").on(review.userId),
@@ -131,7 +131,7 @@ export const assets = createTable(
       .defaultNow(),
     userId: varchar("userId", { length: 191 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   (asset) => ({
     userIdIdx: index("assets_userId_idx").on(asset.userId),
@@ -173,7 +173,7 @@ export const timeslots = createTable(
     timezone: varchar("timezone", { length: 5 }).default("CST").notNull(),
     eventId: varchar("eventId", { length: 191 })
       .notNull()
-      .references(() => events.id),
+      .references(() => events.id, { onDelete: "cascade" }),
   },
   (timeslot) => ({
     eventIdIdx: index("events_userId_idx").on(timeslot.eventId),
@@ -187,9 +187,15 @@ export const timeslotsRelations = relations(timeslots, ({ one }) => ({
 export const applications = createTable(
   "application",
   {
-    timeslotId: varchar("timeslotId", { length: 191 }).notNull(),
-    eventId: varchar("eventId", { length: 191 }).notNull(),
-    userId: varchar("userId", { length: 191 }).notNull(),
+    timeslotId: varchar("timeslotId", { length: 191 })
+      .notNull()
+      .references(() => timeslots.id),
+    eventId: varchar("eventId", { length: 191 })
+      .notNull()
+      .references(() => events.id),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id),
     status: varchar("status", { length: 15 })
       .$type<ApplicationStatus>()
       .notNull(),
@@ -203,11 +209,6 @@ export const applications = createTable(
         application.userId,
       ],
     }),
-    userIdIdx: index("application_userId_idx").on(application.userId),
-    eventIdIdx: index("application_eventId_idx").on(application.eventId),
-    timeslotIdIdx: index("application_timeslotId_idx").on(
-      application.timeslotId,
-    ),
   }),
 );
 
