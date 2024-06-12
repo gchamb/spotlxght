@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import GenreSelector from "~/components/genre-selector";
 import {
@@ -33,25 +34,23 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const form =
-    type === "venue"
-      ? useForm<z.infer<typeof venueFormSchema>>({
-          resolver: zodResolver(venueFormSchema),
-          defaultValues: {
-            venueName: "Your Venue Name",
-            address: "100 Main Street, Chicago IL, 60605",
-            bannerImage: null,
-          },
-        })
-      : useForm<z.infer<typeof musicianFormSchema>>({
-          resolver: zodResolver(musicianFormSchema),
-          defaultValues: {
-            name: "Your Name",
-            address: "100 Main Street, Chicago IL, 60605",
-            bannerImage: null,
-            profileImage: null,
-          },
-        });
+  const venueForm = useForm<z.infer<typeof venueFormSchema>>({
+    resolver: zodResolver(venueFormSchema),
+    defaultValues: {
+      venueName: "Your Venue Name",
+      address: "100 Main Street, Chicago IL, 60605",
+      bannerImage: null,
+    },
+  });
+  const musicianForm = useForm<z.infer<typeof musicianFormSchema>>({
+    resolver: zodResolver(musicianFormSchema),
+    defaultValues: {
+      name: "Your Name",
+      address: null,
+      bannerImage: null,
+      profileImage: null,
+    },
+  });
 
   const onSubmit = async (
     values:
@@ -62,35 +61,43 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
     const isVenue = "venueName" in values;
     if (
       isVenue &&
-      isVenueForm(form) &&
       values.venueName.trim().toLowerCase() ===
-        form.formState.defaultValues?.venueName?.trim().toLowerCase() &&
+        venueForm.formState.defaultValues?.venueName?.trim().toLowerCase() &&
       values.address.trim().toLowerCase() ===
-        form.formState.defaultValues?.address?.toLowerCase()
+        venueForm.formState.defaultValues?.address?.toLowerCase()
     ) {
-      form.setError("root", { message: "You can't submit the default values" });
+      venueForm.setError("root", {
+        message: "You can't submit the default values",
+      });
       return;
     }
 
     if (
       !isVenue &&
-      !isVenueForm(form) &&
       values.name.trim().toLowerCase() ===
-        form.formState.defaultValues?.name?.trim().toLowerCase() &&
-      values.address.trim().toLowerCase() ===
-        form.formState.defaultValues?.address?.toLowerCase()
+        musicianForm.formState.defaultValues?.name?.trim().toLowerCase()
     ) {
-      form.setError("root", { message: "You can't submit the default values" });
+      musicianForm.setError("root", {
+        message: "You can't submit the default values",
+      });
       return;
     }
 
-    if (form.formState.errors.root?.message) {
-      form.setError("root", { message: undefined });
+    if (
+      musicianForm.formState.errors.root?.message ??
+      venueForm.formState.errors.root?.message
+    ) {
+      venueForm.setError("root", { message: undefined });
+      musicianForm.setError("root", { message: undefined });
     }
 
     const data = new FormData();
     data.set("type", type);
-    data.set("address", values.address);
+    data.set("genres", selectedGenres.join(","));
+
+    if (values.address) {
+      data.set("address", values?.address);
+    }
 
     if (values.bannerImage) {
       data.set("bannerImage", values.bannerImage);
@@ -112,9 +119,15 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
       await createProfile(data);
       setSlide(3);
     } catch (err) {
-      form.setError("root", {
-        message: err instanceof Error ? err.message : String(err),
-      });
+      if (isVenue) {
+        venueForm.setError("root", {
+          message: err instanceof Error ? err.message : String(err),
+        });
+      } else {
+        musicianForm.setError("root", {
+          message: err instanceof Error ? err.message : String(err),
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -148,19 +161,19 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           <h1 className="3xl:text-5xl text-center text-3xl font-semibold">
             Complete Profile
           </h1>
-          {isVenueForm(form) ? (
-            <Form {...form}>
+          {type === "venue" ? (
+            <Form {...venueForm}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={venueForm.handleSubmit(onSubmit)}
                 className="space-y-4"
               >
-                {form.formState.errors.root?.message && (
+                {venueForm.formState.errors.root?.message && (
                   <p className="text-center text-sm text-red-600">
-                    {form.formState.errors.root.message}
+                    {venueForm.formState.errors.root.message}
                   </p>
                 )}
                 <FormField
-                  control={form.control}
+                  control={venueForm.control}
                   name="venueName"
                   rules={{ required: true }}
                   render={({ field }) => (
@@ -175,7 +188,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={venueForm.control}
                   name="address"
                   rules={{ required: true }}
                   render={({ field }) => (
@@ -189,7 +202,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={venueForm.control}
                   name="bannerImage"
                   render={({ field }) => (
                     <FormItem>
@@ -213,7 +226,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                               return;
                             }
 
-                            form.setValue("bannerImage", file);
+                            venueForm.setValue("bannerImage", file);
                           }}
                           ref={field.ref}
                           name={field.name}
@@ -244,18 +257,18 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
               </form>
             </Form>
           ) : (
-            <Form {...form}>
+            <Form {...musicianForm}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={musicianForm.handleSubmit(onSubmit)}
                 className="space-y-4"
               >
-                {form.formState.errors.root?.message && (
+                {musicianForm.formState.errors.root?.message && (
                   <p className="text-center text-sm text-red-600">
-                    {form.formState.errors.root.message}
+                    {musicianForm.formState.errors.root.message}
                   </p>
                 )}
                 <FormField
-                  control={form.control}
+                  control={musicianForm.control}
                   name="name"
                   rules={{ required: true }}
                   render={({ field }) => (
@@ -269,7 +282,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="address"
                   render={({ field }) => (
@@ -284,9 +297,9 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
                 <FormField
-                  control={form.control}
+                  control={musicianForm.control}
                   name="profileImage"
                   render={({ field }) => (
                     <FormItem>
@@ -310,7 +323,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                               return;
                             }
 
-                            form.setValue("profileImage", file);
+                            musicianForm.setValue("profileImage", file);
                           }}
                           ref={field.ref}
                           name={field.name}
@@ -322,7 +335,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={musicianForm.control}
                   name="bannerImage"
                   render={({ field }) => (
                     <FormItem>
@@ -346,7 +359,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                               return;
                             }
 
-                            form.setValue("bannerImage", file);
+                            musicianForm.setValue("bannerImage", file);
                           }}
                           ref={field.ref}
                           name={field.name}
@@ -379,22 +392,25 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
             </Form>
           )}
         </div>
-        <div className=" bg-underground-dark-grey flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl 2xl:block">
+        <div className=" flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl bg-underground-dark-grey 2xl:block">
           <div className="h-[200px] w-full rounded-t-xl">
-            {isVenueForm(form) && form.watch("bannerImage") ? (
+            {type === "venue" && venueForm.watch("bannerImage") ? (
               <img
                 className="h-full w-full rounded-t-xl object-cover"
-                src={URL.createObjectURL(form.watch("bannerImage")!)}
+                src={URL.createObjectURL(venueForm.watch("bannerImage")!)}
+                alt="venue banner"
               />
-            ) : !isVenueForm(form) && form.watch("bannerImage") ? (
+            ) : type === "musician" && musicianForm.watch("bannerImage") ? (
               <img
                 className="h-full w-full rounded-t-xl object-cover"
-                src={URL.createObjectURL(form.watch("bannerImage")!)}
+                src={URL.createObjectURL(musicianForm.watch("bannerImage")!)}
+                alt="musician banner"
               />
             ) : (
               <img
                 className="h-full w-full rounded-t-xl object-cover"
                 src="/images/default-banner.jpg"
+                alt="default banner"
               />
             )}
           </div>
@@ -402,15 +418,19 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           <div className="flex">
             {type === "musician" && (
               <div className="h-[200px] w-[200px] p-4 ">
-                {!isVenueForm(form) && form.watch("profileImage") ? (
+                {type === "musician" && musicianForm.watch("profileImage") ? (
                   <img
                     className="h-full w-full rounded-full object-cover"
-                    src={URL.createObjectURL(form.watch("profileImage")!)}
+                    src={URL.createObjectURL(
+                      musicianForm.watch("profileImage")!,
+                    )}
+                    alt="profile image"
                   />
                 ) : (
                   <img
                     className="h-full w-full rounded-full object-cover object-center"
                     src="/images/default-profile2.png"
+                    alt="default profile image"
                   />
                 )}
               </div>
@@ -429,14 +449,15 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                   })}
                 </div>
                 <h2 className="text-4xl font-semibold">
-                  {isVenueForm(form)
-                    ? shortenOrNot(form.watch("venueName"))
-                    : shortenOrNot(form.watch("name"), 20)}
+                  {type === "venue"
+                    ? shortenOrNot(venueForm.watch("venueName"))
+                    : shortenOrNot(musicianForm.watch("name"), 20)}
                 </h2>
                 <span>
-                  {isVenueForm(form)
-                    ? shortenOrNot(form.watch("address"), 50)
-                    : shortenOrNot(form.watch("address"), 50)}
+                  {type === "venue"
+                    ? shortenOrNot(venueForm.watch("address"), 50)
+                    : // hard code this for now
+                      "100 Main Street, Chicago IL, 60605"}
                 </span>
               </div>
               <div className="flex gap-x-2">

@@ -20,7 +20,7 @@ export function isVenueForm(
     | UseFormReturn<
         {
           name: string;
-          address: string;
+          address: string | null;
           bannerImage: File | null;
           profileImage: File | null;
         },
