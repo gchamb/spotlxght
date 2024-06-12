@@ -10,7 +10,7 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 import { type AdapterAccount } from "next-auth/adapters";
-import { UserType } from "~/lib/types";
+import { ApplicationStatus, EventStatus, UserType } from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -27,9 +27,9 @@ export const users = createTable("user", {
   emailVerified: timestamp("emailVerified", {
     mode: "date",
     fsp: 3,
-  }).default(sql`CURRENT_TIMESTAMP(3)`),
+  }).defaultNow(),
   password: varchar("password", { length: 255 }),
-  address: varchar("address", { length: 255 }),
+  address: varchar("address", { length: 255 }).notNull(),
   profilePicImage: varchar("profilePicImage", { length: 255 }),
   profileBannerImage: varchar("profilePicImage", { length: 255 }),
   type: varchar("type", { length: 10 }).$type<UserType>().notNull(),
@@ -48,7 +48,7 @@ export const accounts = createTable(
   {
     userId: varchar("userId", { length: 191 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     type: varchar("type", { length: 255 })
       .$type<AdapterAccount["type"]>()
       .notNull(),
@@ -82,7 +82,7 @@ export const sessions = createTable(
       .primaryKey(),
     userId: varchar("userId", { length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (session) => ({
@@ -102,11 +102,13 @@ export const reviews = createTable(
       .notNull()
       .references(() => users.id),
     message: varchar("message", { length: 255 }),
-    reviewedAt: timestamp("reviewedAt", { mode: "date" }).notNull(),
+    reviewedAt: timestamp("reviewedAt", { mode: "date" })
+      .notNull()
+      .defaultNow(),
     rate: int("rate").notNull(),
     userId: varchar("userId", { length: 191 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   (review) => ({
     userIdIdx: index("reviews_userId_idx").on(review.userId),
@@ -124,10 +126,12 @@ export const assets = createTable(
     type: varchar("type", { length: 25 }).notNull(),
     mimetype: varchar("mimetype", { length: 25 }).notNull(),
     azureBlobKey: varchar("azureBlobKey", { length: 191 }).notNull(),
-    uploadedAt: timestamp("uploadedAt", { mode: "date" }).notNull(),
+    uploadedAt: timestamp("uploadedAt", { mode: "date" })
+      .notNull()
+      .defaultNow(),
     userId: varchar("userId", { length: 191 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   (asset) => ({
     userIdIdx: index("assets_userId_idx").on(asset.userId),
@@ -142,8 +146,8 @@ export const events = createTable(
   "event",
   {
     id: varchar("id", { length: 191 }).notNull().primaryKey(),
-    name: varchar("name", { length: 50 }).notNull(),
-    status: int("mimetype").notNull(),
+    name: varchar("name", { length: 100 }).notNull(),
+    status: varchar("status", { length: 15 }).$type<EventStatus>().notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
     venueId: varchar("venueId", { length: 191 })
       .notNull()
@@ -169,7 +173,7 @@ export const timeslots = createTable(
     timezone: varchar("timezone", { length: 5 }).default("CST").notNull(),
     eventId: varchar("eventId", { length: 191 })
       .notNull()
-      .references(() => events.id),
+      .references(() => events.id, { onDelete: "cascade" }),
   },
   (timeslot) => ({
     eventIdIdx: index("events_userId_idx").on(timeslot.eventId),
@@ -183,19 +187,28 @@ export const timeslotsRelations = relations(timeslots, ({ one }) => ({
 export const applications = createTable(
   "application",
   {
-    id: varchar("id", { length: 191 }).notNull().primaryKey(),
-    timeslotId: varchar("timeslotId", { length: 191 }).notNull(),
-    eventId: varchar("eventId", { length: 191 }).notNull(),
-    userId: varchar("userId", { length: 191 }).notNull(),
-    status: int("status").notNull(),
+    timeslotId: varchar("timeslotId", { length: 191 })
+      .notNull()
+      .references(() => timeslots.id),
+    eventId: varchar("eventId", { length: 191 })
+      .notNull()
+      .references(() => events.id),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id),
+    status: varchar("status", { length: 15 })
+      .$type<ApplicationStatus>()
+      .notNull(),
     appliedAt: timestamp("endDate", { mode: "date" }).notNull(),
   },
   (application) => ({
-    userIdIdx: index("application_userId_idx").on(application.userId),
-    eventIdIdx: index("application_eventId_idx").on(application.eventId),
-    timeslotIdIdx: index("application_timeslotId_idx").on(
-      application.timeslotId,
-    ),
+    pk: primaryKey({
+      columns: [
+        application.timeslotId,
+        application.eventId,
+        application.userId,
+      ],
+    }),
   }),
 );
 
