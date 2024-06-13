@@ -12,6 +12,7 @@
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
 db.sqlite
+start-database.sh
 
 # next.js
 /.next/
@@ -41,3 +42,9 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# jetbrains
+.idea
+
+# drizzle
+/drizzle

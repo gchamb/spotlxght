@@ -1,16 +1,7 @@
-import { relations, sql } from "drizzle-orm";
-import {
-  bigint,
-  index,
-  int,
-  mysqlTableCreator,
-  primaryKey,
-  text,
-  timestamp,
-  varchar,
-} from "drizzle-orm/mysql-core";
+import { relations } from "drizzle-orm";
+import { index, int, mysqlTableCreator, primaryKey, text, timestamp, varchar, } from "drizzle-orm/mysql-core";
 import { type AdapterAccount } from "next-auth/adapters";
-import { ApplicationStatus, EventStatus, UserType } from "~/lib/types";
+import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -21,7 +12,10 @@ import { ApplicationStatus, EventStatus, UserType } from "~/lib/types";
 export const createTable = mysqlTableCreator((name) => `underground_${name}`);
 
 export const users = createTable("user", {
-  id: varchar("id", { length: 191 }).notNull().primaryKey(),
+  id: varchar("id", { length: 191 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).unique().notNull(),
   emailVerified: timestamp("emailVerified", {
@@ -29,6 +23,9 @@ export const users = createTable("user", {
     fsp: 3,
   }).defaultNow(),
   password: varchar("password", { length: 255 }),
+  timestamp: timestamp("timestamp", { mode: "date" }).defaultNow(),
+  image: varchar("image", { length: 255 }),
+  // profilePicImage: varchar("profilePicImage", { length: 255 }),
   address: varchar("address", { length: 255 }).notNull(),
   profilePicImage: varchar("profilePicImage", { length: 255 }),
   profileBannerImage: varchar("profilePicImage", { length: 255 }),
@@ -212,7 +209,7 @@ export const applications = createTable(
   }),
 );
 
-export const applicantsRelations = relations(applications, ({ one, many }) => ({
+export const applicantsRelations = relations(applications, ({ one }) => ({
   timeslot: one(timeslots, {
     fields: [applications.timeslotId],
     references: [timeslots.id],
