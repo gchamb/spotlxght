@@ -27,93 +27,102 @@ export async function createProfile(data: FormData): Promise<void> {
     throw new Error("Invalid request");
   }
 
-  if (type === "venue") {
-    const valid = venueFormSchema.safeParse({
-      venueName,
-      address,
-      bannerImage,
-    });
+  try {
+    if (type === "venue") {
+      const valid = venueFormSchema.safeParse({
+        venueName,
+        address,
+        bannerImage,
+      });
 
-    if (!valid.success) {
-      throw new Error(valid.error.errors[0]?.message);
-    }
+      if (!valid.success) {
+        throw new Error(valid.error.errors[0]?.message);
+      }
 
-    const {
-      venueName: validVenueName,
-      address: validAddress,
-      bannerImage: validBannerImage,
-    } = valid.data;
-
-    // upload images to azure
-    let azureBannerName;
-    if (validBannerImage) {
-      azureBannerName = `${userId}.${validBannerImage.name.split(".")[1]}`;
-      await bannerImagesContainer
-        .getBlockBlobClient(azureBannerName)
-        .uploadData(validBannerImage);
-    }
-
-    // update name to venueName, address, their uploaded banner image, and genres
-    await db
-      .update(users)
-      .set({
-        name: validVenueName,
-        profileBannerImage: azureBannerName ? azureBannerName : null,
+      const {
+        venueName: validVenueName,
         address: validAddress,
-      })
-      .where(eq(users.id, userId));
-  } else {
-    const valid = musicianFormSchema.safeParse({
-      name,
-      address,
-      profileImage,
-      bannerImage,
-    });
+        bannerImage: validBannerImage,
+      } = valid.data;
 
-    if (!valid.success) {
-      throw new Error(valid.error.errors[0]?.message);
-    }
+      // upload images to azure
+      let azureBannerName;
+      if (validBannerImage) {
+        azureBannerName = `${userId}.${validBannerImage.name.split(".")[1]}`;
+        await bannerImagesContainer
+          .getBlockBlobClient(azureBannerName)
+          .uploadData(await validBannerImage.arrayBuffer());
+      }
 
-    const {
-      bannerImage: validBannerImage,
-      profileImage: validProfileImage,
-      name: validName,
-    } = valid.data;
+      // update name to venueName, address, their uploaded banner image, and genres
+      await db
+        .update(users)
+        .set({
+          name: validVenueName,
+          profileBannerImage: azureBannerName ? azureBannerName : null,
+          address: validAddress,
+        })
+        .where(eq(users.id, userId));
+    } else {
+      const valid = musicianFormSchema.safeParse({
+        name,
+        address,
+        profileImage,
+        bannerImage,
+      });
 
-    // upload images to azure
-    let azureBannerName, azureProfileName;
-    if (validBannerImage) {
-      console.log("uploading now");
-      azureBannerName = `${userId}.${validBannerImage.name.split(".")[1]}`;
-      await bannerImagesContainer
-        .getBlockBlobClient(azureBannerName)
-        .uploadData(await validBannerImage.arrayBuffer());
-    }
-    if (validProfileImage) {
-      console.log("uploading now p");
-      azureProfileName = `${userId}.${validProfileImage.name.split(".")[1]}`;
-      await profileImagesContainer
-        .getBlockBlobClient(azureProfileName)
-        .uploadData(await validProfileImage.arrayBuffer());
-    }
+      if (!valid.success) {
+        throw new Error(valid.error.errors[0]?.message);
+      }
 
-    // update name to musician name, their uploaded banner image, their uploaded profile image and genres
-    await db
-      .update(users)
-      .set({
+      const {
+        bannerImage: validBannerImage,
+        profileImage: validProfileImage,
         name: validName,
-        profileBannerImage: azureBannerName ? azureBannerName : null,
-        profilePicImage: azureProfileName ? azureProfileName : null,
-      })
-      .where(eq(users.id, userId));
+      } = valid.data;
+
+      // upload images to azure
+      let azureBannerName, azureProfileName;
+      if (validBannerImage) {
+        console.log("uploading now");
+        azureBannerName = `${userId}.${validBannerImage.name.split(".")[1]}`;
+        await bannerImagesContainer
+          .getBlockBlobClient(azureBannerName)
+          .uploadData(await validBannerImage.arrayBuffer());
+      }
+      if (validProfileImage) {
+        console.log("uploading now p");
+        azureProfileName = `${userId}.${validProfileImage.name.split(".")[1]}`;
+        await profileImagesContainer
+          .getBlockBlobClient(azureProfileName)
+          .uploadData(await validProfileImage.arrayBuffer());
+      }
+
+      // update name to musician name, their uploaded banner image, their uploaded profile image and genres
+      await db
+        .update(users)
+        .set({
+          name: validName,
+          profileBannerImage: azureBannerName ? azureBannerName : null,
+          profilePicImage: azureProfileName ? azureProfileName : null,
+        })
+        .where(eq(users.id, userId));
+    }
+
+    // add genres
+    // NOTE: UPDATE ONCE IDS ARE DEFAULTS WITH UUID
+    const genreInserts = genreList
+      .split(",")
+      .map(async (genre) =>
+        db.insert(genres).values({ id: `${Math.random()}`, genre, userId }),
+      );
+
+    await Promise.allSettled(genreInserts);
+  } catch (err) {
+    throw new Error(
+      err instanceof Error
+        ? err.message
+        : "Unable to handle this request. Try again.",
+    );
   }
-
-  // add genres
-  // const d = genreList
-  //   .split(",")
-  //   .map(async (genre) =>
-  //     db.insert(genres).values({ id: v4(), genre, userId }),
-  //   );
-
-  await Promise.allSettled(d);
 }
