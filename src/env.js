@@ -25,6 +25,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     AZURE_STORAGE_ACCOUNT_CONNECTION: z.string(),
+    STRIPE_API_KEY: z.string(),
   },
 
   /**
@@ -49,6 +50,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     AZURE_STORAGE_ACCOUNT_CONNECTION:
       process.env.AZURE_STORAGE_ACCOUNT_CONNECTION,
+    STRIPE_API_KEY: process.env.STRIPE_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
