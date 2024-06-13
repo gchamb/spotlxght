@@ -22,7 +22,7 @@ import { ApplicationStatus, EventStatus, UserType } from "~/lib/types";
 export const createTable = mysqlTableCreator((name) => `underground_${name}`);
 
 export const users = createTable("user", {
-  id: varchar("id", { length: 191 }).notNull().primaryKey(),
+  id: varchar("id", { length: 191 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).unique().notNull(),
   emailVerified: timestamp("emailVerified", {
@@ -99,7 +99,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 export const genres = createTable(
   "genre",
   {
-    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    id: varchar("id", { length: 191 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
     genre: varchar("genre", { length: 25 }).notNull(),
     userId: varchar("userId", { length: 191 })
       .notNull()
@@ -117,7 +117,7 @@ export const genresRelations = relations(genres, ({ one }) => ({
 export const reviews = createTable(
   "review",
   {
-    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    id: varchar("id", { length: 191 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
     reviewer: varchar("id", { length: 191 })
       .notNull()
       .references(() => users.id),
@@ -142,7 +142,7 @@ export const reviewsRelations = relations(reviews, ({ one }) => ({
 export const assets = createTable(
   "asset",
   {
-    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    id: varchar("id", { length: 191 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
     type: varchar("type", { length: 25 }).notNull(),
     mimetype: varchar("mimetype", { length: 25 }).notNull(),
     azureBlobKey: varchar("azureBlobKey", { length: 191 }).notNull(),
@@ -165,7 +165,7 @@ export const assetsRelations = relations(assets, ({ one }) => ({
 export const events = createTable(
   "event",
   {
-    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    id: varchar("id", { length: 191 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
     name: varchar("name", { length: 100 }).notNull(),
     status: varchar("status", { length: 15 }).$type<EventStatus>().notNull(),
     amount: float("amount").notNull(),
@@ -188,7 +188,7 @@ export const eventsRelations = relations(events, ({ one, many }) => ({
 export const timeslots = createTable(
   "timeslot",
   {
-    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    id: varchar("id", { length: 191 }).notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
     startDate: timestamp("startDate", { mode: "date" }).notNull(),
     endDate: timestamp("endDate", { mode: "date" }).notNull(),
     timezone: varchar("timezone", { length: 5 }).default("CST").notNull(),
