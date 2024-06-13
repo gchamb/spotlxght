@@ -119,7 +119,10 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
     try {
       startTransition(async () => {
         await createProfile(data);
-        setSlide(3);
+
+        if (type === "musician") {
+          setSlide(3);
+        }
       });
     } catch (err) {
       if (isVenue) {

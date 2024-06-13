@@ -4,6 +4,7 @@ import { bannerImagesContainer, profileImagesContainer } from "../azure";
 import { db } from "../db";
 import { genres, users } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 export async function createProfile(data: FormData): Promise<void> {
   // NOTE: authenticate request by getting session cookie and checking what needs to be checked
@@ -119,5 +120,9 @@ export async function createProfile(data: FormData): Promise<void> {
         ? err.message
         : "Unable to handle this request. Try again.",
     );
+  }
+
+  if (type === "venue") {
+    redirect(`/profile/${userId}`);
   }
 }
