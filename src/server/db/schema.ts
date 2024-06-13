@@ -32,7 +32,7 @@ export const users = createTable("user", {
   password: varchar("password", { length: 255 }),
   address: varchar("address", { length: 255 }).notNull(),
   profilePicImage: varchar("profilePicImage", { length: 255 }),
-  profileBannerImage: varchar("profilePicImage", { length: 255 }),
+  profileBannerImage: varchar("profileBannerImage", { length: 255 }),
   type: varchar("type", { length: 10 }).$type<UserType>().notNull(),
 });
 
