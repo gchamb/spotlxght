@@ -28,6 +28,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { createProfile } from "~/server/actions/onboarding-actions";
 import { isVenueForm, shortenOrNot } from "~/lib/utils";
+import { onboardUser } from "~/server/actions/stripe";
 
 export default function Onboarding({ type }: { type: "venue" | "musician" }) {
   const [slide, setSlide] = useState<1 | 2 | 3>(1);
@@ -576,6 +577,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
         <Button
           variant="default"
           className=" h-full max-h-[60px] w-full max-w-[600px]  text-3xl font-semibold"
+          onClick={async () => await onboardUser()}
         >
           Link
         </Button>
