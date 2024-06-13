@@ -84,14 +84,12 @@ export async function createProfile(data: FormData): Promise<void> {
       // upload images to azure
       let azureBannerName, azureProfileName;
       if (validBannerImage) {
-        console.log("uploading now");
         azureBannerName = `${userId}.${validBannerImage.name.split(".")[1]}`;
         await bannerImagesContainer
           .getBlockBlobClient(azureBannerName)
           .uploadData(await validBannerImage.arrayBuffer());
       }
       if (validProfileImage) {
-        console.log("uploading now p");
         azureProfileName = `${userId}.${validProfileImage.name.split(".")[1]}`;
         await profileImagesContainer
           .getBlockBlobClient(azureProfileName)
@@ -110,12 +108,9 @@ export async function createProfile(data: FormData): Promise<void> {
     }
 
     // add genres
-    // NOTE: UPDATE ONCE IDS ARE DEFAULTS WITH UUID
     const genreInserts = genreList
       .split(",")
-      .map(async (genre) =>
-        db.insert(genres).values({ id: `${Math.random()}`, genre, userId }),
-      );
+      .map((genre) => db.insert(genres).values({ genre, userId }));
 
     await Promise.allSettled(genreInserts);
   } catch (err) {
