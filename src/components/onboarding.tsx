@@ -85,6 +85,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
       return;
     }
 
+    // resets the root error if there was one present
     if (
       musicianForm.formState.errors.root?.message ??
       venueForm.formState.errors.root?.message
@@ -156,7 +157,14 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
         />
         <div className="justify-right mx-auto flex w-11/12 ">
           <Button
-            onClick={() => setSlide(2)}
+            onClick={() => {
+              if (selectedGenres.length === 0) {
+                toast("You need to select at least one genre.");
+                return;
+              }
+
+              setSlide(2);
+            }}
             variant="ghost"
             className="ml-auto flex items-center gap-x-4"
           >
@@ -296,22 +304,6 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                     </FormItem>
                   )}
                 />
-                {/* <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Address</FormLabel>
-                      <FormControl>
-                        <Input className="bg-white text-black" {...field} />
-                      </FormControl>
-                      <FormDescription className="text-sm">
-                        Only City and State will show on profile
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
                 <FormField
                   control={musicianForm.control}
                   name="profileImage"
