@@ -10,7 +10,7 @@ import {
   LucideLockKeyhole,
   Star,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -27,13 +27,14 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { createProfile } from "~/server/actions/onboarding-actions";
-import { isVenueForm, shortenOrNot } from "~/lib/utils";
+import { shortenOrNot } from "~/lib/utils";
 import { onboardUser } from "~/server/actions/stripe";
+import { toast } from "sonner";
 
 export default function Onboarding({ type }: { type: "venue" | "musician" }) {
   const [slide, setSlide] = useState<1 | 2 | 3>(1);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const venueForm = useForm<z.infer<typeof venueFormSchema>>({
     resolver: zodResolver(venueFormSchema),
@@ -115,10 +116,11 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
       }
     }
 
-    setLoading(true);
     try {
-      await createProfile(data);
-      setSlide(3);
+      startTransition(async () => {
+        await createProfile(data);
+        setSlide(3);
+      });
     } catch (err) {
       if (isVenue) {
         venueForm.setError("root", {
@@ -129,8 +131,16 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           message: err instanceof Error ? err.message : String(err),
         });
       }
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const handleStripeLink = async () => {
+    try {
+      startTransition(async () => {
+        await onboardUser();
+      });
+    } catch (err) {
+      toast(err instanceof Error ? err.message : String(err));
     }
   };
 
@@ -241,16 +251,16 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                 <Button
                   className="flex h-[75px] w-full items-center gap-x-2 text-2xl font-semibold"
                   type="submit"
-                  disabled={loading}
+                  disabled={isPending}
                 >
-                  {loading && <Loader2 className="animate-spin" />}
+                  {isPending && <Loader2 className="animate-spin" />}
                   Complete Profile
                 </Button>
                 <Button
                   className="w-full "
                   variant="ghost"
                   type="button"
-                  disabled={loading}
+                  disabled={isPending}
                   onClick={() => setSlide(1)}
                 >
                   Back
@@ -374,9 +384,9 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                 <Button
                   className="flex h-[75px] w-full items-center gap-x-2 text-2xl font-semibold"
                   type="submit"
-                  disabled={loading}
+                  disabled={isPending}
                 >
-                  {loading && <Loader2 className="animate-spin" />}
+                  {isPending && <Loader2 className="animate-spin" />}
                   Complete Profile
                 </Button>
 
@@ -384,7 +394,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                   className="w-full"
                   variant="ghost"
                   type="button"
-                  disabled={loading}
+                  disabled={isPending}
                   onClick={() => setSlide(1)}
                 >
                   Back
@@ -576,9 +586,11 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
       <div className="mb-auto flex h-36 justify-center pb-4 ">
         <Button
           variant="default"
-          className=" h-full max-h-[60px] w-full max-w-[600px]  text-3xl font-semibold"
-          onClick={async () => await onboardUser()}
+          className=" items-cente flex h-full max-h-[60px] w-full max-w-[600px] gap-x-2 text-3xl font-semibold"
+          onClick={handleStripeLink}
+          disabled={isPending}
         >
+          {isPending && <Loader2 className="animate-spin" />}
           Link
         </Button>
       </div>

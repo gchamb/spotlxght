@@ -3,30 +3,35 @@
 import { redirect } from "next/navigation";
 import { stripe } from "../stripe";
 import { headers } from "next/headers";
+import Stripe from "stripe";
 
 export async function onboardUser() {
-  try {
-    const requestHeaders = headers();
+  const requestHeaders = headers();
 
+  // NOTE: authenticate request that returns userId
+  const userId = "123";
+
+  let accountLink: Stripe.Response<Stripe.AccountLink>;
+  try {
     const account = await stripe.accounts.create({
       controller: {
+        losses: {
+          payments: "application",
+        },
         fees: {
           payer: "application",
         },
+        stripe_dashboard: {
+          type: "express",
+        },
       },
     });
-
-    console.log(requestHeaders.get("origin"), account.id);
-    // const accountLink = await stripe.accountLinks.create({
-    //   account: account.id,
-    //   return_url: `${requestHeaders.get("origin")}/return/${account}`,
-    //   refresh_url: `${requestHeaders.get("origin")}/refresh/${account}`,
-    //   type: "account_onboarding",
-    // });
-
-    // console.log(accountLink);
-
-    // redirect(accountLink.url);
+    accountLink = await stripe.accountLinks.create({
+      account: account.id,
+      return_url: `${requestHeaders.get("origin")}/profile/${userId}`,
+      refresh_url: `${requestHeaders.get("origin")}/musician/onboarding`,
+      type: "account_onboarding",
+    });
   } catch (err) {
     throw new Error(
       err instanceof Error
@@ -34,4 +39,7 @@ export async function onboardUser() {
         : "Unable to process this request. Try again.",
     );
   }
+
+  // you have to do the redirect outside of try/catch
+  redirect(accountLink.url);
 }
