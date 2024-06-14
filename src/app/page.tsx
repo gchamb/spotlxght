@@ -1,7 +1,9 @@
-import Link from "next/link";
+import { SignIn } from "~/components/sign-in";
 
 export default function HomePage() {
   return (
-    <main className=""></main>
+    <main className="">
+      <SignIn />
+    </main>
   );
 }
