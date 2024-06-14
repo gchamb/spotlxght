@@ -11,11 +11,6 @@ export async function createProfile(data: FormData): Promise<void> {
   const userId = "29fe2ee2-979d-4af5-b957-b1f9fe92da79"; // use real userId
 
   const type = data.get("type");
-
-  if (type === null || (type !== "venue" && type !== "musician")) {
-    throw new Error("Invalid Request");
-  }
-
   const venueName = data.get("venueName");
   const address = data.get("address");
   const bannerImage = data.get("bannerImage");
@@ -23,6 +18,9 @@ export async function createProfile(data: FormData): Promise<void> {
   const name = data.get("name");
   const genreList = data.get("genres");
 
+  if (type === null || (type !== "venue" && type !== "musician")) {
+    throw new Error("Invalid Request");
+  }
   // validate genres (will validate and refactor once we know all the genres we want in)
   if (genreList === null || typeof genreList !== "string") {
     throw new Error("Invalid request");
@@ -62,6 +60,7 @@ export async function createProfile(data: FormData): Promise<void> {
           name: validVenueName,
           profileBannerImage: azureBannerName ? azureBannerName : null,
           address: validAddress,
+          type,
         })
         .where(eq(users.id, userId));
     } else {
@@ -104,6 +103,7 @@ export async function createProfile(data: FormData): Promise<void> {
           name: validName,
           profileBannerImage: azureBannerName ? azureBannerName : null,
           profilePicImage: azureProfileName ? azureProfileName : null,
+          type,
         })
         .where(eq(users.id, userId));
     }
