@@ -1,17 +1,7 @@
-import { relations, sql } from "drizzle-orm";
-import {
-  bigint,
-  float,
-  index,
-  int,
-  mysqlTableCreator,
-  primaryKey,
-  text,
-  timestamp,
-  varchar,
-} from "drizzle-orm/mysql-core";
+import { relations } from "drizzle-orm";
+import { float, index, int, mysqlTableCreator, primaryKey, text, timestamp, varchar, } from "drizzle-orm/mysql-core";
 import { type AdapterAccount } from "next-auth/adapters";
-import { ApplicationStatus, EventStatus, UserType } from "~/lib/types";
+import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -36,7 +26,7 @@ export const users = createTable("user", {
   address: varchar("address", { length: 255 }),
   profilePicImage: varchar("profilePicImage", { length: 255 }),
   profileBannerImage: varchar("profileBannerImage", { length: 255 }),
-  type: varchar("type", { length: 10 }).$type<UserType>().notNull(),
+  type: varchar("type", { length: 10 }).$type<UserType>(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
