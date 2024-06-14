@@ -36,7 +36,7 @@ export const users = createTable("user", {
   address: varchar("address", { length: 255 }),
   profilePicImage: varchar("profilePicImage", { length: 255 }),
   profileBannerImage: varchar("profileBannerImage", { length: 255 }),
-  type: varchar("type", { length: 10 }).$type<UserType>().notNull(),
+  type: varchar("type", { length: 10 }).$type<UserType>(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
