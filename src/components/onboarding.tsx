@@ -532,9 +532,9 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           <div className="flex flex-col gap-y-4">
             <h2 className="text-2xl font-semibold">Link Bank Account</h2>
             <p className="text-sm">
-              {type === "venue"
-                ? "Link your bank account via Plaid to fund your events quickly and securely."
-                : "Link your bank account via Plaid to receive funds for your completed events while ensuring your information remains protected."}
+              Link your bank account via Stripe to receive funds for your
+              completed events while ensuring your information remains
+              protected.
             </p>
           </div>
         </div>
@@ -546,9 +546,8 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
               {type === "venue" ? "Create" : "Browse"} Event
             </h2>
             <p className="text-sm">
-              {type === "venue"
-                ? "Create and list your events with the available time slots and necessary details for musicians to apply"
-                : "Browse the list of events and apply based on your availability within the provided time slots created by the venue."}
+              Browse the list of events and apply based on your availability
+              within the provided time slots created by the venue.
             </p>
           </div>
         </div>
@@ -558,9 +557,8 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           <div className="flex flex-col gap-y-4">
             <h2 className="text-2xl font-semibold">Escrow Funds</h2>
             <p className="text-sm">
-              {type === "venue"
-                ? "After you accept the qualified musician, funds are placed in escrow for security for both the venue and musician."
-                : "After the venue accepts you, funds are placed in escrow for security for both the venue and musician."}
+              After the venue accepts you, funds are placed in escrow for
+              security for both the venue and musician.
             </p>
           </div>
         </div>
@@ -570,9 +568,8 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
           <div className="flex flex-col gap-y-4">
             <h2 className="text-2xl font-semibold">Musicians are paid</h2>
             <p className="text-sm">
-              {type === "venue"
-                ? "Upon the successful completion of an event, you can release the payment to the musician for their excellent performance."
-                : "Upon the successful completion of an event, the venue can release the payment to the musician for their excellent performance."}
+              Upon the successful completion of an event, the venue can release
+              the payment to the musician for their excellent performance.
             </p>
           </div>
         </div>
