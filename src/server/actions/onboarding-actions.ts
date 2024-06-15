@@ -5,10 +5,10 @@ import { db } from "../db";
 import { genres, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { authenticate } from "~/lib/auth/auth";
 
 export async function createProfile(data: FormData): Promise<void> {
-  // NOTE: authenticate request by getting session cookie and checking what needs to be checked
-  const userId = "29fe2ee2-979d-4af5-b957-b1f9fe92da79"; // use real userId
+  const userId = await authenticate();
 
   const type = data.get("type");
   const venueName = data.get("venueName");
