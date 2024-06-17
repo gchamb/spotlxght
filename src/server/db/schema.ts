@@ -1,17 +1,7 @@
-import { relations, sql } from "drizzle-orm";
-import {
-  bigint,
-  float,
-  index,
-  int,
-  mysqlTableCreator,
-  primaryKey,
-  text,
-  timestamp,
-  varchar,
-} from "drizzle-orm/mysql-core";
+import { relations } from "drizzle-orm";
+import { float, index, int, mysqlTableCreator, primaryKey, text, timestamp, varchar, } from "drizzle-orm/mysql-core";
 import { type AdapterAccount } from "next-auth/adapters";
-import { ApplicationStatus, EventStatus, UserType } from "~/lib/types";
+import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
