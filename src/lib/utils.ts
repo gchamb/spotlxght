@@ -1,6 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { UseFormReturn } from "react-hook-form";
+import { type UseFormReturn } from "react-hook-form";
+import { getSession } from "~/server/auth/lib";
+import { redirect } from "next/navigation";
+import { type User } from "next-auth";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -45,4 +48,13 @@ export function shortenOrNot(word: string, maxLength = 25) {
   }
 
   return `${word.substring(0, maxLength)}...`;
+}
+
+export async function getUser(): Promise<User> {
+  const session = await getSession();
+  if (!session?.user?.id) {
+    redirect("/");
+  } else {
+    return session.user as User;
+  }
 }

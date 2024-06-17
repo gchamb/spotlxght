@@ -3,12 +3,7 @@
 import { redirect } from "next/navigation";
 import { type UserType } from "~/lib/types";
 import { signIn } from "~/next-auth";
-import {
-  emailSignIn,
-  emailSignInCredentials,
-  getSession,
-  signUp,
-} from "~/server/auth/lib";
+import { emailSignIn, emailSignUp, getSession } from "~/server/auth/lib";
 import { type Credentials } from "~/types/zod";
 
 export async function emailSignInAction(credentials: Credentials) {
@@ -33,14 +28,14 @@ export async function googleSignIn(userType: UserType) {
 }
 
 export async function emailSignInCredentialsAction(credentials: Credentials) {
-  await emailSignInCredentials(credentials);
+  await emailSignIn(credentials);
 }
 
 export async function emailSignUpAction(
   credentials: Credentials & { type: UserType },
 ) {
   const { type, ...creds } = credentials;
-  await signUp(creds);
+  await emailSignUp(creds);
 
   redirect(`/${type}/onboarding`);
 }
