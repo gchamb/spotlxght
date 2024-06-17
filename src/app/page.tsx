@@ -1,10 +1,8 @@
-import { SignIn } from "~/components/sign-in";
-
-export default function HomePage() {
+export default async function LandingPage() {
   return (
-    <main className=" flex flex-col min-h-screen items-center justify-center gap-4">
-      <a href="/musician/auth">Musician</a>
-      <a href="/venue/auth">Venue</a>
-    </main>
+    <div className="flex min-h-screen flex-col items-center justify-center  gap-4">
+      <a href="/musician/auth">Musician auth</a>
+      <a href="/venue/auth">Venue auth</a>
+    </div>
   );
 }
