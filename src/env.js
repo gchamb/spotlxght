@@ -22,6 +22,8 @@ export const env = createEnv({
       // VERCEL_URL doesn't include `https` so it cant be validated as a URL
       process.env.VERCEL ? z.string() : z.string().url(),
     ),
+    AZURE_STORAGE_ACCOUNT_CONNECTION: z.string(),
+    STRIPE_API_KEY: z.string(),
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
   },
@@ -42,6 +44,9 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    AZURE_STORAGE_ACCOUNT_CONNECTION:
+      process.env.AZURE_STORAGE_ACCOUNT_CONNECTION,
+    STRIPE_API_KEY: process.env.STRIPE_API_KEY,
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_URL: process.env.AUTH_URL, // TODO: Make sure this is defined at runtime automatically by next-auth
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,

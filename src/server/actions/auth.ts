@@ -1,18 +1,35 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { UserType } from "~/lib/types";
+import { type UserType } from "~/lib/types";
 import { signIn } from "~/next-auth";
-import { emailSignIn, emailSignInCredentials, signUp } from "~/server/auth/lib";
+import {
+  emailSignIn,
+  emailSignInCredentials,
+  getSession,
+  signUp,
+} from "~/server/auth/lib";
 import { type Credentials } from "~/types/zod";
 
 export async function emailSignInAction(credentials: Credentials) {
-  await emailSignIn(credentials);
+  const user = await emailSignIn(credentials);
+  redirect(`/profile/${user.id}`);
 }
 
 export async function googleSignIn(userType: UserType) {
-  const redirectTo = `/${userType}/onboarding`;
-  await signIn("google", { redirectTo });
+  if (userType !== "venue" && userType !== "musician") {
+    redirect("/");
+    return;
+  }
+
+  const session = await getSession();
+  if (!session?.user?.id) {
+    await signIn("google");
+  } else if (!session.user.type) {
+    await signIn("google", { redirectTo: `/${userType}/onboarding` });
+  } else {
+    await signIn("google", { redirectTo: `/profile/${session.user.id}` });
+  }
 }
 
 export async function emailSignInCredentialsAction(credentials: Credentials) {

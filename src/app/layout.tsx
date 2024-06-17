@@ -1,5 +1,6 @@
 import "~/styles/globals.css";
 
+import { Toaster } from "~/components/ui/sonner";
 import { Inter } from "next/font/google";
 import Nav from "~/components/nav";
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <Nav />
           {children}
         </main>
+        <Toaster />
       </body>
     </html>
   );
