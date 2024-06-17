@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 
-import { GeistSans } from "geist/font/sans";
+import { Inter } from "next/font/google";
+import Nav from "~/components/nav";
 
 export const metadata = {
   title: "Create T3 App",
@@ -8,14 +9,23 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+const inter = Inter({
+  subsets: ["latin"],
+});
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="dark">{children}</body>
+    <html lang="en" className={`${inter.className} dark`}>
+      <body>
+        <main className="flex h-screen flex-col">
+          <Nav />
+          {children}
+        </main>
+      </body>
     </html>
   );
 }

@@ -1,20 +1,8 @@
-import { getSession } from "~/server/auth/lib";
-import { SignInForm } from "~/components/sign-in-form";
-import Home from "~/app/home/page";
-import Onboarding from "~/app/onboarding/page";
-
-export default async function HomePage() {
-  const session = await getSession();
-  console.log("home page session:");
-  console.log(session);
-
-  if (!session?.user) {
-    return <SignInForm />;
-  } else {
-    if (session.user.type !== null) {
-      return <Home />;
-    } else {
-      return <Onboarding />;
-    }
-  }
+export default async function LandingPage() {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center  gap-4">
+      <a href="/musician/auth">Musician auth</a>
+      <a href="/venue/auth">Venue auth</a>
+    </div>
+  );
 }

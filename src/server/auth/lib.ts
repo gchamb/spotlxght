@@ -1,3 +1,5 @@
+"use server";
+
 import { type Credentials, credentialsSchema } from "~/types/zod";
 import { db } from "~/server/db";
 import { sessions, users } from "~/server/db/schema";
@@ -74,14 +76,12 @@ async function googleSignIn() {
   //   - Keep the last account only
 }
 
-export async function emailSignIn(credentials: FormData) {
+export async function emailSignIn(credentials: Credentials) {
   console.log("Email sign in...");
-  const formEmail = credentials.get("email");
-  const formPassword = credentials.get("password");
 
   const { email, password } = await credentialsSchema.parseAsync({
-    email: formEmail,
-    password: formPassword,
+    email: credentials.email,
+    password: credentials.password,
   });
   if (!email || !password) throw new Error("Invalid email or password");
 
@@ -91,9 +91,11 @@ export async function emailSignIn(credentials: FormData) {
   });
   if (!user) throw new Error("Invalid email or password");
 
+  if (user.password === null) throw new Error("No password for this account.");
+
   // 2. Compare password
-  const passwordsMatch = await bcrypt.compare(password, user.password!);
-  if (!passwordsMatch) throw new Error("Invalid email or password");
+  const passwordsMatch = await bcrypt.compare(password, user.password);
+  if (!passwordsMatch) throw new Error("Incorrect password.");
 
   // 3. Invalidate expired sessions
   await invalidateExpiredSessions();
@@ -169,10 +171,9 @@ async function invalidateExpiredSessions() {
     );
 }
 
-export async function signUp(credentials: FormData) {
+export async function signUp(credentials: Credentials) {
   // TODO: Add email verification
-  const { email: formEmail, password: formPassword } =
-    Object.fromEntries(credentials);
+  const { email: formEmail, password: formPassword } = credentials;
 
   console.log("Signing up...");
   const { email, password } = await credentialsSchema.parseAsync({
@@ -212,7 +213,7 @@ export async function signUp(credentials: FormData) {
   return createdUser;
 }
 
-export async function signOut () {
+export async function signOut() {
   console.log("Signing out...");
   const userCookies = cookies();
   const customSessionToken = userCookies.get("session-token")?.value;
