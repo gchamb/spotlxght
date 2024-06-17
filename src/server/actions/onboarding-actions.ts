@@ -5,10 +5,19 @@ import { db } from "../db";
 import { genres, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { authenticate } from "~/lib/auth/auth";
+import { getSession } from "../auth/lib";
 
 export async function createProfile(data: FormData): Promise<void> {
-  const userId = await authenticate();
+  const session = await getSession();
+
+  if (
+    session === null ||
+    session === undefined ||
+    session.user === undefined ||
+    session.user.id === undefined
+  ) {
+    return redirect("/");
+  }
 
   const type = data.get("type");
   const venueName = data.get("venueName");
@@ -47,7 +56,7 @@ export async function createProfile(data: FormData): Promise<void> {
       // upload images to azure
       let azureBannerName;
       if (validBannerImage) {
-        azureBannerName = `${userId}.${validBannerImage.name.split(".")[1]}`;
+        azureBannerName = `${session.user.id}.${validBannerImage.name.split(".")[1]}`;
         await bannerImagesContainer
           .getBlockBlobClient(azureBannerName)
           .uploadData(await validBannerImage.arrayBuffer());
@@ -62,7 +71,7 @@ export async function createProfile(data: FormData): Promise<void> {
           address: validAddress,
           type,
         })
-        .where(eq(users.id, userId));
+        .where(eq(users.id, session.user.id));
     } else {
       const valid = musicianFormSchema.safeParse({
         name,
@@ -84,13 +93,13 @@ export async function createProfile(data: FormData): Promise<void> {
       // upload images to azure
       let azureBannerName, azureProfileName;
       if (validBannerImage) {
-        azureBannerName = `${userId}.${validBannerImage.name.split(".")[1]}`;
+        azureBannerName = `${session.user.id}.${validBannerImage.name.split(".")[1]}`;
         await bannerImagesContainer
           .getBlockBlobClient(azureBannerName)
           .uploadData(await validBannerImage.arrayBuffer());
       }
       if (validProfileImage) {
-        azureProfileName = `${userId}.${validProfileImage.name.split(".")[1]}`;
+        azureProfileName = `${session.user.id}.${validProfileImage.name.split(".")[1]}`;
         await profileImagesContainer
           .getBlockBlobClient(azureProfileName)
           .uploadData(await validProfileImage.arrayBuffer());
@@ -105,13 +114,15 @@ export async function createProfile(data: FormData): Promise<void> {
           profilePicImage: azureProfileName ? azureProfileName : null,
           type,
         })
-        .where(eq(users.id, userId));
+        .where(eq(users.id, session.user.id));
     }
 
     // add genres
     const genreInserts = genreList
       .split(",")
-      .map((genre) => db.insert(genres).values({ genre, userId }));
+      .map((genre) =>
+        db.insert(genres).values({ genre, userId: session.user!.id! }),
+      );
 
     await Promise.allSettled(genreInserts);
   } catch (err) {
@@ -123,6 +134,6 @@ export async function createProfile(data: FormData): Promise<void> {
   }
 
   if (type === "venue") {
-    redirect(`/profile/${userId}`);
+    redirect(`/profile/${session.user.id}`);
   }
 }
