@@ -95,7 +95,7 @@ export async function emailSignIn(credentials: Credentials) {
 
   // 2. Compare password
   const passwordsMatch = await bcrypt.compare(password, user.password);
-  if (!passwordsMatch) throw new Error("Incorrect password.");
+  if (!passwordsMatch) throw new Error("Invalid email or password");
 
   // 3. Invalidate expired sessions
   await invalidateExpiredSessions();
