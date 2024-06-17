@@ -6,9 +6,16 @@ import { signIn } from "~/next-auth";
 import { emailSignIn, emailSignUp, getSession } from "~/server/auth/lib";
 import { type Credentials } from "~/types/zod";
 
-export async function emailSignInAction(credentials: Credentials) {
+export async function emailSignInAction(
+  credentials: Credentials,
+  userType: UserType,
+) {
   const user = await emailSignIn(credentials);
-  redirect(`/profile/${user.id}`);
+  if (!user.type) {
+    redirect(`/${userType}/onboarding`);
+  } else {
+    redirect("/profile");
+  }
 }
 
 export async function googleSignIn(userType: UserType) {
@@ -23,7 +30,7 @@ export async function googleSignIn(userType: UserType) {
   } else if (!session.user.type) {
     await signIn("google", { redirectTo: `/${userType}/onboarding` });
   } else {
-    await signIn("google", { redirectTo: `/profile/${session.user.id}` });
+    await signIn("google", { redirectTo: "/profile" });
   }
 }
 

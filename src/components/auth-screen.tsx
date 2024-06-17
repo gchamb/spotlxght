@@ -1,13 +1,13 @@
 "use client";
 
-import { UserType } from "~/lib/types";
+import { type UserType } from "~/lib/types";
 import { Separator } from "~/components/ui/separator";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Credentials, credentialsSchema } from "~/types/zod";
+import { type Credentials, credentialsSchema } from "~/types/zod";
 import {
   Form,
   FormControl,
@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { z } from "zod";
+import { type z } from "zod";
 import {
   emailSignInAction,
   emailSignUpAction,
@@ -51,7 +51,7 @@ export function AuthScreen({ screenType, type }: AuthProps) {
       }
 
       if (screenType === "sign-in") {
-        await emailSignInAction(values);
+        await emailSignInAction(values, type);
       } else {
         await emailSignUpAction({ ...values, type });
       }
