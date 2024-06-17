@@ -18,7 +18,12 @@ export async function emailSignInAction(credentials: Credentials) {
 export async function googleSignIn(userType: UserType) {
   const session = await getSession();
 
-  if (session === null || session === undefined || session.user === undefined) {
+  if (
+    session === null ||
+    session === undefined ||
+    session.user?.type === undefined ||
+    session.user.type === null
+  ) {
     const redirectTo = `/${userType}/onboarding`;
     await signIn("google", { redirectTo });
     return;
