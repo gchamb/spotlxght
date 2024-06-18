@@ -1,13 +1,16 @@
 "use client";
 
-import { type UserType } from "~/lib/types";
+import {
+  type Credentials,
+  credentialsSchema,
+  type UserType,
+} from "~/lib/types";
 import { Separator } from "~/components/ui/separator";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type Credentials, credentialsSchema } from "~/types/zod";
 import {
   Form,
   FormControl,

@@ -73,7 +73,9 @@ export default function GenreSelector({
     return () =>
       window
         .matchMedia("(max-width: 768px)")
-        .removeEventListener("change", () => {});
+        .removeEventListener("change", () =>
+          console.log("remove change handler"),
+        );
   }, []);
 
   const handleGenreSelect = (genre: string) => {
@@ -104,7 +106,7 @@ export default function GenreSelector({
           align: "start",
         }}
       >
-        <CarouselContent className="h-mobile max-h-mobile -mt-1 xl:-ml-2 xl:-ml-4 xl:h-auto xl:max-h-none xl:p-4">
+        <CarouselContent className="-mt-1 h-mobile max-h-mobile xl:-ml-2 xl:-ml-4 xl:h-auto xl:max-h-none xl:p-4">
           {availableGenres.map((genreObj, index) => {
             const shouldShrink = index % 2 === 0;
             const isSelected = selectedGenres.includes(genreObj.genre);

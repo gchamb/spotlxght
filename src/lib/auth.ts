@@ -1,88 +1,39 @@
 "use server";
 
-import { type Credentials, credentialsSchema } from "~/types/zod";
+import { type Credentials, credentialsSchema } from "~/lib/types";
 import { db } from "~/server/db";
 import { sessions, users } from "~/server/db/schema";
 import { eq, lt } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { auth, signOut as authJsSignOut } from "~/next-auth";
 import bcrypt from "bcrypt";
-
-// export type Provider = "google" | "email";
-//
-// export type Options = {
-//   redirectTo?: string;
-//   redirect?: boolean;
-//   email?: string;
-//   password?: string;
-// } & Record<string, unknown>;
-//
-// // TODO: Avoid duplicate session creation
-// export async function signIn(provider: Provider, options?: Options) {
-//   console.log("Signing in...");
-//
-//   // const user
-//
-//   switch (provider) {
-//     case "google":
-//       await googleSignIn();
-//       break;
-//     case "email":
-//       const { email, password } = await credentialsSchema.parseAsync(options);
-//       await emailSignIn({ email, password });
-//       break;
-//   }
-// }
 
 // TODO(future): Use server-side caching to speed up session retrieval?
 // TODO(future): Handle client-side session caching
 export async function getSession() {
   const userCookies = cookies();
-  const customSessionToken = userCookies.get("session-token")?.value;
-  const authJsSessionToken = userCookies.get("authjs.session-token")?.value;
-  if (!customSessionToken && !authJsSessionToken) return null;
+  const sessionToken = userCookies.get("session-token")?.value;
+  if (!sessionToken) return null;
 
-  let session;
-  if (authJsSessionToken) {
-    session = auth();
-  } else if (customSessionToken) {
-    await invalidateExpiredSessions();
-    session = await db.query.sessions.findFirst({
-      where: eq(sessions.sessionToken, customSessionToken),
-      with: { user: true },
-    });
-  }
-
+  await invalidateExpiredSessions();
+  const session = await db.query.sessions.findFirst({
+    where: eq(sessions.sessionToken, sessionToken),
+    with: { user: true },
+  });
   return session;
 }
 
 export async function signOut() {
   const userCookies = cookies();
-  const customSessionToken = userCookies.get("session-token")?.value;
-  const authJsSessionToken = userCookies.get("authjs.session-token")?.value;
+  const sessionToken = userCookies.get("session-token")?.value;
 
-  if (customSessionToken) {
+  if (sessionToken) {
     userCookies.delete("session-token");
-    await db
-      .delete(sessions)
-      .where(eq(sessions.sessionToken, customSessionToken));
-  }
-  if (authJsSessionToken) {
-    await authJsSignOut();
+    await db.delete(sessions).where(eq(sessions.sessionToken, sessionToken));
   }
 }
 
-// async function googleSignIn() {
-//   console.log("Google sign in...");
-//   // TODO: Avoid duplicate accounts (duplicate sessions are allowed)
-//   //   - Keep the last account only
-// }
-
 export async function emailSignIn(credentials: Credentials) {
-  const { email, password } = await credentialsSchema.parseAsync({
-    email: credentials.email,
-    password: credentials.password,
-  });
+  const { email, password } = await credentialsSchema.parseAsync(credentials);
   if (!email || !password) throw new Error("Invalid email or password");
 
   const user = await db.query.users.findFirst({
@@ -113,12 +64,7 @@ export async function emailSignIn(credentials: Credentials) {
 
 export async function emailSignUp(credentials: Credentials) {
   // TODO: Add email verification
-  const { email: formEmail, password: formPassword } = credentials;
-
-  const { email, password } = await credentialsSchema.parseAsync({
-    email: formEmail,
-    password: formPassword,
-  });
+  const { email, password } = await credentialsSchema.parseAsync(credentials);
 
   const existingUser = await db.query.users.findFirst({
     where: eq(users.email, email),
@@ -130,6 +76,7 @@ export async function emailSignUp(credentials: Credentials) {
     email,
     password: hashedPassword,
   });
+
   const createdUser = await db.query.users.findFirst({
     where: eq(users.email, email),
   });
