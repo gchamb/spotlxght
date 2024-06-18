@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Credentials, credentialsSchema } from "~/types/zod";
+import { Credentials, credentialsSchema } from "~/lib/types";
 import {
   Form,
   FormControl,

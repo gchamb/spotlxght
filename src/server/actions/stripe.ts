@@ -4,7 +4,7 @@ import Stripe from "stripe";
 import { redirect } from "next/navigation";
 import { stripe } from "../stripe";
 import { headers } from "next/headers";
-import { getSession } from "../auth/lib";
+import { getSession } from "~/lib/auth";
 
 export async function onboardUser() {
   const requestHeaders = headers();

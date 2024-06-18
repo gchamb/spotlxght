@@ -5,7 +5,7 @@ import { db } from "../db";
 import { genres, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { getSession } from "../auth/lib";
+import { getSession } from "~/lib/auth";
 
 export async function createProfile(data: FormData): Promise<void> {
   const session = await getSession();
