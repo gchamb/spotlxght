@@ -1,38 +1,11 @@
 "use server";
 
-import { type Credentials, credentialsSchema } from "~/types/zod";
+import { type Credentials, credentialsSchema } from "~/lib/types";
 import { db } from "~/server/db";
 import { sessions, users } from "~/server/db/schema";
 import { eq, lt } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { auth, signOut as authJsSignOut } from "~/next-auth";
 import bcrypt from "bcrypt";
-
-export type Provider = "google" | "email";
-
-export type Options = {
-  redirectTo?: string;
-  redirect?: boolean;
-  email?: string;
-  password?: string;
-} & Record<string, unknown>;
-
-// TODO: Avoid duplicate session creation
-export async function signIn(provider: Provider, options?: Options) {
-  console.log("Signing in...");
-
-  // const user
-
-  switch (provider) {
-    case "google":
-      await googleSignIn();
-      break;
-    case "email":
-      const { email, password } = await credentialsSchema.parseAsync(options);
-      await emailSignIn({ email, password });
-      break;
-  }
-}
 
 // TODO(future): Use server-side caching to speed up session retrieval?
 // TODO(future): Handle client-side session caching
@@ -42,38 +15,26 @@ export async function getSession() {
   // 1. Get session token from cookies
   const userCookies = cookies();
   const customSessionToken = userCookies.get("session-token")?.value;
-  const authJsSessionToken = userCookies.get("authjs.session-token")?.value;
-  if (!customSessionToken && !authJsSessionToken) return null;
 
-  let session;
-  if (authJsSessionToken) {
-    console.log("Using authjs session...");
-    session = auth();
-  } else if (customSessionToken) {
-    // 2. Invalidate expired sessions
-    await invalidateExpiredSessions();
+  if (!customSessionToken) return null;
 
-    // 3. Find valid session in database
-    session = await db.query.sessions.findFirst({
-      where: eq(sessions.sessionToken, customSessionToken),
-      with: { user: true },
-    });
-    if (!session) return null;
+  // 2. Invalidate expired sessions
+  await invalidateExpiredSessions();
 
-    // 4. Update session expiration
-    await db
-      .update(sessions)
-      .set({ expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) })
-      .where(eq(sessions.sessionToken, customSessionToken));
-  }
+  // 3. Find valid session in database
+  const session = await db.query.sessions.findFirst({
+    where: eq(sessions.sessionToken, customSessionToken),
+    with: { user: true },
+  });
+  if (!session) return null;
+
+  // 4. Update session expiration
+  await db
+    .update(sessions)
+    .set({ expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) })
+    .where(eq(sessions.sessionToken, customSessionToken));
 
   return session;
-}
-
-async function googleSignIn() {
-  console.log("Google sign in...");
-  // TODO: Avoid duplicate accounts (duplicate sessions are allowed)
-  //   - Keep the last account only
 }
 
 export async function emailSignIn(credentials: Credentials) {
@@ -217,15 +178,11 @@ export async function signOut() {
   console.log("Signing out...");
   const userCookies = cookies();
   const customSessionToken = userCookies.get("session-token")?.value;
-  const authJsSessionToken = userCookies.get("authjs.session-token")?.value;
 
   if (customSessionToken) {
     userCookies.delete("session-token");
     await db
       .delete(sessions)
       .where(eq(sessions.sessionToken, customSessionToken));
-  }
-  if (authJsSessionToken) {
-    await authJsSignOut();
   }
 }
