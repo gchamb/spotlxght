@@ -1,7 +1,21 @@
 import { relations } from "drizzle-orm";
-import { float, index, int, mysqlTableCreator, primaryKey, text, timestamp, varchar, } from "drizzle-orm/mysql-core";
-import { type AdapterAccount } from "next-auth/adapters";
-import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/types";
+import {
+  bigint,
+  float,
+  index,
+  int,
+  mysqlTableCreator,
+  primaryKey,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/mysql-core";
+
+import {
+  type ApplicationStatus,
+  type EventStatus,
+  type UserType,
+} from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -44,14 +58,12 @@ export const accounts = createTable(
     userId: varchar("userId", { length: 191 })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: varchar("type", { length: 255 })
-      .$type<AdapterAccount["type"]>()
-      .notNull(),
+    type: varchar("type", { length: 255 }).notNull(),
     provider: varchar("provider", { length: 255 }).notNull(),
     providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
-    expires_at: int("expires_at"),
+    expires_at: bigint("expires_at", { mode: "number" }),
     token_type: varchar("token_type", { length: 255 }),
     scope: varchar("scope", { length: 255 }),
     id_token: text("id_token"),
