@@ -253,7 +253,7 @@ export const applications = createTable(
   }),
 );
 
-export const applicantsRelations = relations(applications, ({ one, many }) => ({
+export const applicantsRelations = relations(applications, ({ one }) => ({
   timeslot: one(timeslots, {
     fields: [applications.timeslotId],
     references: [timeslots.id],

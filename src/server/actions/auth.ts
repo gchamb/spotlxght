@@ -2,12 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { type UserType } from "~/lib/types";
-import {
-  emailSignIn,
-  emailSignInCredentials,
-  getSession,
-  signUp,
-} from "~/lib/auth";
+import { emailSignIn, emailSignInCredentials, signUp } from "~/lib/auth";
 import { type Credentials } from "~/lib/types";
 import { OAuth2Client } from "google-auth-library";
 import { randomUUID } from "crypto";

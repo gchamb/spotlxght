@@ -49,7 +49,7 @@ export async function GET(request: Request) {
   }
 
   //  check if user already exist
-  const googleInfo: GoogleInfo = await fetchUserResponse.json();
+  const googleInfo = (await fetchUserResponse.json()) as GoogleInfo;
   let user = await db.query.users.findFirst({
     where: eq(users.email, googleInfo.email),
   });

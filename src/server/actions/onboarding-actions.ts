@@ -10,12 +10,7 @@ import { getSession } from "~/lib/auth";
 export async function createProfile(data: FormData): Promise<void> {
   const session = await getSession();
 
-  if (
-    session === null ||
-    session === undefined ||
-    session.user === undefined ||
-    session.user.id === undefined
-  ) {
+  if (!session || !session.user) {
     return redirect("/");
   }
 
@@ -121,11 +116,11 @@ export async function createProfile(data: FormData): Promise<void> {
     const genreInserts = genreList
       .split(",")
       .map((genre) =>
-        db.insert(genres).values({ genre, userId: session.user!.id! }),
+        db.insert(genres).values({ genre, userId: session.user.id }),
       );
 
     await Promise.allSettled(genreInserts);
-  } catch (err) {
+  } catch (err: unknown) {
     throw new Error(
       err instanceof Error
         ? err.message
