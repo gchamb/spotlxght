@@ -23,9 +23,12 @@ import {
 import { useState } from "react";
 import { createEvent } from "~/server/actions/event-actions";
 import { timeslotsTimes } from "~/lib/types";
+import DatePicker from "./ui/date-picker";
 
 export default function CreateEventDialog() {
   const [timeslots, setTimeslots] = useState([crypto.randomUUID()]);
+  const [error, setError] = useState("");
+  const [date, setDate] = useState<Date>(new Date());
 
   return (
     <Dialog
@@ -38,7 +41,7 @@ export default function CreateEventDialog() {
       <DialogTrigger asChild>
         <Button variant="default">Create Event</Button>
       </DialogTrigger>
-      <DialogContent className="">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-center text-2xl">
             Create an Event
@@ -47,14 +50,23 @@ export default function CreateEventDialog() {
             Share your events for other musicians to book with you.
           </DialogDescription>
         </DialogHeader>
-        <form action={createEvent}>
+        <form
+          action={async (data) => {
+            try {
+              await createEvent(data);
+            } catch (err) {
+              // console.log(err.message);
+            }
+          }}
+        >
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="eventName" className="text-right">
+              <Label htmlFor="name" className="text-right">
                 Event Name
               </Label>
               <Input
-                id="eventName"
+                name="name"
+                id="name"
                 placeholder="Jazz Night"
                 className="col-span-3"
               />
@@ -64,18 +76,21 @@ export default function CreateEventDialog() {
                 Date
               </Label>
               <Input
+                hidden
                 id="date"
-                placeholder={new Date().toDateString()}
-                className="col-span-3"
+                name="date"
+                value={date.toUTCString()}
+                className="hidden"
               />
+              <DatePicker date={date} onSelect={setDate} />
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="pay" className="text-right">
                 Pay
               </Label>
-              <Select name="pay" className="w-full">
-                <SelectTrigger className="w-[200px] max-w-[425px]">
+              <Select name="pay">
+                <SelectTrigger className="w-[200px] ">
                   <SelectValue placeholder="How much per timeslot" />
                 </SelectTrigger>
                 <SelectContent>
@@ -90,10 +105,13 @@ export default function CreateEventDialog() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Timeslots
-              </Label>
+            <div className="flex gap-4">
+              <div className="flex w-[100px]  justify-end">
+                <Label htmlFor="username" className="">
+                  Timeslots
+                </Label>
+              </div>
+
               <div className="flex flex-col gap-y-2">
                 {timeslots.map((timeslotId, idx) => {
                   return (
@@ -105,10 +123,10 @@ export default function CreateEventDialog() {
                         <SelectContent>
                           <SelectGroup>
                             <SelectLabel>Timeslots</SelectLabel>
-                            {timeslotsTimes.map((timeslot) => {
+                            {timeslotsTimes.map((timeslot, idx) => {
                               return (
                                 <SelectItem
-                                  key={`${timeslotId}-timeslot-start`}
+                                  key={`${timeslotId}-timeslot-start-${idx}`}
                                   value={timeslot}
                                 >
                                   {timeslot}
@@ -125,10 +143,10 @@ export default function CreateEventDialog() {
                         <SelectContent>
                           <SelectGroup>
                             <SelectLabel>Timeslots</SelectLabel>
-                            {timeslotsTimes.map((timeslot) => {
+                            {timeslotsTimes.map((timeslot, idx) => {
                               return (
                                 <SelectItem
-                                  key={`${timeslotId}-timeslot-end`}
+                                  key={`${timeslotId}-timeslot-end-${idx}`}
                                   value={timeslot}
                                 >
                                   {timeslot}

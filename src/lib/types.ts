@@ -7,51 +7,9 @@ export type EventStatus = "open" | "in-progress" | "completed" | "closed";
 
 export type ApplicationStatus = "requested" | "accepted" | "rejected";
 
-export const MAX_FILE_SIZE = 1024 * 1024 * 5; // 5 MB
-export const ACCEPTED_IMAGE_TYPES = ["image/jpg", "image/jpeg", "image/png"];
+export type MyEvents = z.infer<typeof myEventsDataSchema>;
 
-export const imageZodSchema = z
-  .instanceof(File)
-  .refine((file) => file !== null, "An upload is required.")
-  .refine(
-    (file) => file.size <= MAX_FILE_SIZE,
-    "The upload must be a maximum of 5MB.",
-  )
-  .refine((file) => {
-    return ACCEPTED_IMAGE_TYPES.includes(file.type);
-  }, "Only JPG, JPEG, and PNG are allowed to be uploaded.")
-  .nullable();
-
-export const venueFormSchema = z.object({
-  venueName: z
-    .string()
-    .min(5, "Venue name should be at least 5 characters")
-    .max(20, "Venue name should be at most 20 characters"),
-  address: z.string().min(10, "Location should be at least 10 characters long"),
-  bannerImage: imageZodSchema,
-});
-
-export const musicianFormSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Venue name should be at least 3 characters")
-    .max(20, "Venue name should be at most 20 characters"),
-  address: z
-    .string()
-    .min(10, "Address should be at least 10 characters long")
-    .nullable(),
-  profileImage: imageZodSchema,
-  bannerImage: imageZodSchema,
-});
-
-export type MyEvents = {
-  id: string;
-  name: string;
-  status: EventStatus;
-  amount: number;
-  createdAt: Date;
-  venueId: string;
-};
+export type CreateEvent = z.infer<typeof createEventSchema>;
 
 export const timeslotsTimes = [
   "12:00AM",
@@ -127,3 +85,65 @@ export const timeslotsTimes = [
   "12:30PM",
   "12:45PM",
 ];
+
+export const MAX_FILE_SIZE = 1024 * 1024 * 5; // 5 MB
+export const ACCEPTED_IMAGE_TYPES = ["image/jpg", "image/jpeg", "image/png"];
+
+export const imageZodSchema = z
+  .instanceof(File)
+  .refine((file) => file !== null, "An upload is required.")
+  .refine(
+    (file) => file.size <= MAX_FILE_SIZE,
+    "The upload must be a maximum of 5MB.",
+  )
+  .refine((file) => {
+    return ACCEPTED_IMAGE_TYPES.includes(file.type);
+  }, "Only JPG, JPEG, and PNG are allowed to be uploaded.")
+  .nullable();
+
+export const venueFormSchema = z.object({
+  venueName: z
+    .string()
+    .min(5, "Venue name should be at least 5 characters")
+    .max(20, "Venue name should be at most 20 characters"),
+  address: z.string().min(10, "Location should be at least 10 characters long"),
+  bannerImage: imageZodSchema,
+});
+
+export const musicianFormSchema = z.object({
+  name: z
+    .string()
+    .min(3, "Venue name should be at least 3 characters")
+    .max(20, "Venue name should be at most 20 characters"),
+  address: z
+    .string()
+    .min(10, "Address should be at least 10 characters long")
+    .nullable(),
+  profileImage: imageZodSchema,
+  bannerImage: imageZodSchema,
+});
+
+export const myEventsDataSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  status: z.union([
+    z.literal("open"),
+    z.literal("in-progress"),
+    z.literal("completed"),
+    z.literal("closed"),
+  ]),
+  amount: z.number(),
+  venueId: z.string().uuid(),
+});
+
+export const createEventSchema = z.object({
+  name: z.string(),
+  date: z.date(),
+  pay: z.number(),
+  timeslots: z.array(
+    z.object({
+      startTime: z.string(),
+      endTime: z.string(),
+    }),
+  ),
+});
