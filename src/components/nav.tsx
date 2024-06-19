@@ -5,11 +5,10 @@ export default function Nav() {
   return (
     <nav className="mx-auto w-full max-w-screen-2xl p-4">
       <div>
-        <Link href="/">
-          <h1 className="text-xl font-semibold">underground</h1>
+        <Link href="/" className="block w-fit">
+          <h1 className="w-fit text-xl font-semibold">underground</h1>
         </Link>
       </div>
-      <div></div>
     </nav>
   );
 }
