@@ -2,12 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
-import {
-  CreateEvent,
-  createEventSchema,
-  timeslotsTimes,
-  TimeslotTimes,
-} from "~/lib/types";
+import { createEventSchema, timeslotsTimes, TimeslotTimes } from "~/lib/types";
 import { db } from "../db";
 import { events, timeslots } from "../db/schema";
 import { revalidatePath } from "next/cache";

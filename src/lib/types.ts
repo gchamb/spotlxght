@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { constructZodLiteralUnionType } from "./zod-utilities";
 
 // this file will include zod schemas and typescript types
 
@@ -13,6 +14,19 @@ export type ApplicationStatus = "requested" | "accepted" | "rejected";
 export type MyEvents = z.infer<typeof myEventsDataSchema>;
 
 export type CreateEvent = z.infer<typeof createEventSchema>;
+
+export type GoogleInfo = {
+  id: string;
+  email: string;
+  verified_emai: boolean;
+  name: string;
+  given_name: string;
+  family_name: string;
+  picture: string;
+  locale: string;
+};
+
+export type TimeslotTimes = (typeof timeslotsTimes)[number];
 
 export const timeslotsTimes = [
   "12:00AM",
@@ -51,6 +65,9 @@ export const timeslotsTimes = [
   "11:00AM",
   "11:30AM",
   "11:45AM",
+  "12:00PM",
+  "12:30PM",
+  "12:45PM",
   "1:00PM",
   "1:30PM",
   "1:45PM",
@@ -84,20 +101,11 @@ export const timeslotsTimes = [
   "11:00PM",
   "11:30PM",
   "11:45PM",
-  "12:00PM",
-  "12:30PM",
-  "12:45PM",
-];
-export type GoogleInfo = {
-  id: string;
-  email: string;
-  verified_emai: boolean;
-  name: string;
-  given_name: string;
-  family_name: string;
-  picture: string;
-  locale: string;
-};
+] as const;
+
+export const payArray = [
+  25, 50, 75, 100, 125, 150, 200, 250, 300, 350, 400, 450, 500,
+] as const;
 
 export const MAX_FILE_SIZE = 1024 * 1024 * 5; // 5 MB
 export const ACCEPTED_IMAGE_TYPES = ["image/jpg", "image/jpeg", "image/png"];
@@ -162,13 +170,15 @@ export const myEventsDataSchema = z.object({
 });
 
 export const createEventSchema = z.object({
-  name: z.string(),
+  name: z.string().min(3, "Event Name needs at least 3 characters."),
   date: z.date(),
-  pay: z.number(),
-  timeslots: z.array(
-    z.object({
-      startTime: z.string(),
-      endTime: z.string(),
-    }),
-  ),
+  pay: constructZodLiteralUnionType(payArray.map((pay) => z.literal(pay))),
+  timeslots: z
+    .array(
+      z.object({
+        startTime: z.enum(timeslotsTimes),
+        endTime: z.enum(timeslotsTimes),
+      }),
+    )
+    .min(1, "You need to submit at least one timeslot"),
 });
