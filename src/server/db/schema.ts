@@ -11,11 +11,7 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-import {
-  type ApplicationStatus,
-  type EventStatus,
-  type UserType,
-} from "~/lib/types";
+import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -136,7 +132,7 @@ export const reviews = createTable(
     reviewedAt: timestamp("reviewedAt", { mode: "date" })
       .notNull()
       .defaultNow(),
-    rate: int("rate").notNull(),
+    rate: int("rate").notNull(), // TODO: rename to rating
     userId: varchar("userId", { length: 191 })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),

@@ -6,6 +6,7 @@ import { sessions, users } from "~/server/db/schema";
 import { eq, lt } from "drizzle-orm";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
+import { redirect } from "next/navigation";
 
 // TODO(future): Use server-side caching to speed up session retrieval?
 // TODO(future): Handle client-side session caching
@@ -107,3 +108,22 @@ async function invalidateExpiredSessions() {
     );
 }
 
+export async function getAuthUser() {
+  const session = await getSession();
+  if (!session?.user?.id) {
+    redirect("/");
+  } else {
+    return session.user;
+  }
+}
+
+export async function getUserProfile(userId: string) {
+  return db.query.users.findFirst({
+    where: eq(users.id, userId),
+    with: {
+      genres: true,
+      reviews: true,
+      assets: true,
+    },
+  });
+}

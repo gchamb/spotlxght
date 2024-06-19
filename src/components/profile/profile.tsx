@@ -1,19 +1,15 @@
-import { getUser } from "~/lib/utils";
 import MusicianProfile from "~/components/profile/musician-profile";
 import VenueProfile from "~/components/profile/venue-profile";
-import { redirect } from "next/navigation";
+import { getUserProfile } from "~/lib/auth";
 
-export default async function Profile() {
-  const user = await getUser();
-  console.log("profile user");
-  console.log(user);
-  if (!user.type) {
-    redirect("/onboarding");
-  }
+export default async function Profile({ userId }: { userId: string }) {
+  const userProfile = await getUserProfile(userId);
 
-  if (user.type === "musician") {
-    return <MusicianProfile user={user} />;
+  if (!userProfile) {
+    return <div>User not found</div>;
+  } else if (userProfile.type === "musician") {
+    return <MusicianProfile userProfile={userProfile} />;
   } else {
-    return <VenueProfile user={user} />;
+    return <VenueProfile userProfile={userProfile} />;
   }
 }

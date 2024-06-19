@@ -1,8 +1,57 @@
 import { z } from "zod";
 
-// this file will include zod schemas and typescript types
-
 export type Credentials = z.infer<typeof credentialsSchema>;
+
+export type User = {
+  id: string;
+  name: string | null;
+  email: string;
+  emailVerified: Date | null;
+  password: string | null;
+  address: string | null;
+  profilePicImage: string | null;
+  profileBannerImage: string | null;
+  type: UserType | null;
+};
+
+export type Genre = {
+  id: string;
+  genre: string;
+  userId: string;
+};
+
+export type Review = {
+  id: string;
+  reviewer: string;
+  message: string | null;
+  reviewedAt: Date;
+  rate: number;
+  userId: string;
+};
+
+export type Asset = {
+  id: string;
+  type: string;
+  mimetype: string;
+  azureBlobKey: string;
+  uploadedAt: Date;
+  userId: string;
+};
+
+export type UserProfile = {
+  address: string | null;
+  id: string;
+  name: string | null;
+  type: UserType | null;
+  email: string;
+  password: string | null;
+  emailVerified: Date | null;
+  profilePicImage: string | null;
+  profileBannerImage: string | null;
+  reviews: Review[];
+  assets: Asset[];
+  genres: Genre[];
+};
 
 export type UserType = "venue" | "musician";
 

@@ -16,7 +16,7 @@ export async function emailSignInAction(
   if (!user.type) {
     redirect(`/${userType}/onboarding`);
   } else {
-    redirect("/profile");
+    redirect(`/profile/${user.id}`);
   }
 }
 
