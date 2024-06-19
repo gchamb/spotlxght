@@ -249,7 +249,7 @@ export const applications = createTable(
     status: varchar("status", { length: 15 })
       .$type<ApplicationStatus>()
       .notNull(),
-    appliedAt: timestamp("endDate", { mode: "date" }).notNull(),
+    appliedAt: timestamp("appliedAt", { mode: "date" }).notNull().defaultNow(),
   },
   (application) => ({
     pk: primaryKey({

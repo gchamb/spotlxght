@@ -4,8 +4,6 @@ import { getSession } from "~/lib/auth";
 export default async function Nav() {
   const session = await getSession();
 
-  console.log(session);
-
   return (
     <nav className="mx-auto w-full max-w-screen-2xl p-4">
       <div className="flex items-center gap-x-24">

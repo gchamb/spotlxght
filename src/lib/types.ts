@@ -165,6 +165,7 @@ export const myEventsDataSchema = z.object({
     z.literal("completed"),
     z.literal("closed"),
   ]),
+  date: z.date(),
   amount: z.number(),
   venueId: z.string().uuid(),
 });
