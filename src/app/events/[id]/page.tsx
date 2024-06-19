@@ -109,7 +109,8 @@ export default async function EventDetailsPage({
   const event = await getEventData(params.id, session.userId);
 
   if (event === null) {
-    return <div>event doesn't exist</div>;
+    // NOTE: do this
+    return <div>event doesn&apos;t exist</div>;
   }
 
   // convert blob keys into sas url

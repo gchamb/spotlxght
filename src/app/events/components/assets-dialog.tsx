@@ -38,6 +38,7 @@ export default function AssetsDialog({ assets, name }: AssetsDialogProps) {
           {assets.map((asset) => {
             return (
               <AudioComponent
+                key={asset.azureBlobKey}
                 src={asset.azureBlobKey}
                 mimetype={asset.mimetype}
               />

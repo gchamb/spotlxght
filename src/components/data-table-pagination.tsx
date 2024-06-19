@@ -1,8 +1,8 @@
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-//   DoubleArrow,
-//   DoubleArrowRightIcon,
+  //   DoubleArrow,
+  //   DoubleArrowRightIcon,
 } from "lucide-react";
 import { Table } from "@tanstack/react-table";
 
@@ -23,7 +23,7 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between px-2">
+    <div className="flex flex-col items-center justify-between px-2 md:flex-row">
       <div className="flex-1 text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} of{" "}
         {table.getFilteredRowModel().rows.length} row(s) selected.
@@ -33,7 +33,7 @@ export function DataTablePagination<TData>({
           <p className="text-sm font-medium">Rows per page</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value: any) => {
+            onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
           >

@@ -168,6 +168,7 @@ export const myEventsDataSchema = z.object({
   date: z.date(),
   amount: z.number(),
   venueId: z.string().uuid(),
+  createdAt: z.date(),
 });
 
 export const createEventSchema = z.object({

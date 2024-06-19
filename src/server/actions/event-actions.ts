@@ -8,11 +8,11 @@ import { events, timeslots } from "../db/schema";
 import { revalidatePath } from "next/cache";
 
 function normalize(data: FormData) {
-  const normalizedData: { [key: string]: unknown } = {};
+  const normalizedData: Record<string, unknown> = {};
 
   const timeslotsArray: { startTime?: string; endTime?: string }[] = [];
-  for (let [name, value] of data.entries()) {
-    let currentValue = value.toString();
+  for (const [name, value] of data.entries()) {
+    const currentValue = value.toString();
 
     if (name.includes("timeslot")) {
       const nameSplit = name.split("-");
@@ -64,7 +64,7 @@ function normalize(data: FormData) {
     }
   }
 
-  normalizedData["timeslots"] = timeslotsArray;
+  normalizedData.timeslots = timeslotsArray;
 
   return normalizedData;
 }
@@ -124,7 +124,7 @@ export async function createEvent(data: FormData) {
 
     const { name, date, pay, timeslots: dataTimeslots } = valid.data;
 
-    let acceptableTimeslotRange: number[] = [];
+    const acceptableTimeslotRange: number[] = [];
     for (const { startTime, endTime } of dataTimeslots) {
       // make sure they're valid timeslots
       const timeslotsIndexRange = validTimeslots(startTime, endTime);

@@ -64,7 +64,7 @@ export const columns: ColumnDef<MyEvents>[] = [
       </div>
     ),
     cell: ({ row }) => {
-      const date = row.getValue("date") as Date;
+      const date = row.original.date;
 
       return (
         <div className="text-right font-medium">
@@ -88,7 +88,7 @@ export const columns: ColumnDef<MyEvents>[] = [
       </div>
     ),
     cell: ({ row }) => {
-      const createdtAt = row.getValue("createdAt") as Date;
+      const createdtAt = row.original.createdAt;
 
       return (
         <div className="text-right font-medium">

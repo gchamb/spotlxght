@@ -11,6 +11,7 @@ const config = {
     "plugin:@typescript-eslint/stylistic-type-checked",
   ],
   rules: {
+    "@typescript-eslint/no-base-to-string": "warn",
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/prefer-optional-chain": "warn",
     "@typescript-eslint/array-type": "off",

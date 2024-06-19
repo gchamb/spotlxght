@@ -18,7 +18,7 @@ export default function DatePicker({
   date,
 }: {
   onSelect: (date: Date) => void;
-  date: Date | null;
+  date: Date;
 }) {
   return (
     <Popover>
@@ -38,8 +38,13 @@ export default function DatePicker({
         <Calendar
           mode="single"
           selected={date}
-          onSelect={onSelect}
+          onSelect={(selectedDay) => {
+            if (selectedDay) {
+              onSelect(selectedDay);
+            }
+          }}
           initialFocus
+          required
         />
       </PopoverContent>
     </Popover>
