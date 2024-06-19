@@ -64,7 +64,7 @@ export function DataTable({
 }: DataTableProps<MyEvents, unknown>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [showCreateEventModal, setCreateEventModal] = useState(false);
+  const [showCreateEventModal, setShowCreateEventModal] = useState(false);
 
   const table = useReactTable({
     data,
@@ -88,7 +88,13 @@ export function DataTable({
   return (
     <div className="flex flex-col gap-y-10">
       <div className="flex items-center justify-between">
-        <CreateEventDialog />
+        <Button variant="default" onClick={() => setShowCreateEventModal(true)}>
+          Create Event
+        </Button>
+        <CreateEventDialog
+          open={showCreateEventModal}
+          onClose={() => setShowCreateEventModal(false)}
+        />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

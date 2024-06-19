@@ -1,4 +1,4 @@
-import { Minus, Plus } from "lucide-react";
+import { Loader2, Minus, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -20,27 +20,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { createEvent } from "~/server/actions/event-actions";
-import { timeslotsTimes } from "~/lib/types";
+import { payArray, timeslotsTimes } from "~/lib/types";
 import DatePicker from "./ui/date-picker";
 
-export default function CreateEventDialog() {
+export default function CreateEventDialog({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const [timeslots, setTimeslots] = useState([crypto.randomUUID()]);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [date, setDate] = useState<Date>(new Date());
 
+  const eventOnClose = () => {
+    onClose();
+    setTimeslots([crypto.randomUUID()]);
+    setError("");
+    setDate(new Date());
+  };
+
   return (
-    <Dialog
-      onOpenChange={(open) => {
-        if (!open) {
-          setTimeslots([crypto.randomUUID()]);
-        }
-      }}
-    >
-      <DialogTrigger asChild>
-        <Button variant="default">Create Event</Button>
-      </DialogTrigger>
+    <Dialog open={open}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-center text-2xl">
@@ -51,14 +56,27 @@ export default function CreateEventDialog() {
           </DialogDescription>
         </DialogHeader>
         <form
-          action={async (data) => {
-            try {
-              await createEvent(data);
-            } catch (err) {
-              // console.log(err.message);
-            }
+          action={(data) => {
+            startTransition(async () => {
+              try {
+                if (error !== "") {
+                  setError("");
+                }
+
+                await createEvent(data);
+                eventOnClose();
+              } catch (err) {
+                const error = err as Error;
+                setError(error.message);
+              }
+            });
           }}
         >
+          {error !== "" && (
+            <div className="flex justify-center">
+              <span className="text-sm text-red-600">{error}</span>
+            </div>
+          )}
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
@@ -96,11 +114,13 @@ export default function CreateEventDialog() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Pay</SelectLabel>
-                    <SelectItem value="50">$50</SelectItem>
-                    <SelectItem value="75">$75</SelectItem>
-                    <SelectItem value="100">$100</SelectItem>
-                    <SelectItem value="125">$125</SelectItem>
-                    <SelectItem value="150">$150</SelectItem>
+                    {payArray.map((pay) => {
+                      return (
+                        <SelectItem key={pay} value={`${pay}`}>
+                          ${pay}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -159,7 +179,9 @@ export default function CreateEventDialog() {
 
                       {timeslots.length > 1 && (
                         <Button
+                          disabled={isPending}
                           variant="ghost"
+                          type="button"
                           onClick={() => {
                             setTimeslots(
                               timeslots.filter((id) => id !== timeslotId),
@@ -171,7 +193,9 @@ export default function CreateEventDialog() {
                       )}
 
                       <Button
+                        disabled={isPending}
                         variant="ghost"
+                        type="button"
                         onClick={() => {
                           if (timeslots.length === 4) {
                             return;
@@ -189,7 +213,20 @@ export default function CreateEventDialog() {
             </div>
           </div>
           <DialogFooter>
-            <Button className="w-full text-lg font-semibold" type="submit">
+            <Button
+              disabled={isPending}
+              className="flex w-full items-center gap-x-2 text-lg font-semibold"
+              onClick={eventOnClose}
+              type="button"
+            >
+              Close
+            </Button>
+            <Button
+              disabled={isPending}
+              className="flex w-full items-center gap-x-2 text-lg font-semibold"
+              type="submit"
+            >
+              {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               Save changes
             </Button>
           </DialogFooter>
