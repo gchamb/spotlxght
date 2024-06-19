@@ -1,16 +1,17 @@
-import { auth } from "~/auth";
+import Link from "next/link";
+import { getSession } from "~/lib/auth";
 
 export default async function Nav() {
-  const session = await auth();
+  const session = await getSession();
 
   console.log(session);
 
   return (
     <nav className="mx-auto w-full max-w-screen-2xl p-4">
       <div className="flex items-center gap-x-24">
-        <a href="/">
+        <Link href="/">
           <h1 className="text-xl font-semibold">underground</h1>
-        </a>
+        </Link>
         <div>
           {session?.user.type === "venue" && <a href="/my-events">My Events</a>}
           {session?.user.type === "musician" && (

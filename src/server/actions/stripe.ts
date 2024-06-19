@@ -1,15 +1,18 @@
 "use server";
 
+import { type Stripe } from "stripe";
 import { redirect } from "next/navigation";
 import { stripe } from "../stripe";
 import { headers } from "next/headers";
-import Stripe from "stripe";
+import { getSession } from "~/lib/auth";
 
 export async function onboardUser() {
   const requestHeaders = headers();
+  const session = await getSession();
 
-  // NOTE: authenticate request that returns userId
-  const userId = "123";
+  if (!session || !session.user) {
+    return redirect("/");
+  }
 
   let accountLink: Stripe.Response<Stripe.AccountLink>;
   try {
@@ -28,7 +31,7 @@ export async function onboardUser() {
     });
     accountLink = await stripe.accountLinks.create({
       account: account.id,
-      return_url: `${requestHeaders.get("origin")}/profile/${userId}`,
+      return_url: `${requestHeaders.get("origin")}/profile/${session.user.id}`,
       refresh_url: `${requestHeaders.get("origin")}/musician/onboarding`,
       type: "account_onboarding",
     });

@@ -1,9 +1,5 @@
-import { SignIn } from "~/components/sign-in";
+import { AuthScreen } from "~/components/auth-screen";
 
-export default function auth() {
-  return (
-    <main className="">
-      <SignIn type="musician" />
-    </main>
-  );
+export default function MusicAuth() {
+  return <AuthScreen screenType="sign-in" type="musician" />;
 }

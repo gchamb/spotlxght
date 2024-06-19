@@ -1,6 +1,6 @@
 import { type AuthConfig } from "@auth/core";
 import { type Session } from "next-auth";
-import { type NextResponse } from "next/server";
+import { type NextRequest, type NextResponse } from "next/server";
 
 declare module "next-auth" {
   /**
@@ -11,7 +11,7 @@ declare module "next-auth" {
     id: string;
     name: string;
     email: string;
-    email_verified: boolean;
+    email_verified: string;
     picture: string;
   }
 

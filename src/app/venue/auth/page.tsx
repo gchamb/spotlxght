@@ -1,9 +1,5 @@
-import { SignIn } from "~/components/sign-in";
+import { AuthScreen } from "~/components/auth-screen";
 
-export default function auth() {
-  return (
-    <main className="">
-      <SignIn type="venue" />
-    </main>
-  );
+export default function VenueAuth() {
+  return <AuthScreen screenType="sign-in" type="venue" />;
 }
