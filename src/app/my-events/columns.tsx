@@ -1,17 +1,12 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Filter, MoreHorizontal } from "lucide-react";
+import { ArrowRight, ArrowUpDown, Filter, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "~/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+import Chip from "~/components/ui/chip";
+
 import { MyEvents } from "~/lib/types";
 
 export const columns: ColumnDef<MyEvents>[] = [
@@ -22,6 +17,24 @@ export const columns: ColumnDef<MyEvents>[] = [
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => {
+      const status = row.original.status;
+      return (
+        <Chip
+          size="xs"
+          text={status}
+          color={
+            status === "open"
+              ? "gray"
+              : status === "in-progress"
+                ? "yellow"
+                : status === "closed" || status === "completed"
+                  ? "red"
+                  : "gray"
+          }
+        />
+      );
+    },
   },
 
   {
@@ -35,6 +48,29 @@ export const columns: ColumnDef<MyEvents>[] = [
       }).format(amount);
 
       return <div className="text-right font-medium">{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "date",
+    header: ({ column }) => (
+      <div className="text-right">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => {
+      const date = row.getValue("date") as Date;
+
+      return (
+        <div className="text-right font-medium">
+          {date.toLocaleDateString()}
+        </div>
+      );
     },
   },
   {
@@ -64,27 +100,16 @@ export const columns: ColumnDef<MyEvents>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
-
+      const eventDetails = row.original;
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+        <div className="flex justify-end">
+          <Link href={`/events/${eventDetails.id}`}>
+            <Button className="flex items-center gap-x-2" variant="link">
+              View Applicants
+              <ArrowRight />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View all applicants</DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Share Event Link
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </Link>
+        </div>
       );
     },
   },
