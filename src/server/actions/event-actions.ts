@@ -2,106 +2,23 @@
 
 import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
-import { createEventSchema, timeslotsTimes, TimeslotTimes } from "~/lib/types";
+import {
+  ApplicationStatus,
+  createEventSchema,
+  SetApplicantStatusRequest,
+  setApplicantStatusRequest,
+} from "~/lib/types";
 import { db } from "../db";
-import { events, timeslots } from "../db/schema";
+import { applications, events, timeslots } from "../db/schema";
 import { revalidatePath } from "next/cache";
-
-function normalize(data: FormData) {
-  const normalizedData: Record<string, unknown> = {};
-
-  const timeslotsArray: { startTime?: string; endTime?: string }[] = [];
-  for (const [name, value] of data.entries()) {
-    const currentValue = value.toString();
-
-    if (name.includes("timeslot")) {
-      const nameSplit = name.split("-");
-      const indexStr = nameSplit[1];
-      const timeType = nameSplit[2];
-
-      if (!indexStr) {
-        throw new Error("Invalid Request");
-      }
-
-      if (timeType !== "end" && timeType !== "start") {
-        throw new Error("Invalid Request");
-      }
-
-      const index = parseInt(indexStr);
-
-      const timeslot = timeslotsArray[index];
-      if (timeslot) {
-        if (timeType === "start") {
-          timeslot.startTime = currentValue;
-        } else {
-          timeslot.endTime = currentValue;
-        }
-      } else {
-        if (timeType === "start") {
-          timeslotsArray[index] = {
-            startTime: currentValue,
-          };
-        } else {
-          timeslotsArray[index] = {
-            endTime: currentValue,
-          };
-        }
-      }
-    }
-
-    if (name === "date") {
-      const createDateObj = new Date(currentValue);
-      normalizedData[name] = createDateObj;
-    }
-
-    if (name === "pay") {
-      const castedPay = parseInt(currentValue);
-      normalizedData[name] = castedPay;
-    }
-
-    if (name === "name") {
-      normalizedData[name] = currentValue;
-    }
-  }
-
-  normalizedData.timeslots = timeslotsArray;
-
-  return normalizedData;
-}
-
-/**
- *
- * @param startTime
- * @param endTime
- * @returns an array of indexes ranging from but not including startTime to endTime
- */
-function validTimeslots(startTime: TimeslotTimes, endTime: TimeslotTimes) {
-  const startTimeIndex = timeslotsTimes.indexOf(startTime);
-  const endTimeIndex = timeslotsTimes.indexOf(endTime);
-  const acceptableIndexes: number[] = [];
-
-  for (let i = startTimeIndex + 1; i < startTimeIndex + 13; i++) {
-    if (i >= timeslotsTimes.length) {
-      acceptableIndexes.push(i % timeslotsTimes.length);
-    } else {
-      acceptableIndexes.push(i);
-    }
-  }
-
-  if (!acceptableIndexes.includes(endTimeIndex)) {
-    throw new Error("Invalid end time.");
-  }
-
-  return acceptableIndexes.filter((_, index) => {
-    return index <= acceptableIndexes.indexOf(endTimeIndex);
-  });
-}
+import { normalizeCreateEventData, validTimeslots } from "~/lib/utils";
+import { and, eq } from "drizzle-orm";
 
 export async function createEvent(data: FormData) {
   const session = await getSession();
 
   if (session === null) {
-    return redirect("/");
+    return redirect("/venue/auth");
   }
 
   if (session.user.type !== "venue") {
@@ -109,7 +26,7 @@ export async function createEvent(data: FormData) {
   }
 
   try {
-    const normalizedData = normalize(data);
+    const normalizedData = normalizeCreateEventData(data);
     const valid = createEventSchema.safeParse(normalizedData);
 
     if (!valid.success) {
@@ -161,6 +78,79 @@ export async function createEvent(data: FormData) {
       err instanceof Error
         ? err.message
         : "Unable to process your request. Try again.",
+    );
+  }
+}
+
+export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
+  const session = await getSession();
+
+  if (session === null) return redirect("/venue/auth");
+
+  if (session.user.type !== "venue") return redirect("/");
+
+  try {
+    // validate input
+    const valid = setApplicantStatusRequest.safeParse(data);
+
+    if (!valid.success) {
+      const zodError = valid.error.errors[0];
+      throw new Error(zodError?.message);
+    }
+    // make sure the current session user owns this event
+    const { eventId, applicantId, timeslotId, status } = valid.data;
+
+    const application = await db.query.applications.findFirst({
+      where: and(
+        eq(applications.timeslotId, timeslotId),
+        eq(applications.userId, applicantId),
+        eq(applications.eventId, eventId),
+      ),
+      with: {
+        event: true,
+      },
+    });
+
+    if (!application) throw new Error("Applicant doesn't exist.");
+
+    if (application.event.venueId !== session.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    // make sure this timeslot doesn't already have an accepted applicant
+    const acceptedApplication = await db.query.applications.findFirst({
+      where: and(
+        eq(applications.timeslotId, timeslotId),
+        eq(applications.eventId, eventId),
+        eq(applications.status, "accepted"),
+      ),
+    });
+    console.log(acceptedApplication);
+    if (status === "accepted" && acceptedApplication) {
+      throw new Error("An applicant was already accepted for this timeslot.");
+    }
+
+    // set the status of the applicant
+    await db
+      .update(applications)
+      .set({
+        status,
+      })
+      .where(
+        and(
+          eq(applications.timeslotId, timeslotId),
+          eq(applications.userId, applicantId),
+          eq(applications.eventId, eventId),
+        ),
+      );
+
+    // revalidate path
+    revalidatePath(`/events/${eventId}`, "page");
+
+    // send the email to the musician
+  } catch (err) {
+    throw new Error(
+      err instanceof Error ? err.message : "Unable to handle this request.",
     );
   }
 }

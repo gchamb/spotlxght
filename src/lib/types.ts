@@ -9,11 +9,15 @@ export type UserType = "venue" | "musician";
 
 export type EventStatus = "open" | "in-progress" | "completed" | "closed";
 
-export type ApplicationStatus = "requested" | "accepted" | "rejected";
+export type ApplicationStatus = (typeof applicantStatuses)[number];
 
 export type MyEvents = z.infer<typeof myEventsDataSchema>;
 
 export type CreateEvent = z.infer<typeof createEventSchema>;
+
+export type SetApplicantStatusRequest = z.infer<
+  typeof setApplicantStatusRequest
+>;
 
 export type GoogleInfo = {
   id: string;
@@ -25,6 +29,8 @@ export type GoogleInfo = {
   picture: string;
   locale: string;
 };
+
+export const applicantStatuses = ["requested", "accepted", "rejected"] as const;
 
 export type TimeslotTimes = (typeof timeslotsTimes)[number];
 
@@ -183,4 +189,15 @@ export const createEventSchema = z.object({
       }),
     )
     .min(1, "You need to submit at least one timeslot"),
+});
+
+export const setApplicantStatusRequest = z.object({
+  eventId: z.string(),
+  applicantId: z.string(),
+  timeslotId: z.string(),
+  status: constructZodLiteralUnionType(
+    applicantStatuses
+      .filter((status) => status !== "requested")
+      .map((status) => z.literal(status)),
+  ),
 });
