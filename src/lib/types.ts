@@ -178,7 +178,10 @@ export const myEventsDataSchema = z.object({
 });
 
 export const createEventSchema = z.object({
-  name: z.string().min(3, "Event Name needs at least 3 characters."),
+  name: z
+    .string()
+    .min(3, "Event name needs at least 3 characters.")
+    .max(25, "Event name should be at max 25 characters."),
   date: z.date(),
   pay: constructZodLiteralUnionType(payArray.map((pay) => z.literal(pay))),
   timeslots: z
