@@ -38,6 +38,7 @@ export default function DatePicker({
         <Calendar
           mode="single"
           selected={date}
+          disabled={{ before: new Date() }}
           onSelect={(selectedDay) => {
             if (selectedDay) {
               onSelect(selectedDay);
