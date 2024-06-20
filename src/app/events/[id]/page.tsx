@@ -7,6 +7,9 @@ import { assets, events, users } from "~/server/db/schema";
 import TimeslotTabs from "../components/timeslot-tabs";
 import TimeslotSelect from "../components/timeslot-select";
 import { getSaSUrl } from "~/lib/azure";
+import Link from "next/link";
+import { Button } from "~/components/ui/button";
+import { ArrowRight, Home } from "lucide-react";
 
 async function getEventData(id: string, userId: string) {
   // returns all the timeslots and applicants
@@ -109,8 +112,25 @@ export default async function EventDetailsPage({
   const event = await getEventData(params.id, session.userId);
 
   if (event === null) {
-    // NOTE: do this
-    return <div>event doesn&apos;t exist</div>;
+    return (
+      <div className="max-screen2xl mx-auto flex h-4/5 flex-col items-center justify-center gap-4">
+        <h1 className="text-7xl">404</h1>
+        <div className="flex flex-col items-center">
+          <h2 className="text-3xl font-semibold">This event doesn't exist.</h2>
+          {session.user.type === "venue" ? (
+            <Button variant="link" className="flex items-center gap-x-2">
+              <Link href="/my-events">Return to your events.</Link>
+              <ArrowRight />
+            </Button>
+          ) : (
+            <Button variant="link" className="flex items-center gap-x-2">
+              <Link href="/">Return back to home</Link>
+              <Home />
+            </Button>
+          )}
+        </div>
+      </div>
+    );
   }
 
   // convert blob keys into sas url
