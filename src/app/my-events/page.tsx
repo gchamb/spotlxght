@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
-import { columns } from "./columns";
-import { DataTable } from "./data-table";
+import { columns } from "./components/columns";
+import { DataTable } from "./components/data-table";
 import { redirect } from "next/navigation";
 import { type MyEvents } from "~/lib/types";
 import { DataTablePagination } from "~/components/data-table-pagination";
