@@ -23,6 +23,8 @@ export const env = createEnv({
       process.env.VERCEL ? z.string() : z.string().url(),
     ),
     AZURE_STORAGE_ACCOUNT_CONNECTION: z.string(),
+    AZURE_STORAGE_ACCOUNT_NAME: z.string(),
+    AZURE_STORAGE_ACCOUNT_KEY: z.string(),
     STRIPE_API_KEY: z.string(),
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
@@ -46,6 +48,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     AZURE_STORAGE_ACCOUNT_CONNECTION:
       process.env.AZURE_STORAGE_ACCOUNT_CONNECTION,
+    AZURE_STORAGE_ACCOUNT_NAME: process.env.AZURE_STORAGE_ACCOUNT_NAME,
+    AZURE_STORAGE_ACCOUNT_KEY: process.env.AZURE_STORAGE_ACCOUNT_KEY,
     STRIPE_API_KEY: process.env.STRIPE_API_KEY,
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_URL: process.env.AUTH_URL, // TODO: Make sure this is defined at runtime automatically by next-auth

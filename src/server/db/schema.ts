@@ -11,7 +11,7 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/types";
+import { type ApplicationStatus, type AzureBlobContainer, type EventStatus, type UserType, } from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -153,7 +153,11 @@ export const assets = createTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    type: varchar("type", { length: 25 }).notNull(),
+    title: varchar("title", { length: 255 }),
+    description: text("description"),
+    azureBlobContainer: varchar("azureBlobContainer", { length: 25 })
+      .$type<AzureBlobContainer>()
+      .notNull(),
     mimetype: varchar("mimetype", { length: 25 }).notNull(),
     azureBlobKey: varchar("azureBlobKey", { length: 191 }).notNull(),
     uploadedAt: timestamp("uploadedAt", { mode: "date" })

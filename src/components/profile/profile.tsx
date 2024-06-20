@@ -4,7 +4,6 @@ import { getUserProfile } from "~/lib/auth";
 
 export default async function Profile({ userId }: { userId: string }) {
   const userProfile = await getUserProfile(userId);
-
   if (!userProfile) {
     return <div>User not found</div>;
   } else if (userProfile.type === "musician") {

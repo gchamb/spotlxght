@@ -71,17 +71,17 @@ export default function MusicianProfile({
           <Post
             title="Playing Guitar @ Jim's Bar"
             description="Had a great time jamming with Jimmy here!"
-            image="/images/rock.jpg"
+            asset="/images/rock.jpg"
           />
           <Post
             title="Playing Guitar @ Jim's Bar"
             description="Had a great time jamming with Jimmy here!"
-            image="/images/country.jpg"
+            asset="/images/country.jpg"
           />
           <Post
             title="Playing Guitar @ Jim's Bar"
             description="Had a great time jamming with Jimmy here!"
-            image="/images/hip hop.jpg"
+            asset="/images/indie.jpg"
           />
         </div>
       </div>
