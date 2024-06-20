@@ -24,6 +24,7 @@ import { useState, useTransition } from "react";
 import { createEvent } from "~/server/actions/event-actions";
 import { payArray, timeslotsTimes } from "~/lib/types";
 import DatePicker from "./ui/date-picker";
+import { toast } from "sonner";
 
 export default function CreateEventDialog({
   open,
@@ -198,6 +199,9 @@ export default function CreateEventDialog({
                         type="button"
                         onClick={() => {
                           if (timeslots.length === 4) {
+                            toast(
+                              "You can only add up to 4 timeslots per event.",
+                            );
                             return;
                           }
 
