@@ -111,6 +111,7 @@ export default function ApplyDialog({
           <Button
             disabled={isPending}
             onClick={() => {
+              setError("");
               setSelectedTimeslot(null);
               onClose();
             }}
