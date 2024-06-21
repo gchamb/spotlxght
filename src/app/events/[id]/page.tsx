@@ -116,7 +116,9 @@ export default async function EventDetailsPage({
       <div className="max-screen2xl mx-auto flex h-4/5 flex-col items-center justify-center gap-4">
         <h1 className="text-7xl">404</h1>
         <div className="flex flex-col items-center">
-          <h2 className="text-3xl font-semibold">This event doesn&apos;t exist.</h2>
+          <h2 className="text-3xl font-semibold">
+            This event doesn&apos;t exist.
+          </h2>
           {session.user.type === "venue" ? (
             <Button variant="link" className="flex items-center gap-x-2">
               <Link href="/my-events">Return to your events.</Link>
@@ -164,8 +166,6 @@ export default async function EventDetailsPage({
   );
 
   event.applicants = applicants;
-
-  console.log(applicants);
 
   return (
     <div className="mx-auto mx-auto w-11/12 py-10 md:max-w-screen-xl">
