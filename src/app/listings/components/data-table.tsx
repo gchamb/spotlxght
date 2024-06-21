@@ -2,7 +2,6 @@
 
 import {
   ColumnDef,
-  flexRender,
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
@@ -11,41 +10,34 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-import { Filter } from "lucide-react";
-import { useState } from "react";
-import CreateEventDialog from "~/components/create-event-dialog";
-
+import { useMemo, useState } from "react";
 import DataTableComponent from "~/components/data-table";
 import { DataTablePagination } from "~/components/data-table-pagination";
-import { Button } from "~/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 
-import { MyEvents } from "~/lib/types";
+
+import { EventListings } from "~/lib/types";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<MyEvents, TValue>[];
-  data: MyEvents[];
+  columns: ColumnDef<EventListings, TValue>[];
+  data: EventListings[];
 }
 
 export function DataTable({
   columns,
   data,
-}: DataTableProps<MyEvents, unknown>) {
+}: DataTableProps<EventListings[], unknown>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [showCreateEventModal, setShowCreateEventModal] = useState(false);
+
+  const uniqueGenres = useMemo(() => {
+    const genres = data
+      .map((listing) => {
+        return listing.genres.map((genre) => genre.genre);
+      })
+      .flat();
+
+    return new Array(...new Set(genres));
+  }, [data]);
 
   const table = useReactTable({
     data,
@@ -62,21 +54,9 @@ export function DataTable({
     },
   });
 
-  const uniqueStatuses = new Array(
-    ...new Set(data.map((event) => event.status)),
-  );
-
   return (
     <div className="flex flex-col gap-y-10">
-      <div className="flex items-center justify-between">
-        <Button variant="default" onClick={() => setShowCreateEventModal(true)}>
-          Create Event
-        </Button>
-        <CreateEventDialog
-          open={showCreateEventModal}
-          onClose={() => setShowCreateEventModal(false)}
-        />
-
+      {/* <div className="flex items-center justify-between">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button>
@@ -89,31 +69,20 @@ export function DataTable({
             <DropdownMenuGroup>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
-                  <span>Status</span>
+                  <span>Genres</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent>
-                    {uniqueStatuses.map((status, idx) => {
+                    {uniqueGenres.map((genre, idx) => {
                       return (
                         <DropdownMenuCheckboxItem
                           key={idx}
-                          checked={
-                            table.getColumn("status")?.getFilterValue() ===
-                            status
-                          }
+                          checked={true}
                           onCheckedChange={() => {
-                            if (
-                              table.getColumn("status")?.getFilterValue() ===
-                              status
-                            ) {
-                              table.getColumn("status")?.setFilterValue(null);
-                              return;
-                            }
-
-                            table.getColumn("status")?.setFilterValue(status);
+                            setGenre(genre);
                           }}
                         >
-                          {status}
+                          {genre}
                         </DropdownMenuCheckboxItem>
                       );
                     })}
@@ -123,7 +92,7 @@ export function DataTable({
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+      </div> */}
       <DataTableComponent table={table} data={data} columns={columns} />
       <DataTablePagination table={table} />
     </div>

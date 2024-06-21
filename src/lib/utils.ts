@@ -14,6 +14,40 @@ export function shortenOrNot(word: string, maxLength = 25) {
   return `${word.substring(0, maxLength)}...`;
 }
 
+export function getRandomColorPair() {
+  // Helper function to generate a random integer between min and max (inclusive)
+  function getRandomInt(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // Helper function to convert RGB to hex
+  function rgbToHex(r: number, g: number, b: number) {
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+  }
+
+  // Helper function to lighten a color
+  function lightenColor(color: string, percent: number) {
+    const num = parseInt(color.slice(1), 16),
+      amt = Math.round(2.55 * percent),
+      R = (num >> 16) + amt,
+      G = ((num >> 8) & 0x00ff) + amt,
+      B = (num & 0x0000ff) + amt;
+    return rgbToHex(R < 255 ? R : 255, G < 255 ? G : 255, B < 255 ? B : 255);
+  }
+
+  // Generate a random darker color
+  const darkColor = rgbToHex(
+    getRandomInt(0, 100),
+    getRandomInt(0, 100),
+    getRandomInt(0, 100),
+  );
+
+  // Generate a lighter version of the dark color (e.g., 50% lighter)
+  const lightColor = lightenColor(darkColor, 50);
+
+  return { darkColor, lightColor };
+}
+
 export function normalizeCreateEventData(data: FormData) {
   const normalizedData: Record<string, unknown> = {};
 
@@ -82,7 +116,10 @@ export function normalizeCreateEventData(data: FormData) {
  * @param endTime
  * @returns an array of indexes ranging from but not including startTime to endTime
  */
-export function validTimeslots(startTime: TimeslotTimes, endTime: TimeslotTimes) {
+export function validTimeslots(
+  startTime: TimeslotTimes,
+  endTime: TimeslotTimes,
+) {
   const startTimeIndex = timeslotsTimes.indexOf(startTime);
   const endTimeIndex = timeslotsTimes.indexOf(endTime);
   const acceptableIndexes: number[] = [];
