@@ -19,7 +19,7 @@ type AssetsDialogProps = {
 export default function AssetsDialog({ assets, name }: AssetsDialogProps) {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button className="flex items-center gap-x-2" variant="ghost">
           <Music />
           View Performances
