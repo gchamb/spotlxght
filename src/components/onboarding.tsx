@@ -297,7 +297,11 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input className="bg-white text-black" {...field} />
+                        <Input
+                          placeholder="Your name"
+                          className="bg-white text-black"
+                          {...field}
+                        />
                       </FormControl>
 
                       <FormMessage />
@@ -457,7 +461,10 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
                 <h2 className="text-4xl font-semibold">
                   {type === "venue"
                     ? shortenOrNot(venueForm.watch("venueName"))
-                    : shortenOrNot(musicianForm.watch("name"), 20)}
+                    : shortenOrNot(
+                        musicianForm.watch("name") || "Your name",
+                        20,
+                      )}
                 </h2>
                 <span>
                   {type === "venue"

@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
-import { eq } from "drizzle-orm";
-import { assets } from "~/server/db/schema";
+import { eq, sql } from "drizzle-orm";
+import { assets, reviews } from "~/server/db/schema";
 import { getSasUrl } from "~/lib/azure";
 import { type Asset, AzureBlobContainer, type UserProfile } from "~/lib/types";
 
@@ -12,9 +12,27 @@ export async function getUserAssets(userProfile: UserProfile) {
 
   await Promise.all(
     userAssets.map(async (asset) => {
-      asset.sasUrl = await getSasUrl(asset, AzureBlobContainer.ASSET);
+      asset.sasUrl = await getSasUrl(
+        asset.azureBlobKey,
+        AzureBlobContainer.ASSET,
+      );
       return Promise.resolve(asset);
     }),
   );
   return userAssets;
+}
+
+export async function getUserRating(userId: string) {
+  const queryResults = await db
+    .select({
+      ratingsSum: sql<number>`sum(${reviews.rating})`,
+      count: sql<number>`count(${reviews.id})`,
+    })
+    .from(reviews)
+    .where(eq(reviews.userId, userId));
+
+  const reviewResults = queryResults[0];
+  if (!reviewResults) throw new Error("Error getting reviews");
+  if (!reviewResults?.count) return 5;
+  return reviewResults.ratingsSum / reviewResults.count;
 }

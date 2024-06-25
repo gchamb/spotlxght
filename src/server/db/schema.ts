@@ -3,15 +3,21 @@ import {
   bigint,
   float,
   index,
-  int,
   mysqlTableCreator,
   primaryKey,
+  smallint,
   text,
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
 
-import { type ApplicationStatus, type AzureBlobContainer, type EventStatus, type UserType, } from "~/lib/types";
+import {
+  type ApplicationStatus,
+  type AzureBlobContainer,
+  type EventStatus,
+  type Rating,
+  type UserType,
+} from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -118,6 +124,7 @@ export const genresRelations = relations(genres, ({ one }) => ({
   user: one(users, { fields: [genres.userId], references: [users.id] }),
 }));
 
+// TODO: Create [reviewerId, userId] composite key (unique)
 export const reviews = createTable(
   "review",
   {
@@ -125,14 +132,14 @@ export const reviews = createTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    reviewer: varchar("id", { length: 191 })
+    reviewerId: varchar("reviewerId", { length: 191 })
       .notNull()
       .references(() => users.id),
-    message: varchar("message", { length: 255 }),
+    message: varchar("message", { length: 255 }), // TODO: change to text
     reviewedAt: timestamp("reviewedAt", { mode: "date" })
       .notNull()
       .defaultNow(),
-    rate: int("rate").notNull(), // TODO: rename to rating
+    rating: smallint("rate").$type<Rating>().notNull(),
     userId: varchar("userId", { length: 191 })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),

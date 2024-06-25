@@ -28,8 +28,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { uploadFile } from "~/server/actions/profile";
-import { router } from "next/client";
-import { revalidatePath } from "next/cache";
+import { Loader2 } from "lucide-react";
 
 export default function UploadButton({
   userProfile,
@@ -38,6 +37,7 @@ export default function UploadButton({
 }) {
   const [open, setOpen] = useState(false);
   const [descriptionVisible, setDescriptionVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const resetFormState = () => {
     uploadFileForm.reset();
@@ -62,6 +62,7 @@ export default function UploadButton({
     description?: string | null;
     uploadItem: File | null;
   }> = async (values: z.infer<typeof uploadFileFormSchema>) => {
+    setLoading(true);
     const formData = new FormData();
     formData.append("uploadItem", values.uploadItem!);
     resetFormState();
@@ -75,12 +76,11 @@ export default function UploadButton({
         values.title,
         values.description,
       );
-
-      revalidatePath(`/profile/${userProfile.id}`);
-      router.reload();
     } catch (err) {
       console.error(err);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -96,9 +96,7 @@ export default function UploadButton({
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="default" className="text-lg">
-          Upload
-        </Button>
+        <Button variant="default">Upload</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <Form {...uploadFileForm}>
@@ -115,14 +113,14 @@ export default function UploadButton({
               <div className="flex items-center justify-center">
                 <div className="flex w-64 flex-col items-center justify-center gap-3 py-12">
                   {uploadFileForm.formState.errors.title?.message && (
-                    <p className="text-center text-sm text-red-600">
+                    <p className="mb-[-16px] text-center text-sm text-red-600">
                       {uploadFileForm.formState.errors.title.message}
                     </p>
                   )}
                   <FormField
                     name="title"
                     control={uploadFileForm.control}
-                    // rules={{ required: true }}
+                    rules={{ required: true }}
                     render={({ field }) => (
                       <FormItem className="w-full">
                         <FormLabel>Title</FormLabel>
@@ -136,7 +134,7 @@ export default function UploadButton({
                   {descriptionVisible && (
                     <>
                       {uploadFileForm.formState.errors.description?.message && (
-                        <p className="text-center text-sm text-red-600">
+                        <p className="mb-[-16px] text-center text-sm text-red-600">
                           {uploadFileForm.formState.errors.description.message}
                         </p>
                       )}
@@ -159,7 +157,7 @@ export default function UploadButton({
                   )}
 
                   {uploadFileForm.formState.errors.uploadItem?.message && (
-                    <p className=" mt-4 text-center text-sm text-red-600">
+                    <p className="mb-[-16px] mt-4 text-center text-sm text-red-600">
                       {uploadFileForm.formState.errors.uploadItem.message}
                     </p>
                   )}
@@ -228,7 +226,8 @@ export default function UploadButton({
               </p>
             </div>
             <DialogFooter className="flex">
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                 Upload
               </Button>
             </DialogFooter>

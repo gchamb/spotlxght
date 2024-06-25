@@ -1,20 +1,27 @@
-import { type Asset, type UserProfile } from "~/lib/types";
-import { Star } from "lucide-react";
-import SkeletonWrapper from "~/components/profile/components/skeleton-wrapper";
-import Post from "~/components/profile/components/post";
-import UploadButton from "~/components/profile/components/upload-button";
-import { Suspense } from "react";
-import LoadingReviews from "~/components/profile/components/loading-reviews";
+import {
+  type Asset,
+  type Review,
+  type User,
+  type UserProfile,
+} from "~/lib/types";
 import { getUserAssets } from "~/lib/profile";
-import MusicPlayer from "~/components/profile/components/music-player";
+import ProfileBanner from "~/components/profile/components/profile-banner";
+import SideNav from "~/components/profile/components/side-nav";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import MainContent from "~/components/profile/components/main-content";
+import Reviews from "~/components/profile/components/reviews";
+import { db } from "~/server/db";
+import { eq } from "drizzle-orm";
+import { reviews } from "~/server/db/schema";
 
 export default async function MusicianProfile({
   userProfile,
+  isCurrentUser,
 }: {
   userProfile: UserProfile;
+  isCurrentUser: boolean;
 }) {
   const userAssets = await getUserAssets(userProfile);
-
   const content: (Asset & { sasUrl?: string })[] = [];
   const songs: (Asset & { sasUrl?: string })[] = [];
   userAssets.forEach((asset) => {
@@ -24,96 +31,41 @@ export default async function MusicianProfile({
       content.push(asset);
     }
   });
+  const userReviews: (Review & { user: User })[] =
+    await db.query.reviews.findMany({
+      with: { user: true },
+      where: eq(reviews.userId, userProfile.id),
+    });
+
   content.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
   songs.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
+  userReviews.sort((a, b) => b.reviewedAt.getTime() - a.reviewedAt.getTime());
 
   return (
     <>
-      <div className="flex h-96 flex-col rounded-2xl border bg-[#222222] shadow-xl">
-        <div className="h-[50%] rounded-2xl bg-white">
-          <img
-            src="/images/default-banner.jpg"
-            className="h-full w-full rounded-xl object-cover"
-          />
-        </div>
-        <div className="container h-full">
-          <div className="flex h-full justify-between py-10">
-            <div className="container ">
-              <p className="font-light">
-                {userProfile.genres.map((g) => g.genre).join(", ")}
-              </p>
-              <h1 className="text-3xl font-semibold">{userProfile.name}</h1>
-              <p className="font-light text-[#eee]">{userProfile.address}</p>
-            </div>
-            <div className="container flex h-full flex-col items-end justify-between">
-              <div className="flex h-full flex-col items-end justify-between">
-                <div className="flex">
-                  <Star size={32} fill="gold" className="text-yellow-500" />
-                  <Star size={32} fill="gold" className="text-yellow-500" />
-                  <Star size={32} fill="gold" className="text-yellow-500" />
-                  <Star size={32} fill="gold" className="text-yellow-500" />
-                  <Star size={32} fill="gold" className="text-yellow-500" />
-                </div>
-                <UploadButton userProfile={userProfile} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ProfileBanner userProfile={userProfile} />
 
-      <div className="my-16 grid grid-cols-3 gap-36">
-        {/*TODO: Make these side-items sticky*/}
-        <div className="sticky">
-          <div className="col-span-1 flex flex-col rounded-2xl border bg-[#222222] px-10 py-14 shadow-xl">
-            <div className="flex flex-col gap-8">
-              {songs.map((asset) => (
-                <MusicPlayer key={asset.id} asset={asset} />
-              ))}
-              {/*<MusicPlayer songName="My song" />*/}
-              {/*<MusicPlayer songName="My song" />*/}
-              {/*<MusicPlayer songName="My song" />*/}
-              {/*<MusicPlayer songName="My song" />*/}
+      <div className="my-16 flex w-full justify-between gap-36">
+        <SideNav
+          userSongs={songs}
+          userReviews={userReviews.slice(0, 3)}
+          isCurrentUser={isCurrentUser}
+        />
+        <div className="align-center col-span-2 flex w-[708px] max-w-full flex-col gap-12 rounded-2xl">
+          <Tabs defaultValue="performances">
+            <div className="mb-12 flex justify-center">
+              <TabsList className="p grid w-[400px] grid-cols-2">
+                <TabsTrigger value="performances">Performances</TabsTrigger>
+                <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              </TabsList>
             </div>
-          </div>
-          <div className="col-span-1 mt-10 flex flex-col rounded-2xl border bg-[#222222] px-10 py-14 shadow-xl">
-            <h1 className="mb-8 text-center">Reviews</h1>
-            <div className="flex flex-col gap-8">
-              {/*TODO: Add this to loading UI*/}
-              {/*TODO: Add pagination & link to full review section*/}
-              <Suspense fallback={<LoadingReviews />}>
-                <SkeletonWrapper />
-                <SkeletonWrapper />
-                <SkeletonWrapper />
-                <SkeletonWrapper />
-                <SkeletonWrapper />
-              </Suspense>
-            </div>
-          </div>
-        </div>
-        <div className="col-span-2 flex flex-col gap-12 rounded-2xl pl-14">
-          {!content.length && (
-            <div className="flex justify-center">
-              <h1>No posts yet.</h1>
-            </div>
-          )}
-          {content.map((asset) => (
-            <Post key={asset.id} asset={asset} />
-          ))}
-          {/*<Post*/}
-          {/*  title="Playing Guitar @ Jim's Bar"*/}
-          {/*  description="Had a great time jamming with Jimmy here!"*/}
-          {/*  image="/images/rock.jpg"*/}
-          {/*/>*/}
-          {/*<Post*/}
-          {/*  title="Playing Guitar @ Jim's Bar"*/}
-          {/*  description="Had a great time jamming with Jimmy here!"*/}
-          {/*  image="/images/country.jpg"*/}
-          {/*/>*/}
-          {/*<Post*/}
-          {/*  title="Playing Guitar @ Jim's Bar"*/}
-          {/*  description="Had a great time jamming with Jimmy here!"*/}
-          {/*  image="/images/indie.jpg"*/}
-          {/*/>*/}
+            <TabsContent value="performances">
+              <MainContent content={content} />
+            </TabsContent>
+            <TabsContent value="reviews">
+              <Reviews userReviews={userReviews} />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </>

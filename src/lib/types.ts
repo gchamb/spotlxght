@@ -22,12 +22,14 @@ export type Genre = {
 
 export type Review = {
   id: string;
-  reviewer: string;
+  userId: string;
+  reviewerId: string;
   message: string | null;
   reviewedAt: Date;
-  rate: number;
-  userId: string;
+  rating: number;
 };
+
+export type Rating = 1 | 2 | 3 | 4 | 5;
 
 export type Asset = {
   id: string;
