@@ -33,19 +33,21 @@ export default function SideNav({
             ))}
           </div>
         </div>
-        <div className="col-span-1 mt-10 flex flex-col rounded-2xl border bg-[#222222] px-10 py-14 shadow-xl">
-          <h1 className="mb-8 text-center">Reviews</h1>
-          {!userReviews.length && (
-            <h1 className="text-center">No reviews yet.</h1>
-          )}
-          <div className="flex w-full flex-col gap-8">
-            <Suspense fallback={<LoadingReviews />}>
-              <div className="w-[314px]">
-                {userReviews.map((review) => (
-                  <ReviewContent key={review.id} review={review} />
-                ))}
-              </div>
-            </Suspense>
+        <div className="hidden xl:block">
+          <div className="col-span-1 mt-10 flex flex-col rounded-2xl border bg-[#222222] px-10 py-14 shadow-xl">
+            <h1 className="mb-8 text-center">Reviews</h1>
+            {!userReviews.length && (
+              <h1 className="text-center">No reviews yet.</h1>
+            )}
+            <div className="flex w-full flex-col gap-8">
+              <Suspense fallback={<LoadingReviews />}>
+                <div className="w-[314px]">
+                  {userReviews.map((review) => (
+                    <ReviewContent key={review.id} review={review} />
+                  ))}
+                </div>
+              </Suspense>
+            </div>
           </div>
         </div>
       </div>

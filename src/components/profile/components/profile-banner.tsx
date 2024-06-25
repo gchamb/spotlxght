@@ -26,7 +26,7 @@ export default async function ProfileBanner({
   const userRating = await getUserRating(userProfile.id);
 
   return (
-    <div className="relative flex h-96 flex-col rounded-2xl border bg-[#222222] shadow-xl">
+    <div className="relative flex h-[29rem] flex-col rounded-2xl border bg-[#222222] shadow-xl sm:h-96">
       <div className="h-[50%] rounded-2xl bg-white">
         {/* TODO */}
         <Suspense fallback={<Loader2 className="h-4 w-4 animate-spin" />}>
@@ -38,26 +38,30 @@ export default async function ProfileBanner({
         </Suspense>
       </div>
       <div className="container h-full">
-        <div className="flex h-full justify-between py-10">
-          <div className="min-w-56"></div>
-          <div className="absolute bottom-0 top-0 my-auto ml-8 h-48 w-48 rounded-full bg-gray-100">
+        <div className="flex h-full flex-col justify-center py-10 sm:flex-row sm:justify-between">
+          <div className="hidden min-w-48 md:block"></div>
+          <div className="absolute bottom-0 top-0 my-auto hidden h-48 w-48 rounded-full bg-gray-100 md:block">
             <img
               src={profilePictureSasUrl}
               className="h-full w-full rounded-full object-fill p-2"
               alt="profile picture"
             />
           </div>
-          <div className="container">
+          <div className="container text-center sm:text-left">
             <p className="font-light">
               {userProfile.genres.map((g) => g.genre).join(", ")}
             </p>
             <h1 className="text-3xl font-semibold">{userProfile.name}</h1>
             <p className="font-light text-[#eee]">{userProfile.address}</p>
           </div>
-          <div className="container flex h-full flex-col items-end justify-between">
-            <div className="flex h-full flex-col items-end justify-between">
-              <StarRatings rating={userRating} />
-              <UploadButton userProfile={userProfile} />
+          <div className="container flex h-full flex-col items-center justify-between sm:items-end">
+            <div className="flex h-full flex-col items-center justify-between sm:items-end">
+              <div className="my-4 sm:mb-0">
+                <StarRatings rating={userRating} />
+              </div>
+              <div className="pb-4 sm:pb-0">
+                <UploadButton userProfile={userProfile} />
+              </div>
             </div>
           </div>
         </div>

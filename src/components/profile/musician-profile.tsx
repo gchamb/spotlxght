@@ -45,14 +45,14 @@ export default async function MusicianProfile({
     <>
       <ProfileBanner userProfile={userProfile} />
 
-      <div className="my-16 flex w-full justify-between gap-36">
+      <div className="my-16 w-full justify-between gap-36 xl:flex">
         <SideNav
           userId={userProfile.id}
           userSongs={songs}
           userReviews={userReviews.slice(0, 3)}
           isCurrentUser={isCurrentUser}
         />
-        <div className="align-center col-span-2 flex w-[708px] max-w-full flex-col gap-12 rounded-2xl">
+        <div className="align-center col-span-2 mx-auto mt-16 flex w-[708px] max-w-full flex-col gap-12 rounded-2xl xl:mt-0">
           <Tabs defaultValue="performances">
             <div className="mb-12 flex justify-center">
               <TabsList className="p grid w-[400px] grid-cols-2">

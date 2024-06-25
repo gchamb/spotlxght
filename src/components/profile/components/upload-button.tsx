@@ -98,7 +98,7 @@ export default function UploadButton({
       <DialogTrigger asChild>
         <Button variant="default">Upload</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[425px]">
         <Form {...uploadFileForm}>
           <form onSubmit={uploadFileForm.handleSubmit(onFileUpload)}>
             <DialogHeader>

@@ -3,7 +3,7 @@
 import { type Asset } from "~/lib/types";
 import React from "react";
 
-export default function MusicPlayer({
+export default function VideoPlayer({
   asset,
 }: {
   asset: Asset & { sasUrl?: string };
