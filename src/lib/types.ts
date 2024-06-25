@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { constructZodLiteralUnionType } from "./zod-utilities";
+import { timeslots, genres } from "~/server/db/schema";
 
 // this file will include zod schemas and typescript types
 
@@ -13,11 +14,22 @@ export type ApplicationStatus = (typeof applicantStatuses)[number];
 
 export type MyEvents = z.infer<typeof myEventsDataSchema>;
 
+export type EventListings = MyEvents & {
+  venueName: string;
+  venueId: string;
+  timeslots: (typeof timeslots.$inferSelect)[];
+  totalApplicants: number;
+  totalTimeslots: number;
+  genres: Omit<typeof genres.$inferSelect, "userId">[];
+};
+
 export type CreateEvent = z.infer<typeof createEventSchema>;
 
 export type SetApplicantStatusRequest = z.infer<
   typeof setApplicantStatusRequest
 >;
+
+export type ApplyTimeslotRequest = z.infer<typeof applyTimeslotRequest>;
 
 export type GoogleInfo = {
   id: string;
@@ -203,4 +215,9 @@ export const setApplicantStatusRequest = z.object({
       .filter((status) => status !== "requested")
       .map((status) => z.literal(status)),
   ),
+});
+
+export const applyTimeslotRequest = z.object({
+  eventId: z.string(),
+  timeslotId: z.string(),
 });

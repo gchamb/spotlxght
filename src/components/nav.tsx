@@ -13,7 +13,7 @@ export default async function Nav() {
         <div>
           {session?.user.type === "venue" && <a href="/my-events">My Events</a>}
           {session?.user.type === "musician" && (
-            <a href="/listings">My Events</a>
+            <a href="/listings">Listings</a>
           )}
         </div>
       </div>

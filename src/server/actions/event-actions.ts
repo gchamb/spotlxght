@@ -3,7 +3,8 @@
 import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
 import {
-  ApplicationStatus,
+  applyTimeslotRequest,
+  ApplyTimeslotRequest,
   createEventSchema,
   SetApplicantStatusRequest,
   setApplicantStatusRequest,
@@ -125,7 +126,7 @@ export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
         eq(applications.status, "accepted"),
       ),
     });
-    console.log(acceptedApplication);
+
     if (status === "accepted" && acceptedApplication) {
       throw new Error("An applicant was already accepted for this timeslot.");
     }
@@ -151,6 +152,60 @@ export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
   } catch (err) {
     throw new Error(
       err instanceof Error ? err.message : "Unable to handle this request.",
+    );
+  }
+}
+
+export async function applyToTimeslot(data: ApplyTimeslotRequest) {
+  const session = await getSession();
+
+  if (session === null) return redirect("/musician/auth");
+
+  if (session.user.type !== "musician") return redirect("/");
+
+  try {
+    // validate input
+    const valid = applyTimeslotRequest.safeParse(data);
+
+    if (!valid.success) {
+      const zodError = valid.error.errors[0];
+      throw new Error(zodError?.message);
+    }
+    const { eventId, timeslotId } = valid.data;
+
+    // make sure this slot isn't already booked and that you haven't applied for this timeslot before
+    const applicants = await db.query.applications.findMany({
+      where: and(
+        eq(applications.timeslotId, timeslotId),
+        eq(applications.eventId, eventId),
+      ),
+    });
+
+    for (const applicant of applicants) {
+      if (applicant.status === "accepted") {
+        throw new Error("Timeslot is already booked.");
+      }
+
+      if (applicant.userId === session.userId) {
+        throw new Error("You've already applied to this timeslot.");
+      }
+    }
+
+    // insert into applicants table
+    await db.insert(applications).values({
+      eventId,
+      timeslotId,
+      userId: session.userId,
+      status: "requested",
+      appliedAt: new Date(),
+    });
+
+    revalidatePath("/listings", "page");
+  } catch (err) {
+    throw new Error(
+      err instanceof Error
+        ? err.message
+        : "Unable to process this request. Try Again.",
     );
   }
 }

@@ -1,10 +1,13 @@
+import { getRandomColorPair } from "~/lib/utils";
+
 type ChipProps = {
   text: string;
   size?: "sm" | "xs";
-  color: "gray" | "green" | "yellow" | "red";
+  color?: "gray" | "green" | "yellow" | "red";
+  randomColor?: boolean;
 };
 
-export default function Chip({ text, size, color }: ChipProps) {
+export default function Chip({ text, size, color, randomColor }: ChipProps) {
   const sizeStyles =
     size === "sm" || size === undefined
       ? "p-1 text-sm max-w-[100px]"
@@ -18,9 +21,23 @@ export default function Chip({ text, size, color }: ChipProps) {
           ? "bg-yellow-800 text-yellow-500"
           : "bg-red-800 text-red-500";
 
+  //   const randomColorPair = randomColor ? getRandomColorPair() : null;
+
   return (
-    <div className={`${sizeStyles} ${colorStyles} flex justify-center drop-shadow-sm drop-shadow-glow rounded`}>
-      <span className="text-center">{text}</span>
+    <div
+      className={`${sizeStyles} ${!randomColor && colorStyles} drop-shadow-glow flex justify-center rounded drop-shadow-sm`}
+      style={
+        {
+          // background: randomColorPair?.darkColor,
+        }
+      }
+    >
+      <span
+        className="text-center"
+        // style={{ color: randomColorPair?.lightColor }}
+      >
+        {text}
+      </span>
     </div>
   );
 }

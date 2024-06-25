@@ -13,6 +13,7 @@ import {
 } from "drizzle-orm/mysql-core";
 
 import {
+  TimeslotTimes,
   type ApplicationStatus,
   type EventStatus,
   type UserType,
@@ -214,8 +215,12 @@ export const timeslots = createTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    startTime: varchar("startTime", { length: 10 }).notNull(),
-    endTime: varchar("endTime", { length: 10 }).notNull(),
+    startTime: varchar("startTime", { length: 10 })
+      .$type<TimeslotTimes>()
+      .notNull(),
+    endTime: varchar("endTime", { length: 10 })
+      .$type<TimeslotTimes>()
+      .notNull(),
     timezone: varchar("timezone", { length: 5 }).default("CST").notNull(),
     status: varchar("status", { length: 15 })
       .$type<EventStatus>()
