@@ -146,6 +146,7 @@ export const reviews = createTable(
   },
   (review) => ({
     userIdIdx: index("reviews_userId_idx").on(review.userId),
+    reviewerIdIdx: index("reviews_reviewerId_idx").on(review.reviewerId),
   }),
 );
 

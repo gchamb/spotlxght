@@ -4,7 +4,7 @@ import { type Review, type User } from "~/lib/types";
 export default async function Reviews({
   userReviews,
 }: {
-  userReviews: (Review & { user: User })[];
+  userReviews: ({ review: Review } & { user: User })[];
 }) {
   return (
     <div>
@@ -14,12 +14,12 @@ export default async function Reviews({
             <h1>No reviews yet.</h1>
           </div>
         )}
-        {userReviews.map((review) => (
+        {userReviews.map((userReview) => (
           <div
-            key={review.id}
+            key={userReview.review.id}
             className="flex gap-8 rounded-2xl bg-[#222222] p-10 drop-shadow-lg"
           >
-            <ReviewContent review={review} />
+            <ReviewContent review={userReview.review} user={userReview.user} />
           </div>
         ))}
       </div>

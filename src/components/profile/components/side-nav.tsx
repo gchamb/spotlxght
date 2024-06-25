@@ -13,7 +13,7 @@ export default function SideNav({
 }: {
   userId: string;
   userSongs: (Asset & { sasUrl?: string })[];
-  userReviews: (Review & { user: User })[];
+  userReviews: ({ review: Review } & { user: User })[];
   isCurrentUser: boolean;
 }) {
   return (
@@ -36,14 +36,14 @@ export default function SideNav({
         </div>
         <div className="hidden xl:block">
           <div className="col-span-1 mt-10 flex flex-col rounded-2xl border bg-[#222222] px-10 py-14 shadow-xl">
-            <h1 className="mb-8 text-center">Reviews</h1>
+            <h1 className="mb-8 text-center font-semibold">Reviews</h1>
             {!userReviews.length && (
               <h1 className="text-center">No reviews yet.</h1>
             )}
             <div className="w-[350px]">
               <div className="mx-auto flex min-w-full flex-col gap-8">
                 <Suspense fallback={<LoadingReviews />}>
-                  {userReviews.map((review) => (
+                  {userReviews.map((userReview) => (
                     // <ReviewContent key={review.id} review={review} />
                     <div className="flex min-w-full items-center">
                       <div>
@@ -57,17 +57,20 @@ export default function SideNav({
                           </Avatar>
                           <div className="ml-3 flex flex-col">
                             <h1 className="font-semibold">
-                              {review.user.name}
+                              {userReview.user.name}
                             </h1>
                             <div className="pt-1">
-                              <StarRatings rating={review.rating} size={22} />
+                              <StarRatings
+                                rating={userReview.review.rating}
+                                size={22}
+                              />
                             </div>
                           </div>
                         </div>
                         {/*<h4 className="min-w-[64px]2 text-right font-light text-gray-200">*/}
                         {/*  {review.reviewedAt.toDateString()}*/}
                         {/*</h4>*/}
-                        <h2 className="mt-4">{review.message}</h2>
+                        <h2 className="mt-4">{userReview.review.message}</h2>
                       </div>
                     </div>
                   ))}

@@ -4,7 +4,7 @@ import { type AzureBlobContainer, type UserProfile } from "~/lib/types";
 import { revalidatePath } from "next/cache";
 import { assetsContainer } from "~/server/azure";
 import { db } from "~/server/db";
-import { assets } from "~/server/db/schema";
+import { assets, reviews, users } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function uploadFile(
@@ -45,6 +45,14 @@ export async function uploadFile(
   console.log("inserted into db");
 
   revalidatePath(`/profile/${userProfile.id}`);
+}
+
+export async function getUserReviews(userId: string) {
+  return db
+    .select()
+    .from(reviews)
+    .where(eq(reviews.userId, userId))
+    .innerJoin(users, eq(reviews.reviewerId, users.id));
 }
 
 export async function deleteAsset(assetId: string, userId: string) {

@@ -10,9 +10,7 @@ import SideNav from "~/components/profile/components/side-nav";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import MainContent from "~/components/profile/components/main-content";
 import Reviews from "~/components/profile/components/reviews";
-import { db } from "~/server/db";
-import { eq } from "drizzle-orm";
-import { reviews } from "~/server/db/schema";
+import { getUserReviews } from "~/server/actions/profile";
 
 export default async function MusicianProfile({
   userProfile,
@@ -31,15 +29,14 @@ export default async function MusicianProfile({
       content.push(asset);
     }
   });
-  const userReviews: (Review & { user: User })[] =
-    await db.query.reviews.findMany({
-      with: { user: true },
-      where: eq(reviews.userId, userProfile.id),
-    });
+  const userReviews: ({ review: Review } & { user: User })[] =
+    await getUserReviews(userProfile.id);
 
   content.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
   songs.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
-  userReviews.sort((a, b) => b.reviewedAt.getTime() - a.reviewedAt.getTime());
+  userReviews.sort(
+    (a, b) => b.review.reviewedAt.getTime() - a.review.reviewedAt.getTime(),
+  );
 
   return (
     <>
@@ -63,7 +60,7 @@ export default async function MusicianProfile({
             <TabsContent value="performances">
               <MainContent
                 content={content}
-                userId={userProfile.id}
+                userProfile={userProfile}
                 isCurrentUser={isCurrentUser}
               />
             </TabsContent>

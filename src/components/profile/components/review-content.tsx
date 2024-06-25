@@ -2,15 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { StarRatings } from "~/components/profile/components/star-ratings";
 import { type Review, type User } from "~/lib/types";
 
-type Custom = {
-  review: Review;
-  user: User;
-};
-
 export default function ReviewContent({
   review,
+  user,
 }: {
-  review: Review & { user: User };
+  review: Review;
+  user: User;
 }) {
   return (
     <div className="flex w-full items-center">
@@ -20,7 +17,7 @@ export default function ReviewContent({
             <AvatarImage src="/images/edm.jpg" alt="profile picture" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <h1 className="ml-3 font-semibold">{review.user.name}</h1>
+          <h1 className="ml-3 font-semibold">{user.name}</h1>
         </div>
         <StarRatings rating={review.rating} size={22} />
         <h4 className="mt-1 font-light text-gray-200">
