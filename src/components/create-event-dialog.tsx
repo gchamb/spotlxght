@@ -36,7 +36,7 @@ export default function CreateEventDialog({
   const [timeslots, setTimeslots] = useState([crypto.randomUUID()]);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<string>(new Date());
 
   const eventOnClose = () => {
     onClose();
@@ -106,7 +106,7 @@ export default function CreateEventDialog({
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="pay" className="text-right">
-                Pay
+                Pay Per Slot
               </Label>
               <Select name="pay">
                 <SelectTrigger className="w-[200px] ">
@@ -231,7 +231,7 @@ export default function CreateEventDialog({
               type="submit"
             >
               {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-              Save changes
+              Checkout
             </Button>
           </DialogFooter>
         </form>

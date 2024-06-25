@@ -8,7 +8,12 @@ export type Credentials = z.infer<typeof credentialsSchema>;
 
 export type UserType = "venue" | "musician";
 
-export type EventStatus = "open" | "in-progress" | "completed" | "closed";
+export type EventStatus =
+  | "draft"
+  | "open"
+  | "in-progress"
+  | "completed"
+  | "closed";
 
 export type ApplicationStatus = (typeof applicantStatuses)[number];
 
@@ -183,7 +188,7 @@ export const myEventsDataSchema = z.object({
     z.literal("completed"),
     z.literal("closed"),
   ]),
-  date: z.date(),
+  date: z.string(),
   amount: z.number(),
   venueId: z.string().uuid(),
   createdAt: z.date(),

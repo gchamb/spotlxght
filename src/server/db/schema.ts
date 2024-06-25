@@ -43,6 +43,7 @@ export const users = createTable("user", {
   profilePicImage: varchar("profilePicImage", { length: 255 }),
   profileBannerImage: varchar("profileBannerImage", { length: 255 }),
   type: varchar("type", { length: 10 }).$type<UserType>(),
+  stripeAccountId: varchar("stripeAccountId", { length: 100 }),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -52,6 +53,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   assets: many(assets),
   applications: many(applications),
   genres: many(genres),
+  stripeCheckouts: many(stripeCheckouts),
+  stripePayouts: many(stripePayouts),
 }));
 
 export const accounts = createTable(
@@ -189,9 +192,9 @@ export const events = createTable(
     status: varchar("status", { length: 15 })
       .$type<EventStatus>()
       .notNull()
-      .default("open"),
+      .default("draft"),
     amount: float("amount").notNull(),
-    date: date("date", { mode: "date" }).notNull(),
+    date: date("date", { mode: "string" }).notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
     venueId: varchar("venueId", { length: 191 })
       .notNull()
@@ -276,5 +279,67 @@ export const applicantsRelations = relations(applications, ({ one }) => ({
   event: one(events, {
     fields: [applications.eventId],
     references: [events.id],
+  }),
+}));
+
+export const stripeCheckouts = createTable(
+  "stripe_checkout",
+  {
+    checkoutSessionId: varchar("checkoutSessionId", { length: 191 })
+      .notNull()
+      .primaryKey(),
+    status: varchar("status", { length: 10 }).notNull(),
+    paymentStatus: varchar("paymentStatus", { length: 10 }).notNull(),
+    amount: int("amount").notNull(),
+    eventId: varchar("eventId", { length: 191 })
+      .notNull()
+      .references(() => events.id),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (checkout) => ({
+    userIdIdx: index("checkout_userId_idx").on(checkout.userId),
+  }),
+);
+
+export const stripeCheckoutsRelations = relations(
+  stripeCheckouts,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [stripeCheckouts.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const stripePayouts = createTable(
+  "stripe_payout",
+  {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    status: varchar("status", { length: 10 }).notNull(),
+    currency: varchar("currency", { length: 5 }).notNull().default("usd"),
+    amount: int("amount"),
+    eventId: varchar("eventId", { length: 191 })
+      .notNull()
+      .references(() => events.id),
+    timeslotId: varchar("timeslotId", { length: 191 })
+      .notNull()
+      .references(() => timeslots.id),
+    stripeAccountId: varchar("stripeAccountId", { length: 191 })
+      .notNull()
+      .references(() => users.stripeAccountId),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (payout) => ({
+    accountIdIdx: index("payout_accountId_idx").on(payout.stripeAccountId),
+  }),
+);
+
+export const stripePayoutsRelations = relations(stripePayouts, ({ one }) => ({
+  user: one(users, {
+    fields: [stripePayouts.stripeAccountId],
+    references: [users.stripeAccountId],
   }),
 }));

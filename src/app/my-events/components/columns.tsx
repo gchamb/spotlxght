@@ -68,7 +68,7 @@ export const columns: ColumnDef<MyEvents>[] = [
 
       return (
         <div className="text-right font-medium">
-          {date.toLocaleDateString()}
+          {date}
         </div>
       );
     },

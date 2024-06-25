@@ -5,6 +5,9 @@ import { redirect } from "next/navigation";
 import { stripe } from "../stripe";
 import { headers } from "next/headers";
 import { getSession } from "~/lib/auth";
+import { db } from "../db";
+import { users } from "../db/schema";
+import { eq } from "drizzle-orm";
 
 export async function onboardUser() {
   const requestHeaders = headers();
@@ -29,6 +32,13 @@ export async function onboardUser() {
         },
       },
     });
+
+    // update user account
+    await db
+      .update(users)
+      .set({ stripeAccountId: account.id })
+      .where(eq(users.id, session.userId));
+
     accountLink = await stripe.accountLinks.create({
       account: account.id,
       return_url: `${requestHeaders.get("origin")}/profile/${session.user.id}`,
