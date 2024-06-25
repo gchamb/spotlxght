@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   bigint,
+  date,
   float,
   index,
   int,
@@ -184,9 +185,13 @@ export const events = createTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     name: varchar("name", { length: 100 }).notNull(),
-    status: varchar("status", { length: 15 }).$type<EventStatus>().notNull(),
+    status: varchar("status", { length: 15 })
+      .$type<EventStatus>()
+      .notNull()
+      .default("open"),
     amount: float("amount").notNull(),
-    createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+    date: date("date", { mode: "date" }).notNull(),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
     venueId: varchar("venueId", { length: 191 })
       .notNull()
       .references(() => users.id),
@@ -209,9 +214,13 @@ export const timeslots = createTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    startDate: timestamp("startDate", { mode: "date" }).notNull(),
-    endDate: timestamp("endDate", { mode: "date" }).notNull(),
+    startTime: varchar("startTime", { length: 10 }).notNull(),
+    endTime: varchar("endTime", { length: 10 }).notNull(),
     timezone: varchar("timezone", { length: 5 }).default("CST").notNull(),
+    status: varchar("status", { length: 15 })
+      .$type<EventStatus>()
+      .notNull()
+      .default("open"),
     eventId: varchar("eventId", { length: 191 })
       .notNull()
       .references(() => events.id, { onDelete: "cascade" }),
@@ -240,7 +249,7 @@ export const applications = createTable(
     status: varchar("status", { length: 15 })
       .$type<ApplicationStatus>()
       .notNull(),
-    appliedAt: timestamp("endDate", { mode: "date" }).notNull(),
+    appliedAt: timestamp("appliedAt", { mode: "date" }).notNull().defaultNow(),
   },
   (application) => ({
     pk: primaryKey({
