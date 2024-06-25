@@ -11,7 +11,7 @@ export default async function Reviews({
       <div className="flex flex-col gap-8">
         {!userReviews.length && (
           <div className="flex justify-center">
-            <h1>No posts yet.</h1>
+            <h1>No reviews yet.</h1>
           </div>
         )}
         {userReviews.map((review) => (

@@ -2,7 +2,7 @@ import { AzureBlobContainer, type UserProfile } from "~/lib/types";
 import { getSasUrl } from "~/lib/azure";
 import { Loader2 } from "lucide-react";
 import UploadButton from "~/components/profile/components/upload-button";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { StarRatings } from "~/components/profile/components/star-ratings";
 import { getUserRating } from "~/lib/profile";
 
@@ -11,28 +11,43 @@ export default async function ProfileBanner({
 }: {
   userProfile: UserProfile;
 }) {
+  const profilePictureSasUrl = userProfile.profilePicImage
+    ? (await getSasUrl(
+        userProfile.profilePicImage,
+        AzureBlobContainer.PROFILE,
+      )) ?? "/images/default-profile.jpg"
+    : "/images/default-profile.jpg";
   const profileBannerSasUrl = userProfile.profileBannerImage
     ? (await getSasUrl(
         userProfile.profileBannerImage,
-        AzureBlobContainer.PROFILE,
+        AzureBlobContainer.BANNER,
       )) ?? "/images/default-banner.jpg"
     : "/images/default-banner.jpg";
   const userRating = await getUserRating(userProfile.id);
 
   return (
-    <div className="flex h-96 flex-col rounded-2xl border bg-[#222222] shadow-xl">
+    <div className="relative flex h-96 flex-col rounded-2xl border bg-[#222222] shadow-xl">
       <div className="h-[50%] rounded-2xl bg-white">
         {/* TODO */}
         <Suspense fallback={<Loader2 className="h-4 w-4 animate-spin" />}>
           <img
             src={profileBannerSasUrl}
             className="h-full w-full rounded-xl object-cover"
+            alt="profile banner"
           />
         </Suspense>
       </div>
       <div className="container h-full">
         <div className="flex h-full justify-between py-10">
-          <div className="container ">
+          <div className="min-w-56"></div>
+          <div className="absolute bottom-0 top-0 my-auto ml-8 h-48 w-48 rounded-full bg-gray-100">
+            <img
+              src={profilePictureSasUrl}
+              className="h-full w-full rounded-full object-fill p-2"
+              alt="profile picture"
+            />
+          </div>
+          <div className="container">
             <p className="font-light">
               {userProfile.genres.map((g) => g.genre).join(", ")}
             </p>

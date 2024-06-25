@@ -194,6 +194,16 @@ export default function UploadButton({
                                     "The upload must be a maximum of 5MB.",
                                 });
                               }
+                              if (
+                                !files[0].type.includes("video") &&
+                                !files[0].type.includes("audio")
+                              ) {
+                                uploadFileForm.setError("uploadItem", {
+                                  type: "fileType",
+                                  message:
+                                    "Only MP3, WAV, OGG, MP4, OGG, and WEBM files are allowed to be uploaded.",
+                                });
+                              }
 
                               uploadFileForm.setValue("uploadItem", files[0]);
                             }}

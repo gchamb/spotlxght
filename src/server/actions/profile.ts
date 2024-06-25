@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { assetsContainer } from "~/server/azure";
 import { db } from "~/server/db";
 import { assets } from "~/server/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function uploadFile(
   userProfile: UserProfile,
@@ -44,4 +45,9 @@ export async function uploadFile(
   console.log("inserted into db");
 
   revalidatePath(`/profile/${userProfile.id}`);
+}
+
+export async function deleteAsset(assetId: string, userId: string) {
+  await db.delete(assets).where(eq(assets.id, assetId));
+  revalidatePath(`/profile/${userId}`);
 }

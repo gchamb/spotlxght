@@ -47,6 +47,7 @@ export default async function MusicianProfile({
 
       <div className="my-16 flex w-full justify-between gap-36">
         <SideNav
+          userId={userProfile.id}
           userSongs={songs}
           userReviews={userReviews.slice(0, 3)}
           isCurrentUser={isCurrentUser}
@@ -60,7 +61,11 @@ export default async function MusicianProfile({
               </TabsList>
             </div>
             <TabsContent value="performances">
-              <MainContent content={content} />
+              <MainContent
+                content={content}
+                userId={userProfile.id}
+                isCurrentUser={isCurrentUser}
+              />
             </TabsContent>
             <TabsContent value="reviews">
               <Reviews userReviews={userReviews} />
