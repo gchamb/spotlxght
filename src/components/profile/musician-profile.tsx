@@ -45,7 +45,7 @@ export default async function MusicianProfile({
     <>
       <ProfileBanner userProfile={userProfile} />
 
-      <div className="my-16 w-full justify-between gap-36 xl:flex">
+      <div className="my-16 w-full justify-between gap-20 xl:flex">
         <SideNav
           userId={userProfile.id}
           userSongs={songs}
