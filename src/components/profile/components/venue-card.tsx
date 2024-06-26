@@ -23,7 +23,7 @@ export default function VenueCard({ event }: { event: EventListing }) {
 
   return (
     <div className="mx-auto h-64 w-72 rounded-2xl bg-[#222222] shadow-2xl sm:w-80">
-      <div className="container flex h-full flex-col justify-between gap-8 py-10">
+      <div className="container flex h-full flex-col justify-between gap-8 pb-6 pt-10">
         <div className="flex justify-between gap-12">
           <h1 className="w-fit text-2xl">{event.name}</h1>
           <h1 className="w-fit pt-1 text-2xl font-bold">$50</h1>
@@ -37,7 +37,7 @@ export default function VenueCard({ event }: { event: EventListing }) {
               router.push(`/events/${event.id}`);
             }
           }}
-          className="group flex justify-between rounded-2xl py-4 hover:cursor-pointer"
+          className="group flex items-end justify-between rounded-2xl py-4 hover:cursor-pointer"
         >
           <h1 className="my-auto w-fit group-hover:font-bold">Timeslots</h1>
           <MoveRight
