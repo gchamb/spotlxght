@@ -14,10 +14,14 @@ export default async function Nav() {
           </Link>
           <div>
             {session?.user.type === "venue" && (
-              <a href="/my-events">My Events</a>
+              <a className="hover:font-semibold" href="/my-events">
+                My Events
+              </a>
             )}
             {session?.user.type === "musician" && (
-              <a href="/listings">Listings</a>
+              <a className="hover:font-semibold" href="/listings">
+                Listings
+              </a>
             )}
           </div>
         </div>
