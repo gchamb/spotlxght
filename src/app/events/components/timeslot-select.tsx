@@ -15,6 +15,9 @@ export default function TimeslotSelect({
   applicants,
 }: TimeslotProps) {
   const [timeslotId, setTimeslotId] = useState(timeslots[0]?.id);
+  const [timeslotData, setTimeslotData] = useState<
+    TimeslotProps["timeslots"][number] | undefined
+  >(timeslots.find((t) => t.id === timeslotId));
 
   return (
     <div className="flex flex-col gap-y-8 md:hidden ">
@@ -23,6 +26,7 @@ export default function TimeslotSelect({
         onValueChange={(timeslotId) => {
           console.log(timeslotId);
           setTimeslotId(timeslotId);
+          setTimeslotData(timeslots.find((t) => t.id === timeslotId));
         }}
       >
         <SelectTrigger className="mx-auto w-[180px]">
@@ -54,7 +58,13 @@ export default function TimeslotSelect({
             (applicant) => applicant.applicantData?.timeslotId === timeslotId,
           )
           .map((applicant) => {
-            return <ApplicantRow key={applicant.id} applicant={applicant} />;
+            return (
+              <ApplicantRow
+                key={applicant.id}
+                applicant={applicant}
+                timeslotStatus={timeslotData?.status ?? "open"}
+              />
+            );
           })}
       </div>
     </div>

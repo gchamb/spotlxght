@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { useState, useTransition } from "react";
 import { applyToTimeslot } from "~/server/actions/event-actions";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 type TimeslotApplyDialogProps = {
   open: boolean;
@@ -59,6 +60,7 @@ export default function ApplyDialog({
 
         setSelectedTimeslot(null);
         onClose();
+        toast("You successfully applied.");
       } catch (err) {
         const error = err as Error;
         setError(error.message);
