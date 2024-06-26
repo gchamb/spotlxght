@@ -1,4 +1,4 @@
-import { Check, Loader2, User, X } from "lucide-react";
+import { Check, HandCoins, Loader, Loader2, User, X } from "lucide-react";
 import { TimeslotProps } from "./timeslot-tabs";
 import { Button } from "~/components/ui/button";
 // import Ratings from "~/components/ui/ratings";
@@ -15,13 +15,22 @@ import {
 } from "~/components/ui/card";
 import { setEventApplicantStatus } from "~/server/actions/event-actions";
 import { toast } from "sonner";
-import { SetApplicantStatusRequest } from "~/lib/types";
+import {
+  EventStatus,
+  ReleaseFundsRequest,
+  SetApplicantStatusRequest,
+} from "~/lib/types";
+import { transfer } from "~/server/actions/stripe";
 
 type ApplicantRowProps = {
   applicant: TimeslotProps["applicants"][number];
+  timeslotStatus: EventStatus;
 };
 
-export default function ApplicantCard({ applicant }: ApplicantRowProps) {
+export default function ApplicantCard({
+  applicant,
+  timeslotStatus,
+}: ApplicantRowProps) {
   const [isPending, startTransition] = useTransition();
   const [selectedStatus, setSelectedStatus] =
     useState<SetApplicantStatusRequest["status"]>();
@@ -43,6 +52,23 @@ export default function ApplicantCard({ applicant }: ApplicantRowProps) {
         toast(error.message);
       } finally {
         setSelectedStatus(undefined);
+      }
+    });
+  };
+
+  const releaseFunds = async (data: ReleaseFundsRequest) => {
+    if (data.eventId === "" || data.userId === "" || data.timeslotId === "") {
+      toast("Unable to release funds");
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        await transfer(data);
+        toast("Successfully released the funds.");
+      } catch (err) {
+        const error = err as Error;
+        toast(error.message);
       }
     });
   };
@@ -143,6 +169,27 @@ export default function ApplicantCard({ applicant }: ApplicantRowProps) {
             </div>
           </div>
         )}
+
+        {applicant.applicantData?.status === "accepted" &&
+          timeslotStatus === "completed" && (
+            <div>
+              <Button
+                disabled={isPending}
+                onClick={() =>
+                  releaseFunds({
+                    eventId: applicant.applicantData?.eventId ?? "",
+                    userId: applicant.applicantData?.userId ?? "",
+                    timeslotId: applicant.applicantData?.timeslotId ?? "",
+                  })
+                }
+                className="flex items-center gap-x-2"
+              >
+                {isPending && <Loader2 className="animate-spin" />}
+                <HandCoins />
+                Release Funds
+              </Button>
+            </div>
+          )}
       </CardFooter>
     </Card>
   );

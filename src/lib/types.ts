@@ -36,6 +36,8 @@ export type SetApplicantStatusRequest = z.infer<
 
 export type ApplyTimeslotRequest = z.infer<typeof applyTimeslotRequest>;
 
+export type ReleaseFundsRequest = z.infer<typeof releaseFundsRequest>;
+
 export type GoogleInfo = {
   id: string;
   email: string;
@@ -225,4 +227,10 @@ export const setApplicantStatusRequest = z.object({
 export const applyTimeslotRequest = z.object({
   eventId: z.string(),
   timeslotId: z.string(),
+});
+
+export const releaseFundsRequest = z.object({
+  eventId: z.string().min(1, "Invalid Request"),
+  timeslotId: z.string().min(1, "Invalid Request"),
+  userId: z.string().min(1, "Invalid Request"),
 });
