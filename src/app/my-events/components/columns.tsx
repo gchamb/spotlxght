@@ -29,8 +29,8 @@ export const columns: ColumnDef<MyEvents>[] = [
               : status === "in-progress"
                 ? "yellow"
                 : status === "closed" || status === "completed"
-                  ? "red"
-                  : "gray"
+                  ? "green"
+                  : "red"
           }
         />
       );
@@ -66,11 +66,7 @@ export const columns: ColumnDef<MyEvents>[] = [
     cell: ({ row }) => {
       const date = row.original.date;
 
-      return (
-        <div className="text-right font-medium">
-          {date}
-        </div>
-      );
+      return <div className="text-right font-medium">{date}</div>;
     },
   },
   {

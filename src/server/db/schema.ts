@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   bigint,
+  boolean,
   date,
   float,
   index,
@@ -343,3 +344,50 @@ export const stripePayoutsRelations = relations(stripePayouts, ({ one }) => ({
     references: [users.stripeAccountId],
   }),
 }));
+
+export const stripeTransfers = createTable(
+  "stripe_transfer",
+  {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    currency: varchar("currency", { length: 5 }).notNull().default("usd"),
+    amount: int("amount").notNull(),
+    reversed: boolean("reversed").notNull(),
+    balanceTransaction: varchar("balanceTransaction", {
+      length: 191,
+    }).notNull(),
+    transferGroup: varchar("transferGroup", { length: 191 })
+      .notNull()
+      .references(() => events.id),
+    timeslotId: varchar("timeslotId", { length: 191 })
+      .notNull()
+      .references(() => timeslots.id),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id),
+    destination: varchar("destination", { length: 191 })
+      .notNull()
+      .references(() => users.stripeAccountId),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (transfers) => ({
+    accountIdIdx: index("transfer_accountId_idx").on(transfers.destination),
+  }),
+);
+
+export const stripeTransfersRelations = relations(
+  stripeTransfers,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [stripeTransfers.userId],
+      references: [users.id],
+    }),
+    event: one(events, {
+      fields: [stripeTransfers.transferGroup],
+      references: [events.id],
+    }),
+    timeslot: one(timeslots, {
+      fields: [stripeTransfers.timeslotId],
+      references: [timeslots.id],
+    }),
+  }),
+);

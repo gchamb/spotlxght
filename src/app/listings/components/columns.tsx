@@ -84,11 +84,7 @@ export const columns: ColumnDef<EventListings>[] = [
     cell: ({ row }) => {
       const date = row.original.date;
 
-      return (
-        <div className="text-right font-medium">
-          {date.toUTCString().split("00:")[0]}
-        </div>
-      );
+      return <div className="text-right font-medium">{date}</div>;
     },
   },
   {
@@ -114,7 +110,7 @@ export const columns: ColumnDef<EventListings>[] = [
     cell: ({ row }) => {
       const eventDetails = row.original;
 
-      return <Actions eventDetails={eventDetails}  />;
+      return <Actions eventDetails={eventDetails} />;
     },
   },
 ];
