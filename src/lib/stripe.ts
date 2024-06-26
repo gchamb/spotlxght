@@ -32,7 +32,7 @@ export function createCheckoutSession(
       },
     ],
     payment_intent_data: {
-      transfer_group: crypto.randomUUID(),
+      transfer_group: metadata?.eventId,
     },
     metadata: {
       ...metadata,
