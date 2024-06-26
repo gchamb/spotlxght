@@ -8,7 +8,7 @@ export async function GET() {
   }
 
   //   only return the needed information
-  const { user, userId, ...rest } = session;
+  const { user, ...rest } = session;
   const { type } = user;
 
   return Response.json({ ...rest, type });

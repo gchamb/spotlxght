@@ -1,22 +1,25 @@
 import {
   type Asset,
   type Review,
+  Session,
   type User,
   type UserProfile,
 } from "~/lib/types";
 import { getUserAssets } from "~/lib/profile";
-import ProfileBanner from "~/components/profile/components/profile-banner";
 import SideNav from "~/components/profile/components/side-nav";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import MainContent from "~/components/profile/components/main-content";
 import Reviews from "~/components/profile/components/reviews";
 import { getUserReviews } from "~/server/actions/profile";
+import ProfileBanner from "~/components/profile/components/profile-banner";
+import MainContent from "~/components/profile/components/main-content";
 
 export default async function MusicianProfile({
   userProfile,
+  session,
   isCurrentUser,
 }: {
   userProfile: UserProfile;
+  session: Session;
   isCurrentUser: boolean;
 }) {
   const userAssets = await getUserAssets(userProfile);
@@ -32,15 +35,9 @@ export default async function MusicianProfile({
   const userReviews: ({ review: Review } & { user: User })[] =
     await getUserReviews(userProfile.id);
 
-  content.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
-  songs.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
-  userReviews.sort(
-    (a, b) => b.review.reviewedAt.getTime() - a.review.reviewedAt.getTime(),
-  );
-
   return (
     <>
-      <ProfileBanner userProfile={userProfile} />
+      <ProfileBanner userProfile={userProfile} isCurrentUser={isCurrentUser} />
 
       <div className="my-16 w-full justify-between gap-20 xl:flex">
         <SideNav

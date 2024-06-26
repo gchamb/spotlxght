@@ -89,10 +89,8 @@ export default function VideoPlayer({
   // );
 
   return (
-    <React.Fragment key={asset.id}>
-      <video controls={true}>
-        <source key={asset.id} src={asset.sasUrl} type={asset.mimetype} />
-      </video>
-    </React.Fragment>
+    <video key={asset.id} controls={true}>
+      <source key={asset.id} src={asset.sasUrl} type={asset.mimetype} />
+    </video>
   );
 }

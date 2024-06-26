@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { constructZodLiteralUnionType } from "./zod-utilities";
-import { timeslots, genres } from "~/server/db/schema";
+import { genres, timeslots } from "~/server/db/schema";
+import { getSession } from "~/lib/auth";
 
 export type Credentials = z.infer<typeof credentialsSchema>;
 
@@ -15,6 +16,8 @@ export type User = {
   profileBannerImage: string | null;
   type: UserType | null;
 };
+
+export type Session = Awaited<ReturnType<typeof getSession>>;
 
 export type Genre = {
   id: string;
@@ -65,9 +68,9 @@ export type EventStatus = "open" | "in-progress" | "completed" | "closed";
 
 export type ApplicationStatus = (typeof applicantStatuses)[number];
 
-export type MyEvents = z.infer<typeof myEventsDataSchema>;
+export type MyEvent = z.infer<typeof myEventsDataSchema>;
 
-export type EventListings = MyEvents & {
+export type EventListing = MyEvent & {
   venueName: string;
   venueId: string;
   timeslots: (typeof timeslots.$inferSelect)[];

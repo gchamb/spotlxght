@@ -18,7 +18,7 @@ import {
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type z } from "zod";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Form,
   FormControl,
@@ -35,6 +35,7 @@ export default function UploadButton({
 }: {
   userProfile: UserProfile;
 }) {
+  const fileRef = useRef<HTMLInputElement | null>();
   const [open, setOpen] = useState(false);
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -146,8 +147,11 @@ export default function UploadButton({
                             <FormLabel>Description</FormLabel>
                             <FormControl>
                               <Input
+                                value={field.value ?? ""}
                                 placeholder="description (optional)"
-                                {...field}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                                ref={field.ref}
                               />
                             </FormControl>
                           </FormItem>
@@ -174,6 +178,10 @@ export default function UploadButton({
                             className="block bg-white text-black"
                             disabled={field.disabled}
                             onBlur={field.onBlur}
+                            ref={(ref) => {
+                              fileRef.current = ref;
+                              field.ref(ref);
+                            }}
                             onChange={(e) => {
                               const { files } = e.currentTarget;
                               if (!files?.[0]) {
@@ -205,9 +213,11 @@ export default function UploadButton({
                                 });
                               }
 
+                              // const duration = await getDuration(files[0]);
+                              // if (duration....)
+
                               uploadFileForm.setValue("uploadItem", files[0]);
                             }}
-                            ref={field.ref}
                             name={field.name}
                           />
                         </FormControl>

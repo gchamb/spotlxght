@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { type Asset, UserProfile } from "~/lib/types";
 import MusicianContent from "~/components/profile/components/musician-content";
@@ -15,7 +13,7 @@ export default function MainContent({
   isCurrentUser: boolean;
 }) {
   if (userProfile.type === "venue") {
-    return <VenueContent />;
+    return <VenueContent userProfile={userProfile} />;
   } else {
     return (
       <MusicianContent

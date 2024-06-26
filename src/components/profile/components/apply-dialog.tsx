@@ -1,4 +1,3 @@
-import { TimeslotProps } from "~/app/events/components/timeslot-tabs";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +7,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { TimeslotTimes } from "~/lib/types";
-import { Button } from "./ui/button";
+import { Button } from "~/components/ui/button";
 import { useState, useTransition } from "react";
 import { applyToTimeslot } from "~/server/actions/event-actions";
 import { Loader2 } from "lucide-react";

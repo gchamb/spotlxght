@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { assetsContainer } from "~/server/azure";
 import { db } from "~/server/db";
 import { assets, reviews, users } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 export async function uploadFile(
   userProfile: UserProfile,
@@ -52,7 +52,8 @@ export async function getUserReviews(userId: string) {
     .select()
     .from(reviews)
     .where(eq(reviews.userId, userId))
-    .innerJoin(users, eq(reviews.reviewerId, users.id));
+    .innerJoin(users, eq(reviews.reviewerId, users.id))
+    .orderBy(desc(reviews.reviewedAt));
 }
 
 export async function deleteAsset(assetId: string, userId: string) {

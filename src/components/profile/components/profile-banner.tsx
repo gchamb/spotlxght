@@ -9,15 +9,17 @@ import CreateEventButton from "~/components/profile/components/create-event-butt
 
 export default async function ProfileBanner({
   userProfile,
+  isCurrentUser,
 }: {
   userProfile: UserProfile;
+  isCurrentUser: boolean;
 }) {
   const profilePictureSasUrl = userProfile.profilePicImage
     ? (await getSasUrl(
         userProfile.profilePicImage,
         AzureBlobContainer.PROFILE,
-      )) ?? "/images/default-profile.jpg"
-    : "/images/default-profile.jpg";
+      )) ?? "/images/default-profile.png"
+    : "/images/default-profile.png";
   const profileBannerSasUrl = userProfile.profileBannerImage
     ? (await getSasUrl(
         userProfile.profileBannerImage,
@@ -64,9 +66,10 @@ export default async function ProfileBanner({
               <div className="my-4 sm:my-0">
                 <StarRatings rating={userRating} />
               </div>
-              {userProfile.type === "venue" ? (
-                <CreateEventButton userProfile={userProfile} />
-              ) : (
+              {isCurrentUser && userProfile.type === "venue" && (
+                <CreateEventButton />
+              )}
+              {isCurrentUser && userProfile.type === "musician" && (
                 <UploadButton userProfile={userProfile} />
               )}
             </div>

@@ -1,15 +1,15 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowRight, ArrowUpDown, Filter, MoreHorizontal } from "lucide-react";
+import { ArrowRight, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "~/components/ui/button";
 import Chip from "~/components/ui/chip";
 
-import { MyEvents } from "~/lib/types";
+import { MyEvent } from "~/lib/types";
 
-export const columns: ColumnDef<MyEvents>[] = [
+export const columns: ColumnDef<MyEvent>[] = [
   {
     accessorKey: "name",
     header: () => "Event Name",
