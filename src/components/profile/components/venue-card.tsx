@@ -10,10 +10,6 @@ import { useSession } from "~/hooks/auth";
 export default function VenueCard({ event }: { event: EventListing }) {
   const router = useRouter();
   const session = useSession();
-  if (!session?.data) {
-    router.replace("/");
-    return;
-  }
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -21,7 +17,6 @@ export default function VenueCard({ event }: { event: EventListing }) {
   };
 
   const handleClose = () => {
-    console.log("pressed closed");
     setOpen(false);
   };
 
@@ -34,11 +29,12 @@ export default function VenueCard({ event }: { event: EventListing }) {
         </div>
         <div
           onClick={() => {
-            console.log(session.data?.type);
-            if (session.data?.type === "musician") {
-              handleOpen();
-            } else {
-              router.push(`/events/${event.id}`);
+            if (session) {
+              if (session.data?.type === "musician") {
+                handleOpen();
+              } else {
+                router.push(`/events/${event.id}`);
+              }
             }
           }}
           className="group flex items-end justify-between rounded-2xl py-4 hover:cursor-pointer"

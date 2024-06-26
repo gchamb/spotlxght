@@ -23,19 +23,12 @@ import {
   FormLabel,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { uploadFile } from "~/server/actions/profile";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { uploadFile } from "~/server/actions/profile";
 import { useSession } from "~/hooks/auth";
 
 export default function UploadButton() {
-  const router = useRouter();
   const session = useSession();
-  if (!session?.data) {
-    router.replace("/");
-    return;
-  }
-
   const fileRef = useRef<HTMLInputElement | null>();
   const [open, setOpen] = useState(false);
   const [descriptionVisible, setDescriptionVisible] = useState(false);

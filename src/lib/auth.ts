@@ -20,6 +20,7 @@ export async function getSession() {
     where: eq(sessions.sessionToken, sessionToken),
     with: { user: true },
   });
+  if (!session) return null;
   return session;
 }
 

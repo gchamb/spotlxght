@@ -14,7 +14,6 @@ import { MoreHorizontal } from "lucide-react";
 import { deleteAsset } from "~/server/actions/profile";
 import { Asset, UserProfile } from "~/lib/types";
 import { useSession } from "~/hooks/auth";
-import { useRouter } from "next/navigation";
 
 export default function MusicianContent({
   content,
@@ -24,12 +23,7 @@ export default function MusicianContent({
   userProfile: UserProfile;
   isCurrentUser: boolean;
 }) {
-  const router = useRouter();
   const session = useSession();
-  if (session.data === null || session.data === undefined) {
-    router.replace("/");
-    return;
-  }
 
   return (
     <div className="xl:flex xl:flex-col xl:gap-8">
