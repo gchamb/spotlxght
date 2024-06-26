@@ -70,10 +70,7 @@ export default async function ProfileBanner({
                 <CreateEventButton />
               )}
               {isCurrentUser && userProfile.type === "musician" && (
-                <UploadButton
-                  userId={userProfile.id}
-                  isCurrentUser={isCurrentUser}
-                />
+                <UploadButton />
               )}
             </div>
           </div>
