@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { Toaster } from "~/components/ui/sonner";
 import { Inter } from "next/font/google";
 import Nav from "~/components/nav";
+import Providers from "~/components/providers";
 
 export const metadata = {
   title: "Create T3 App",
@@ -24,7 +25,7 @@ export default function RootLayout({
       <body>
         <main className="flex h-screen flex-col">
           <Nav />
-          {children}
+          <Providers>{children}</Providers>
         </main>
         <Toaster />
       </body>
