@@ -1,5 +1,6 @@
-import ReviewContent from "~/components/profile/components/review-content";
 import { type Review, type User } from "~/lib/types";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { StarRatings } from "~/components/profile/components/star-ratings";
 
 export default async function Reviews({
   userReviews,
@@ -19,7 +20,22 @@ export default async function Reviews({
             key={userReview.review.id}
             className="flex gap-8 rounded-2xl bg-[#222222] p-10 drop-shadow-lg"
           >
-            <ReviewContent review={userReview.review} user={userReview.user} />
+            <div className="flex w-full items-center">
+              <div>
+                <div className="mb-2 flex items-center">
+                  <Avatar>
+                    <AvatarImage src="/images/edm.jpg" alt="profile picture" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <h1 className="ml-3 font-semibold">{userReview.user.name}</h1>
+                </div>
+                <StarRatings rating={userReview.review.rating} size={22} />
+                <h4 className="mt-1 font-light text-gray-200">
+                  {userReview.review.reviewedAt.toDateString()}
+                </h4>
+                <h2 className="mt-4">{userReview.review.message}</h2>
+              </div>
+            </div>
           </div>
         ))}
       </div>

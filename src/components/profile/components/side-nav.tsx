@@ -1,15 +1,13 @@
-import { type Asset, type Review, type User } from "~/lib/types";
+import { type Asset } from "~/lib/types";
 import MusicPlayer from "~/components/profile/components/music-player";
 
 export default function SideNav({
   userId,
   userSongs,
-  userReviews,
   isCurrentUser,
 }: {
   userId: string;
   userSongs: (Asset & { sasUrl?: string })[];
-  userReviews: ({ review: Review } & { user: User })[];
   isCurrentUser: boolean;
 }) {
   return (

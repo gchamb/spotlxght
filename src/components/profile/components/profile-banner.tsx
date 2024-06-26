@@ -31,7 +31,7 @@ export default async function ProfileBanner({
   return (
     <div className="relative flex h-fit flex-col rounded-2xl border bg-[#222222] shadow-xl sm:h-96">
       <div className="h-[50%] rounded-2xl bg-white">
-        {/* TODO */}
+        {/* TODO: Avoid banner picture flash */}
         <Suspense fallback={<Loader2 className="h-4 w-4 animate-spin" />}>
           <img
             src={profileBannerSasUrl}

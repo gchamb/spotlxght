@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import VideoPlayer from "~/components/profile/components/video-player";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -108,8 +107,16 @@ export default function MusicianContent({
                 </div>
               )}
             </div>
-            <div className="mt-4">
-              <VideoPlayer asset={asset} />
+            <div key={asset.id} className="mt-4">
+              <React.Fragment key={asset.id}>
+                <video key={asset.id} controls={true}>
+                  <source
+                    key={asset.id}
+                    src={asset.sasUrl}
+                    type={asset.mimetype}
+                  />
+                </video>
+              </React.Fragment>
             </div>
           </div>
         </div>

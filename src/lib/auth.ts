@@ -32,6 +32,7 @@ export async function signOut() {
     userCookies.delete("session-token");
     await db.delete(sessions).where(eq(sessions.sessionToken, sessionToken));
   }
+  redirect("/");
 }
 
 export async function emailSignIn(credentials: Credentials) {
