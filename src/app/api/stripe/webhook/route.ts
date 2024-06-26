@@ -1,18 +1,14 @@
 import { stripe } from "~/server/stripe";
 import { Stripe } from "stripe";
 import { env } from "~/env";
-import { db } from "~/server/db";
-import { events, stripeCheckouts } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
 import {
   handleStripeCheckoutFailure,
   handleStripeCheckoutSuccess,
 } from "~/lib/stripe";
 
 // stripe webhook for the following
-// customer creation
-// subscription creation
-// subscription updates
+// stripe checkout
+// stripe payout
 export async function POST(request: Request) {
   const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret) {
@@ -50,6 +46,16 @@ export async function POST(request: Request) {
       const failedCheckoutData = event.data.object;
       await handleStripeCheckoutFailure(failedCheckoutData);
       return new Response(null, { status: 200 });
+
+    // payouts are from connected accounts to their personal accounts
+    // case "payout.paid":
+    //   const payoutPaidData = event.data.object;
+    //   console.log(payoutPaidData);
+    //   return new Response(null, { status: 200 });
+    // case "payout.failed":
+    //   const payoutFailedData = event.data.object;
+    //   console.log(payoutFailedData);
+    //   return new Response(null, { status: 200 });
     default:
       return new Response(null, { status: 200 });
   }
