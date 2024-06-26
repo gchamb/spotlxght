@@ -1,6 +1,6 @@
 "use server";
 
-import { type AzureBlobContainer, type UserProfile } from "~/lib/types";
+import { type AzureBlobContainer } from "~/lib/types";
 import { revalidatePath } from "next/cache";
 import { assetsContainer } from "~/server/azure";
 import { db } from "~/server/db";
@@ -8,7 +8,7 @@ import { assets, reviews, users } from "~/server/db/schema";
 import { desc, eq } from "drizzle-orm";
 
 export async function uploadFile(
-  userProfile: UserProfile,
+  userId: string,
   formData: FormData,
   azureBlobContainer: AzureBlobContainer,
   title: string,
@@ -25,7 +25,7 @@ export async function uploadFile(
   console.log(title);
   console.log(description);
 
-  const azureBlobKey = `${userProfile.id}_${file.name.replace(/\s/g, "-")}`;
+  const azureBlobKey = `${userId}_${file.name.replace(/\s/g, "-")}`;
   const azureResponse = await assetsContainer
     .getBlockBlobClient(azureBlobKey)
     .uploadData(await file.arrayBuffer());
@@ -35,7 +35,7 @@ export async function uploadFile(
   console.log("uploaded to azure");
 
   await db.insert(assets).values({
-    userId: userProfile.id,
+    userId: userId,
     title,
     description,
     mimetype: file.type,
@@ -44,7 +44,7 @@ export async function uploadFile(
   });
   console.log("inserted into db");
 
-  revalidatePath(`/profile/${userProfile.id}`);
+  revalidatePath(`/profile/${userId}`);
 }
 
 export async function getUserReviews(userId: string) {

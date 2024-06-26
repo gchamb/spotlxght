@@ -10,6 +10,10 @@ import { useSession } from "~/hooks/auth";
 export default function VenueCard({ event }: { event: EventListing }) {
   const router = useRouter();
   const session = useSession();
+  if (!session?.data) {
+    router.replace("/");
+    return;
+  }
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {

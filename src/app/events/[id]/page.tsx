@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
-import { ApplicationStatus } from "~/lib/types";
+import { ApplicationStatus, AzureBlobContainer } from "~/lib/types";
 import { db } from "~/server/db";
 import { assets, events, users } from "~/server/db/schema";
 import TimeslotTabs from "../components/timeslot-tabs";
@@ -40,7 +40,7 @@ async function getEventData(id: string, userId: string) {
               azureBlobKey: true,
               mimetype: true,
             },
-            where: eq(assets.type, "audio"),
+            where: eq(assets.azureBlobContainer, AzureBlobContainer.ASSET),
           },
         },
       });
@@ -105,7 +105,7 @@ export default async function EventDetailsPage({
 }) {
   const session = await getSession();
 
-  if (session === null) {
+  if (!session) {
     return redirect("/venue/auth");
   }
 
@@ -142,7 +142,10 @@ export default async function EventDetailsPage({
       const assets = await Promise.all(
         applicant.assets.map(
           async (asset): Promise<(typeof applicant)["assets"][number]> => {
-            const sasUrl = await getSasUrl(asset.azureBlobKey, "assets");
+            const sasUrl = await getSasUrl(
+              asset.azureBlobKey,
+              AzureBlobContainer.ASSET,
+            );
 
             return { ...asset, azureBlobKey: sasUrl };
           },
@@ -156,7 +159,7 @@ export default async function EventDetailsPage({
       ) {
         profilePicSasUrl = await getSasUrl(
           applicant.profilePicImage,
-          "profile-pic",
+          AzureBlobContainer.PROFILE,
         );
         applicant.profilePicImage = profilePicSasUrl;
       }

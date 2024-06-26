@@ -13,21 +13,29 @@ import { Button } from "~/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { deleteAsset } from "~/server/actions/profile";
 import { Asset, UserProfile } from "~/lib/types";
+import { useSession } from "~/hooks/auth";
+import { useRouter } from "next/navigation";
 
 export default function MusicianContent({
   content,
-  userProfile,
   isCurrentUser,
 }: {
   content: (Asset & { sasUrl?: string })[];
   userProfile: UserProfile;
   isCurrentUser: boolean;
 }) {
+  const router = useRouter();
+  const session = useSession();
+  if (session.data === null || session.data === undefined) {
+    router.replace("/");
+    return;
+  }
+
   return (
     <div className="xl:flex xl:flex-col xl:gap-8">
       {!content.length && (
         <div className="flex justify-center">
-          {userProfile.type === "venue" ? (
+          {session.data?.type === "venue" ? (
             <h1 className="text-center">No events yet.</h1>
           ) : (
             <h1 className="text-center">No performances yet.</h1>
@@ -104,7 +112,7 @@ export default function MusicianContent({
                       {/*</DropdownMenuItem>*/}
                       <DropdownMenuItem
                         onClick={async () =>
-                          deleteAsset(asset.id, userProfile.id)
+                          deleteAsset(asset.id, session.data?.userId!)
                         }
                       >
                         <p className="font-bold text-red-600">Delete</p>

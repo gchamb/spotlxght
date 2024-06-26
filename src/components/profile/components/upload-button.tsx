@@ -10,11 +10,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
-import {
-  AzureBlobContainer,
-  uploadFileFormSchema,
-  type UserProfile,
-} from "~/lib/types";
+import { AzureBlobContainer, uploadFileFormSchema } from "~/lib/types";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type z } from "zod";
@@ -29,12 +25,17 @@ import {
 import { Input } from "~/components/ui/input";
 import { uploadFile } from "~/server/actions/profile";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useSession } from "~/hooks/auth";
 
-export default function UploadButton({
-  userProfile,
-}: {
-  userProfile: UserProfile;
-}) {
+export default function UploadButton() {
+  const router = useRouter();
+  const session = useSession();
+  if (!session?.data) {
+    router.replace("/");
+    return;
+  }
+
   const fileRef = useRef<HTMLInputElement | null>();
   const [open, setOpen] = useState(false);
   const [descriptionVisible, setDescriptionVisible] = useState(false);
@@ -71,7 +72,7 @@ export default function UploadButton({
 
     try {
       await uploadFile(
-        userProfile,
+        session.data?.userId!,
         formData,
         AzureBlobContainer.ASSET,
         values.title,

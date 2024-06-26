@@ -7,7 +7,7 @@ export async function GET() {
     return Response.json(null);
   }
 
-  //   only return the needed information
+  // only return the needed information
   const { user, ...rest } = session;
   const { type } = user;
 

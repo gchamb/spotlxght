@@ -14,7 +14,7 @@ async function getEvents(userId: string): Promise<MyEvent[]> {
 export default async function MyEvents() {
   const session = await getSession();
 
-  if (session === null) {
+  if (!session) {
     return redirect("/venue/auth");
   }
 
