@@ -110,15 +110,6 @@ async function invalidateExpiredSessions() {
     );
 }
 
-export async function getAuthUser() {
-  const session = await getSession();
-  if (!session?.user?.id) {
-    redirect("/");
-  } else {
-    return session.user;
-  }
-}
-
 export async function getUserProfile(userId: string) {
   return db.query.users.findFirst({
     where: eq(users.id, userId),
