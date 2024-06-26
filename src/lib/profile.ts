@@ -26,7 +26,7 @@ export async function getUserAssets(userProfile: UserProfile) {
 export async function getUserRating(userId: string) {
   const queryResults = await db
     .select({
-      ratingsSum: sql<number>`sum(${reviews.rating})`,
+      avg: sql<number>`avg(${reviews.rating})`,
       count: sql<number>`count(${reviews.id})`,
     })
     .from(reviews)
@@ -35,5 +35,5 @@ export async function getUserRating(userId: string) {
   const reviewResults = queryResults[0];
   if (!reviewResults) throw new Error("Error getting reviews");
   if (!reviewResults?.count) return 5;
-  return reviewResults.ratingsSum / reviewResults.count;
+  return reviewResults.avg;
 }

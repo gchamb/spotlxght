@@ -56,7 +56,7 @@ export default function MusicPlayer({
   }, [isPlaying, progress]);
 
   return (
-    <div className="audio-player">
+    <div>
       <React.Fragment key={asset.id}>
         <audio ref={audioRef}>
           <source src={asset.sasUrl} />
@@ -65,33 +65,20 @@ export default function MusicPlayer({
       <div className="flex">
         <div className="w-30 h-30 block">
           <div className="w-30 h-30 relative">
-            <button className="pt-7">
+            <button
+              className="pt-7"
+              onClick={() => {
+                setIsPlaying((prev) => !prev);
+                setProgress(
+                  (audioRef.current.currentTime / audioRef.current.duration) *
+                    100,
+                );
+              }}
+            >
               {isPlaying ? (
-                <Pause
-                  onClick={() => {
-                    setIsPlaying((prev) => !prev);
-                    setProgress(
-                      (audioRef.current.currentTime /
-                        audioRef.current.duration) *
-                        100,
-                    );
-                  }}
-                  size={30}
-                  className="text-gray-100"
-                />
+                <Pause size={30} className="text-gray-100" />
               ) : (
-                <Play
-                  onClick={() => {
-                    setIsPlaying((prev) => !prev);
-                    setProgress(
-                      (audioRef.current.currentTime /
-                        audioRef.current.duration) *
-                        100,
-                    );
-                  }}
-                  size={30}
-                  className="text-gray-100"
-                />
+                <Play size={30} className="text-gray-100" />
               )}
             </button>
           </div>

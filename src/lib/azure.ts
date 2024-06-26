@@ -21,17 +21,17 @@ export async function getSasUrl(blobUrl: string, type: AzureBlobContainer) {
 
   // Be careful this is a cost per call so in dev mode it is recalled on every change
   if (type === AzureBlobContainer.BANNER) {
-    return await bannerImagesContainer.getBlobClient(blobUrl).generateSasUrl({
+    return bannerImagesContainer.getBlobClient(blobUrl).generateSasUrl({
       permissions,
       expiresOn: EXPIRATION_DATE,
     });
   } else if (type === AzureBlobContainer.PROFILE) {
-    return await profileImagesContainer.getBlobClient(blobUrl).generateSasUrl({
+    return profileImagesContainer.getBlobClient(blobUrl).generateSasUrl({
       permissions,
       expiresOn: EXPIRATION_DATE,
     });
   } else {
-    return await assetsContainer.getBlobClient(blobUrl).generateSasUrl({
+    return assetsContainer.getBlobClient(blobUrl).generateSasUrl({
       permissions,
       expiresOn: EXPIRATION_DATE,
     });

@@ -1,4 +1,4 @@
-import { getSession, getUserProfile } from "~/lib/auth";
+import { getSession } from "~/lib/auth";
 import { getUserAssets } from "~/lib/profile";
 import type { Asset, Review, User } from "~/lib/types";
 import { getUserReviews } from "~/server/actions/profile";
@@ -8,8 +8,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import VenueContent from "~/components/profile/components/venue-content";
 import MusicianContent from "~/components/profile/components/musician-content";
 import Reviews from "~/components/profile/components/reviews";
+import { db } from "~/server/db";
+import { eq } from "drizzle-orm";
+import { users } from "~/server/db/schema";
 
 export const revalidate = 3000;
+
+async function getUserProfile(userId: string) {
+  return db.query.users.findFirst({
+    where: eq(users.id, userId),
+    with: {
+      genres: true,
+      reviews: true,
+      assets: true,
+    },
+  });
+}
 
 export default async function Profile({ userId }: { userId: string }) {
   const userProfile = await getUserProfile(userId);

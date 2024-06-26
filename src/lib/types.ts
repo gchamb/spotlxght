@@ -1,62 +1,30 @@
 import { z } from "zod";
 import { constructZodLiteralUnionType } from "./zod-utilities";
-import { genres, timeslots } from "~/server/db/schema";
-import { getSession } from "~/lib/auth";
+import {
+  type assets,
+  type genres,
+  type reviews,
+  type timeslots,
+  type users,
+} from "~/server/db/schema";
+import { type getSession } from "~/lib/auth";
+import { type InferSelectModel } from "drizzle-orm";
 
 export type Credentials = z.infer<typeof credentialsSchema>;
 
-export type User = {
-  id: string;
-  name: string | null;
-  email: string;
-  emailVerified: Date | null;
-  password: string | null;
-  address: string | null;
-  profilePicImage: string | null;
-  profileBannerImage: string | null;
-  type: UserType | null;
-};
+export type User = InferSelectModel<typeof users>;
 
 export type Session = Awaited<ReturnType<typeof getSession>>;
 
-export type Genre = {
-  id: string;
-  genre: string;
-  userId: string;
-};
+export type Genre = InferSelectModel<typeof genres>;
 
-export type Review = {
-  id: string;
-  userId: string;
-  reviewerId: string;
-  message: string | null;
-  reviewedAt: Date;
-  rating: number;
-};
+export type Review = InferSelectModel<typeof reviews>;
 
 export type Rating = 1 | 2 | 3 | 4 | 5;
 
-export type Asset = {
-  id: string;
-  title: string | null;
-  description: string | null;
-  azureBlobContainer: AzureBlobContainer;
-  mimetype: string;
-  azureBlobKey: string;
-  uploadedAt: Date;
-  userId: string;
-};
+export type Asset = InferSelectModel<typeof assets>;
 
-export type UserProfile = {
-  address: string | null;
-  id: string;
-  name: string | null;
-  type: UserType | null;
-  email: string;
-  password: string | null;
-  emailVerified: Date | null;
-  profilePicImage: string | null;
-  profileBannerImage: string | null;
+export type UserProfile = User & {
   reviews: Review[];
   assets: Asset[];
   genres: Genre[];

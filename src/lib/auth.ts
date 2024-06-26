@@ -109,14 +109,3 @@ async function invalidateExpiredSessions() {
       lt(sessions.expires, new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)),
     );
 }
-
-export async function getUserProfile(userId: string) {
-  return db.query.users.findFirst({
-    where: eq(users.id, userId),
-    with: {
-      genres: true,
-      reviews: true,
-      assets: true,
-    },
-  });
-}

@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
 import {
   applyTimeslotRequest,
-  ApplyTimeslotRequest,
+  type ApplyTimeslotRequest,
   createEventSchema,
-  SetApplicantStatusRequest,
+  type SetApplicantStatusRequest,
   setApplicantStatusRequest,
 } from "~/lib/types";
 import { db } from "../db";
@@ -22,7 +22,7 @@ export async function createEvent(data: FormData) {
     return redirect("/venue/auth");
   }
 
-  if (session.user?.type !== "venue") {
+  if (session.user.type !== "venue") {
     return redirect("/");
   }
 

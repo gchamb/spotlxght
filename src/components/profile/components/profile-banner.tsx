@@ -18,13 +18,13 @@ export default async function ProfileBanner({
     ? (await getSasUrl(
         userProfile.profilePicImage,
         AzureBlobContainer.PROFILE,
-      )) ?? "/images/default-profile.png"
+      )) || "/images/default-profile.png"
     : "/images/default-profile.png";
   const profileBannerSasUrl = userProfile.profileBannerImage
     ? (await getSasUrl(
         userProfile.profileBannerImage,
         AzureBlobContainer.BANNER,
-      )) ?? "/images/default-banner.jpg"
+      )) || "/images/default-banner.jpg"
     : "/images/default-banner.jpg";
   const userRating = await getUserRating(userProfile.id);
 
