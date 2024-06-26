@@ -185,6 +185,7 @@ export const myEventsDataSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   status: z.union([
+    z.literal("draft"),
     z.literal("open"),
     z.literal("in-progress"),
     z.literal("completed"),

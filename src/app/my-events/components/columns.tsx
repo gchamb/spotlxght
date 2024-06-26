@@ -24,7 +24,7 @@ export const columns: ColumnDef<MyEvents>[] = [
           size="xs"
           text={status}
           color={
-            status === "open"
+            status === "open" || status === "draft"
               ? "gray"
               : status === "in-progress"
                 ? "yellow"
