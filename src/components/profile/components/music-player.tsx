@@ -39,7 +39,7 @@ export default function MusicPlayer({
         audioRef.current.pause();
       }
     };
-    handlePlay();
+    handlePlay().catch((err) => console.error(err));
   }, [isPlaying]);
 
   useEffect(() => {

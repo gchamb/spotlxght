@@ -14,7 +14,7 @@ import { AzureBlobContainer, uploadFileFormSchema } from "~/lib/types";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type z } from "zod";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   Form,
   FormControl,
@@ -25,11 +25,8 @@ import {
 import { Input } from "~/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { uploadFile } from "~/server/actions/profile";
-import { useSession } from "~/hooks/auth";
 
-export default function UploadButton() {
-  const session = useSession();
-  const fileRef = useRef<HTMLInputElement | null>();
+export default function UploadButton({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false);
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -65,7 +62,7 @@ export default function UploadButton() {
 
     try {
       await uploadFile(
-        session.data?.userId!,
+        userId,
         formData,
         AzureBlobContainer.ASSET,
         values.title,
@@ -173,7 +170,6 @@ export default function UploadButton() {
                             disabled={field.disabled}
                             onBlur={field.onBlur}
                             ref={(ref) => {
-                              fileRef.current = ref;
                               field.ref(ref);
                             }}
                             onChange={(e) => {

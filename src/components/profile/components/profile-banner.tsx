@@ -1,11 +1,11 @@
 import { AzureBlobContainer, type UserProfile } from "~/lib/types";
 import { getSasUrl } from "~/lib/azure";
 import { Loader2 } from "lucide-react";
-import UploadButton from "~/components/profile/components/upload-button";
 import React, { Suspense } from "react";
 import { StarRatings } from "~/components/profile/components/star-ratings";
 import { getUserRating } from "~/lib/profile";
 import CreateEventButton from "~/components/profile/components/create-event-button";
+import UploadButton from "~/components/profile/components/upload-button";
 
 export default async function ProfileBanner({
   userProfile,
@@ -70,7 +70,7 @@ export default async function ProfileBanner({
                 <CreateEventButton />
               )}
               {isCurrentUser && userProfile.type === "musician" && (
-                <UploadButton />
+                <UploadButton userId={userProfile.id} />
               )}
             </div>
           </div>

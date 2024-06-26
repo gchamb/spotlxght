@@ -12,28 +12,22 @@ import {
 import { Button } from "~/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { deleteAsset } from "~/server/actions/profile";
-import { Asset, UserProfile } from "~/lib/types";
-import { useSession } from "~/hooks/auth";
+import { Asset } from "~/lib/types";
 
 export default function MusicianContent({
   content,
+  userId,
   isCurrentUser,
 }: {
   content: (Asset & { sasUrl?: string })[];
-  userProfile: UserProfile;
+  userId: string;
   isCurrentUser: boolean;
 }) {
-  const session = useSession();
-
   return (
     <div className="xl:flex xl:flex-col xl:gap-8">
       {!content.length && (
         <div className="flex justify-center">
-          {session.data?.type === "venue" ? (
-            <h1 className="text-center">No events yet.</h1>
-          ) : (
-            <h1 className="text-center">No performances yet.</h1>
-          )}
+          <h1 className="text-center">No performances yet.</h1>
         </div>
       )}
       {content.map((asset) => (
@@ -105,9 +99,7 @@ export default function MusicianContent({
                       {/*  </AlertDialog>*/}
                       {/*</DropdownMenuItem>*/}
                       <DropdownMenuItem
-                        onClick={async () =>
-                          deleteAsset(asset.id, session.data?.userId!)
-                        }
+                        onClick={async () => deleteAsset(asset.id, userId)}
                       >
                         <p className="font-bold text-red-600">Delete</p>
                       </DropdownMenuItem>

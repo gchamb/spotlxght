@@ -18,7 +18,7 @@ export default function MainContent({
     return (
       <MusicianContent
         content={content!}
-        userProfile={userProfile}
+        userId={userProfile.id}
         isCurrentUser={isCurrentUser}
       />
     );
