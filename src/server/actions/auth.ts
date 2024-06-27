@@ -9,8 +9,19 @@ import { OAuth2Client } from "google-auth-library";
 import { env } from "~/env";
 
 export async function emailSignInAction(credentials: Credentials) {
-  const user = await emailSignIn(credentials);
-  redirect(`/profile/${user.id}`);
+  let user: Awaited<ReturnType<typeof emailSignIn>> | null = null;
+  try {
+    user = await emailSignIn(credentials);
+  } catch (err) {
+    return {
+      message:
+        err instanceof Error ? err.message : "Unable to process this request",
+    };
+  }
+
+  if (user) {
+    redirect(`/profile/${user.id}`);
+  }
 }
 
 export async function googleSignIn(userType: UserType) {
@@ -48,7 +59,7 @@ export async function googleSignIn(userType: UserType) {
 
 export async function emailSignUpAction(
   credentials: Credentials & { type: UserType },
-) {
+): Promise<{ errorMessage: string }> {
   const { type, ...creds } = credentials;
   await emailSignUp(creds);
 

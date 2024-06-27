@@ -54,7 +54,12 @@ export function AuthScreen({ screenType, type }: AuthProps) {
       }
 
       if (screenType === "sign-in") {
-        await emailSignInAction(values);
+        const error = await emailSignInAction(values);
+        if (error) {
+          form.setError("root", {
+            message: error.message,
+          });
+        }
       } else {
         await emailSignUpAction({ ...values, type });
       }
