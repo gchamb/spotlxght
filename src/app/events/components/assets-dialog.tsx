@@ -37,13 +37,11 @@ export default function AssetsDialog({ assets, name }: AssetsDialogProps) {
         <div className="grid grid-cols-2 grid-rows-2 gap-4">
           {assets.map((asset) => {
             return (
-              asset.mimetype.includes("audio") && (
-                <AudioComponent
-                  key={asset.azureBlobKey}
-                  src={asset.azureBlobKey}
-                  mimetype={asset.mimetype}
-                />
-              )
+              <AudioComponent
+                key={asset.azureBlobKey}
+                src={asset.azureBlobKey}
+                mimetype={asset.mimetype}
+              />
             );
           })}
         </div>
