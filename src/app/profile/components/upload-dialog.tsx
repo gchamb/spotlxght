@@ -25,6 +25,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { uploadFile } from "~/server/actions/profile";
+import { toast } from "sonner";
 
 export default function UploadDialog({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false);
@@ -58,16 +59,23 @@ export default function UploadDialog({ userId }: { userId: string }) {
     resetFormState();
     console.log(values);
 
-    try {
-      await uploadFile(
-        userId,
-        formData,
-        AzureBlobContainer.ASSET,
-        values.title,
-        values.description,
-      );
-    } catch (err) {
-      console.error(err);
+    const error = await uploadFile(
+      userId,
+      formData,
+      AzureBlobContainer.ASSET,
+      values.title,
+      values.description,
+    );
+
+    if (error) {
+      // in future show error in the dialog
+      // currently the dialog closes on success or failure
+      // uploadFileForm.setError("root", {
+      //   message: error.message,
+      // });
+
+      // for now toast the error
+      toast(error.message);
     }
 
     setLoading(false);
