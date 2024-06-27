@@ -1,6 +1,6 @@
 import { type UserProfile } from "~/lib/types";
 import { getVenueEventListings } from "~/lib/events";
-import TimeslotsButton from "~/components/profile/components/timeslots-button";
+import TimeslotsButton from "~/app/profile/components/timeslots-button";
 
 export default async function VenueContent({
   userProfile,

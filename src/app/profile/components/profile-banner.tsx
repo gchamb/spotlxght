@@ -3,8 +3,8 @@ import { getSasUrl } from "~/lib/azure";
 import { Loader2 } from "lucide-react";
 import React, { Suspense } from "react";
 import { getUserRating } from "~/lib/profile";
-import CreateEventButton from "~/components/profile/components/create-event-button";
-import UploadDialog from "~/components/profile/components/upload-dialog";
+import CreateEventButton from "~/app/profile/components/create-event-button";
+import UploadDialog from "~/app/profile/components/upload-dialog";
 import Ratings from "~/components/ui/ratings";
 
 export default async function ProfileBanner({

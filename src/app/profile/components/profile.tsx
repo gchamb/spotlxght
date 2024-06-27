@@ -2,17 +2,17 @@ import { getSession } from "~/lib/auth";
 import { getUserAssets } from "~/lib/profile";
 import { type Asset, type Review, type User } from "~/lib/types";
 import { getUserReviews } from "~/server/actions/profile";
-import ProfileBanner from "~/components/profile/components/profile-banner";
-import SideNav from "~/components/profile/components/side-nav";
+import ProfileBanner from "~/app/profile/components/profile-banner";
+import SideNav from "~/app/profile/components/side-nav";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import VenueContent from "~/components/profile/components/venue-content";
-import MusicianContent from "~/components/profile/components/musician-content";
-import Reviews from "~/components/profile/components/reviews";
+import VenueContent from "~/app/profile/components/venue-content";
+import MusicianContent from "~/app/profile/components/musician-content";
+import Reviews from "~/app/profile/components/reviews";
 import { db } from "~/server/db";
 import { eq } from "drizzle-orm";
 import { users } from "~/server/db/schema";
 import { getSasUrl } from "~/lib/azure";
-import UserNotFound from "~/components/profile/components/user-not-found";
+import UserNotFound from "~/app/profile/components/user-not-found";
 
 export const revalidate = 3000;
 

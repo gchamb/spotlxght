@@ -1,5 +1,5 @@
 import { type Asset } from "~/lib/types";
-import MusicPlayer from "~/components/profile/components/music-player";
+import MusicPlayer from "~/app/profile/components/music-player";
 
 export default function SideNav({
   userId,
