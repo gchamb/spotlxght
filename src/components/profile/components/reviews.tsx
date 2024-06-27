@@ -1,7 +1,7 @@
-import { AzureBlobContainer, type Review, type User } from "~/lib/types";
+import { type Review, type User } from "~/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { StarRatings } from "~/components/profile/components/star-ratings";
 import { getSasUrl } from "~/lib/azure";
+import Ratings from "~/components/ui/ratings";
 
 export default async function Reviews({
   userReviews,
@@ -38,16 +38,13 @@ export default async function Reviews({
                             src={profilePictureSasUrl}
                             alt="profile picture"
                           />
-                          <AvatarFallback>CN</AvatarFallback>
+                          <AvatarFallback>underground</AvatarFallback>
                         </Avatar>
                         <h1 className="ml-3 font-semibold">
                           {userReview.user.name}
                         </h1>
                       </div>
-                      <StarRatings
-                        rating={userReview.review.rating}
-                        size={22}
-                      />
+                      <Ratings rating={userReview.review.rating} />
                       <h4 className="mt-1 font-light text-gray-200">
                         {userReview.review.reviewedAt.toDateString()}
                       </h4>
