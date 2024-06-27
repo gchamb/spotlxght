@@ -59,9 +59,19 @@ export async function googleSignIn(userType: UserType) {
 
 export async function emailSignUpAction(
   credentials: Credentials & { type: UserType },
-): Promise<{ errorMessage: string }> {
+) {
+  let user: Awaited<ReturnType<typeof emailSignIn>> | null = null;
   const { type, ...creds } = credentials;
-  await emailSignUp(creds);
+  try {
+    user = await emailSignUp(creds);
+  } catch (err) {
+    return {
+      message:
+        err instanceof Error ? err.message : "Unable to process this request",
+    };
+  }
 
-  redirect(`/${type}/onboarding`);
+  if (user) {
+    redirect(`/${type}/onboarding`);
+  }
 }
