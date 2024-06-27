@@ -21,7 +21,7 @@ export default async function Reviews({
               const profilePictureSasUrl = userReview.user.profilePicImage
                 ? (await getSasUrl(
                     userReview.user.profilePicImage,
-                    AzureBlobContainer.PROFILE,
+                    "profile-pic",
                   )) || "/images/default-profile.png"
                 : "/images/default-profile.png";
 

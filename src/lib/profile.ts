@@ -2,12 +2,7 @@ import { db } from "~/server/db";
 import { desc, eq, sql } from "drizzle-orm";
 import { assets, reviews } from "~/server/db/schema";
 import { getSasUrl } from "~/lib/azure";
-import {
-  type Asset,
-  AzureBlobContainer,
-  type Rating,
-  type UserProfile,
-} from "~/lib/types";
+import { type Asset, type Rating, type UserProfile } from "~/lib/types";
 
 export async function getUserAssets(userProfile: UserProfile) {
   const userAssets: (Asset & { sasUrl?: string })[] =
@@ -18,10 +13,7 @@ export async function getUserAssets(userProfile: UserProfile) {
 
   await Promise.all(
     userAssets.map(async (asset) => {
-      asset.sasUrl = await getSasUrl(
-        asset.azureBlobKey,
-        AzureBlobContainer.ASSET,
-      );
+      asset.sasUrl = await getSasUrl(asset.azureBlobKey, "assets");
       return Promise.resolve(asset);
     }),
   );

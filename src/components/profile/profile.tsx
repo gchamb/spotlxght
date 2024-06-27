@@ -1,11 +1,6 @@
 import { getSession } from "~/lib/auth";
 import { getUserAssets } from "~/lib/profile";
-import {
-  type Asset,
-  AzureBlobContainer,
-  type Review,
-  type User,
-} from "~/lib/types";
+import { type Asset, type Review, type User } from "~/lib/types";
 import { getUserReviews } from "~/server/actions/profile";
 import ProfileBanner from "~/components/profile/components/profile-banner";
 import SideNav from "~/components/profile/components/side-nav";
@@ -41,10 +36,8 @@ export default async function Profile({ userId }: { userId: string }) {
 
   // For both user types
   const profilePictureSasUrl = userProfile.profilePicImage
-    ? (await getSasUrl(
-        userProfile.profilePicImage,
-        AzureBlobContainer.PROFILE,
-      )) || "/images/default-profile.png"
+    ? (await getSasUrl(userProfile.profilePicImage, "profile-pic")) ||
+      "/images/default-profile.png"
     : "/images/default-profile.png";
 
   const userReviews: ({ review: Review } & { user: User })[] =

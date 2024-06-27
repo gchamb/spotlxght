@@ -1,4 +1,4 @@
-import { AzureBlobContainer, type UserProfile } from "~/lib/types";
+import { type UserProfile } from "~/lib/types";
 import { getSasUrl } from "~/lib/azure";
 import { Loader2 } from "lucide-react";
 import React, { Suspense } from "react";
@@ -17,10 +17,8 @@ export default async function ProfileBanner({
   isCurrentUser: boolean;
 }) {
   const profileBannerSasUrl = userProfile.profileBannerImage
-    ? (await getSasUrl(
-        userProfile.profileBannerImage,
-        AzureBlobContainer.BANNER,
-      )) || "/images/default-banner.jpg"
+    ? (await getSasUrl(userProfile.profileBannerImage, "banner-pic")) ||
+      "/images/default-banner.jpg"
     : "/images/default-banner.jpg";
   const userRating = await getUserRating(userProfile.id);
 

@@ -34,13 +34,14 @@ export async function uploadFile(
   }
   console.log("uploaded to azure");
 
+  const type = file.type.includes("audio") ? "audio" : "video";
   await db.insert(assets).values({
-    userId: userId,
+    type,
     title,
     description,
     mimetype: file.type,
-    azureBlobContainer,
     azureBlobKey,
+    userId: userId,
   });
   console.log("inserted into db");
 

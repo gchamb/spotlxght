@@ -4,11 +4,11 @@ import {
   bannerImagesContainer,
   profileImagesContainer,
 } from "~/server/azure";
-import { AzureBlobContainer } from "~/lib/types";
 
-export const EXPIRATION_DATE = new Date(Date.now() + 60 * 60 * 100 * 10); // 1 hour
-
-export async function getSasUrl(blobUrl: string, type: AzureBlobContainer) {
+export function getSasUrl(
+  blobKey: string,
+  type: "banner-pic" | "profile-pic" | "assets",
+) {
   const permissions = new BlobSASPermissions();
   permissions.read = true;
   permissions.add = false;
@@ -17,23 +17,23 @@ export async function getSasUrl(blobUrl: string, type: AzureBlobContainer) {
   permissions.write = false;
   permissions.execute = false;
 
-  // return "";
+  return "";
 
-  // Be careful this is a cost per call so in dev mode it is recalled on every change
-  if (type === AzureBlobContainer.BANNER) {
-    return bannerImagesContainer.getBlobClient(blobUrl).generateSasUrl({
+  // be careful this is a cost per call so in dev mode it is recalled on every change
+  if (type === "banner-pic") {
+    return bannerImagesContainer.getBlobClient(blobKey).generateSasUrl({
       permissions,
-      expiresOn: EXPIRATION_DATE,
+      expiresOn: new Date(Date.now() + 60 * 60 * 100 * 10), // 1 hour
     });
-  } else if (type === AzureBlobContainer.PROFILE) {
-    return profileImagesContainer.getBlobClient(blobUrl).generateSasUrl({
+  } else if (type === "profile-pic") {
+    return profileImagesContainer.getBlobClient(blobKey).generateSasUrl({
       permissions,
-      expiresOn: EXPIRATION_DATE,
+      expiresOn: new Date(Date.now() + 60 * 60 * 100 * 10), // 1 hour
     });
   } else {
-    return assetsContainer.getBlobClient(blobUrl).generateSasUrl({
+    return assetsContainer.getBlobClient(blobKey).generateSasUrl({
       permissions,
-      expiresOn: EXPIRATION_DATE,
+      expiresOn: new Date(Date.now() + 60 * 60 * 100 * 10), // 1 hour
     });
   }
 }

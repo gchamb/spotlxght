@@ -4,9 +4,9 @@ import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
 import {
   applyTimeslotRequest,
-  type ApplyTimeslotRequest,
+  ApplyTimeslotRequest,
   createEventSchema,
-  type SetApplicantStatusRequest,
+  SetApplicantStatusRequest,
   setApplicantStatusRequest,
 } from "~/lib/types";
 import { db } from "../db";
