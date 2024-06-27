@@ -2,30 +2,29 @@
 
 import {
   ColumnDef,
-  getCoreRowModel,
-  useReactTable,
-  getPaginationRowModel,
-  SortingState,
-  getSortedRowModel,
   ColumnFiltersState,
+  getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import DataTableComponent from "~/components/data-table";
 import { DataTablePagination } from "~/components/data-table-pagination";
 
-
-import { EventListings } from "~/lib/types";
+import { EventListing } from "~/lib/types";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<EventListings, TValue>[];
-  data: EventListings[];
+  columns: ColumnDef<EventListing, TValue>[];
+  data: EventListing[];
 }
 
 export function DataTable({
   columns,
   data,
-}: DataTableProps<EventListings[], unknown>) {
+}: DataTableProps<EventListing[], unknown>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 

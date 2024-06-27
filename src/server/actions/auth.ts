@@ -1,12 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { type UserType } from "~/lib/types";
-import { emailSignIn, emailSignInCredentials, signUp } from "~/lib/auth";
-import { type Credentials } from "~/lib/types";
-import { OAuth2Client } from "google-auth-library";
+import { type Credentials, type UserType } from "~/lib/types";
+import { emailSignIn, emailSignUp } from "~/lib/auth";
 import { randomUUID } from "crypto";
 import { cookies, headers } from "next/headers";
+import { OAuth2Client } from "google-auth-library";
 import { env } from "~/env";
 
 export async function emailSignInAction(credentials: Credentials) {
@@ -16,7 +15,6 @@ export async function emailSignInAction(credentials: Credentials) {
 
 export async function googleSignIn(userType: UserType) {
   const referer = headers().get("referer");
-
   const url = new URL(referer ?? "");
 
   const oAuth2Client = new OAuth2Client(
@@ -48,15 +46,11 @@ export async function googleSignIn(userType: UserType) {
   return redirect(authorizeUrl);
 }
 
-export async function emailSignInCredentialsAction(credentials: Credentials) {
-  await emailSignInCredentials(credentials);
-}
-
 export async function emailSignUpAction(
   credentials: Credentials & { type: UserType },
 ) {
   const { type, ...creds } = credentials;
-  await signUp(creds);
+  await emailSignUp(creds);
 
   redirect(`/${type}/onboarding`);
 }

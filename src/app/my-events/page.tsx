@@ -2,11 +2,10 @@ import { db } from "~/server/db";
 import { columns } from "./components/columns";
 import { DataTable } from "./components/data-table";
 import { redirect } from "next/navigation";
-import { type MyEvents } from "~/lib/types";
-import { DataTablePagination } from "~/components/data-table-pagination";
+import { type MyEvent } from "~/lib/types";
 import { getSession } from "~/lib/auth";
 
-async function getEvents(userId: string): Promise<MyEvents[]> {
+async function getEvents(userId: string): Promise<MyEvent[]> {
   return db.query.events.findMany({
     where: (events, { eq }) => eq(events.venueId, userId),
   });
@@ -15,7 +14,7 @@ async function getEvents(userId: string): Promise<MyEvents[]> {
 export default async function MyEvents() {
   const session = await getSession();
 
-  if (session === null) {
+  if (!session) {
     return redirect("/venue/auth");
   }
 

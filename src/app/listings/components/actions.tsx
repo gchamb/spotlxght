@@ -10,14 +10,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ApplyDialog from "~/components/apply-dialog";
-import { EventListings } from "~/lib/types";
+import { EventListing } from "~/lib/types";
 import { Button } from "~/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 
 export default function Actions({
   eventDetails,
 }: {
-  eventDetails: EventListings;
+  eventDetails: EventListing;
 }) {
   const [open, setOpen] = useState(false);
   const { data } = useSession();

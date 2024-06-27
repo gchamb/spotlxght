@@ -1,12 +1,11 @@
 import { BlobSASPermissions } from "@azure/storage-blob";
 import {
-  blobServiceClient,
   assetsContainer,
-  profileImagesContainer,
   bannerImagesContainer,
+  profileImagesContainer,
 } from "~/server/azure";
 
-export function getSaSUrl(
+export function getSasUrl(
   blobKey: string,
   type: "banner-pic" | "profile-pic" | "assets",
 ) {
