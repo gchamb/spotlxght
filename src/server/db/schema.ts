@@ -322,12 +322,6 @@ export const stripePayouts = createTable(
     status: varchar("status", { length: 10 }).notNull(),
     currency: varchar("currency", { length: 5 }).notNull().default("usd"),
     amount: int("amount"),
-    eventId: varchar("eventId", { length: 191 })
-      .notNull()
-      .references(() => events.id),
-    timeslotId: varchar("timeslotId", { length: 191 })
-      .notNull()
-      .references(() => timeslots.id),
     stripeAccountId: varchar("stripeAccountId", { length: 191 })
       .notNull()
       .references(() => users.stripeAccountId),

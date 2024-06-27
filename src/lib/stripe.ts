@@ -2,7 +2,7 @@ import { stripe } from "~/server/stripe";
 import crypto from "crypto";
 import { eq } from "drizzle-orm";
 import { db } from "~/server/db";
-import { events, stripeCheckouts } from "~/server/db/schema";
+import { events, stripeCheckouts, stripePayouts } from "~/server/db/schema";
 import Stripe from "stripe";
 
 /**
@@ -27,7 +27,8 @@ export function createCheckoutSession(
         price_data: {
           currency: "usd",
           product_data: {
-            name: productDescription ?? "Creating an event for musicians to apply.",
+            name:
+              productDescription ?? "Creating an event for musicians to apply.",
           },
           unit_amount: (amount + platformFee) * 100,
         },
@@ -159,4 +160,8 @@ export async function handleStripeCheckoutFailure(
   });
 
   // send email to user that the payment failed so the event will not be available
+}
+
+export function insertPayout(values: typeof stripePayouts.$inferInsert) {
+  return db.insert(stripePayouts).values(values);
 }

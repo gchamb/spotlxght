@@ -4,6 +4,7 @@ import { env } from "~/env";
 import {
   handleStripeCheckoutFailure,
   handleStripeCheckoutSuccess,
+  insertPayout,
 } from "~/lib/stripe";
 
 // stripe webhook for the following
@@ -48,14 +49,26 @@ export async function POST(request: Request) {
       return new Response(null, { status: 200 });
 
     // payouts are from connected accounts to their personal accounts
-    // case "payout.paid":
-    //   const payoutPaidData = event.data.object;
-    //   console.log(payoutPaidData);
-    //   return new Response(null, { status: 200 });
-    // case "payout.failed":
-    //   const payoutFailedData = event.data.object;
-    //   console.log(payoutFailedData);
-    //   return new Response(null, { status: 200 });
+    case "payout.paid":
+      const payoutPaidData = event.data.object;
+      await insertPayout({
+        id: payoutPaidData.id,
+        status: payoutPaidData.status,
+        stripeAccountId: "NULL", // will add later this requires figuring out are will allowing manual or scheduled payouts
+        currency: payoutPaidData.currency,
+        amount: payoutPaidData.amount,
+      });
+      return new Response(null, { status: 200 });
+    case "payout.failed":
+      const payoutFailedData = event.data.object;
+      await insertPayout({
+        id: payoutFailedData.id,
+        status: payoutFailedData.status,
+        stripeAccountId: "NULL", // will add later this requires figuring out are will allowing manual or scheduled payouts
+        currency: payoutFailedData.currency,
+        amount: payoutFailedData.amount,
+      });
+      return new Response(null, { status: 200 });
     default:
       return new Response(null, { status: 200 });
   }
