@@ -40,7 +40,7 @@ export default function MusicianContent({
                     src={profilePictureSasUrl}
                     alt="profile picture"
                   />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback>underground</AvatarFallback>
                 </Avatar>
               </div>
               <div>
@@ -52,7 +52,7 @@ export default function MusicianContent({
                           src="/images/edm.jpg"
                           alt="profile picture"
                         />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarFallback>underground</AvatarFallback>
                       </Avatar>
                     </div>
                     <div className="my-1">
