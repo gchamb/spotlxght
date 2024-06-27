@@ -11,11 +11,7 @@ export default async function Reviews({
   return (
     <div>
       <div className="flex flex-col gap-8">
-        {!userReviews.length ? (
-          <div className="flex justify-center">
-            <h1>No reviews yet.</h1>
-          </div>
-        ) : (
+        {userReviews.length > 0 ? (
           <>
             {userReviews.map(async (userReview) => {
               const profilePictureSasUrl = userReview.user.profilePicImage
@@ -55,6 +51,10 @@ export default async function Reviews({
               );
             })}
           </>
+        ) : (
+          <div className="flex justify-center">
+            <h1>No reviews yet.</h1>
+          </div>
         )}
       </div>
     </div>

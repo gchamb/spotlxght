@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MoveRight } from "lucide-react";
 import ApplyDialog from "~/components/apply-dialog";
-import { EventListing } from "~/lib/types";
+import { type EventListing } from "~/lib/types";
 
 export default function TimeslotsButton({ event }: { event: EventListing }) {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function TimeslotsButton({ event }: { event: EventListing }) {
 
   return (
     <>
-      <div
+      <button
         onClick={() => {
           if (session.data) {
             if (session.data?.type === "musician") {
@@ -34,14 +34,14 @@ export default function TimeslotsButton({ event }: { event: EventListing }) {
             router.push("/");
           }
         }}
-        className="group flex items-end justify-between rounded-2xl py-4 hover:cursor-pointer"
+        className="group flex items-end justify-between rounded-2xl py-4"
       >
         <h1 className="my-auto w-fit group-hover:font-bold">Timeslots</h1>
         <MoveRight
           size={30}
           className="group-hover:h-9 group-hover:w-9 group-hover:font-bold"
         />
-      </div>
+      </button>
       <ApplyDialog
         open={open}
         onClose={handleClose}

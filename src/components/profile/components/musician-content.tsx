@@ -26,11 +26,7 @@ export default function MusicianContent({
 }) {
   return (
     <div className="xl:flex xl:flex-col xl:gap-8">
-      {!videos.length ? (
-        <div className="flex justify-center">
-          <h1 className="text-center">No performances yet.</h1>
-        </div>
-      ) : (
+      {videos.length > 0 ? (
         <>
           {videos.map((asset) => (
             <div key={asset.id} className="relative gap-6 xl:flex">
@@ -131,6 +127,10 @@ export default function MusicianContent({
             </div>
           ))}
         </>
+      ) : (
+        <div className="flex justify-center">
+          <h1 className="text-center">No performances yet.</h1>
+        </div>
       )}
     </div>
   );

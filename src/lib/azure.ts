@@ -17,7 +17,7 @@ export function getSasUrl(
   permissions.write = false;
   permissions.execute = false;
 
-  return "";
+  // return "";
 
   // be careful this is a cost per call so in dev mode it is recalled on every change
   if (type === "banner-pic") {
