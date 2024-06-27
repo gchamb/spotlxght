@@ -44,27 +44,26 @@ export function AuthScreen({ screenType, type }: AuthProps) {
   });
 
   async function onSubmit(values: z.infer<typeof credentialsSchema>) {
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      if (form.formState.errors.root?.message !== undefined) {
-        form.setError("root", {
-          message: undefined,
-        });
-      }
-
-      if (screenType === "sign-in") {
-        await emailSignInAction(values);
-      } else {
-        await emailSignUpAction({ ...values, type });
-      }
-    } catch (err) {
+    if (form.formState.errors.root?.message !== undefined) {
       form.setError("root", {
-        message: err instanceof Error ? err.message : String(err),
+        message: undefined,
       });
-    } finally {
-      setLoading(false);
     }
+
+    let error: Awaited<ReturnType<typeof emailSignInAction> | undefined>;
+    if (screenType === "sign-in") {
+      error = await emailSignInAction(values);
+    } else {
+      error = await emailSignUpAction({ ...values, type });
+    }
+
+    if (error) {
+      form.setError("root", { message: error.message });
+    }
+
+    setLoading(false);
   }
 
   return (
