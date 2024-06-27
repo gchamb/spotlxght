@@ -6,6 +6,7 @@ import { assetsContainer } from "~/server/azure";
 import { db } from "~/server/db";
 import { assets, reviews, users } from "~/server/db/schema";
 import { desc, eq } from "drizzle-orm";
+import { randomUUID } from "crypto";
 
 export async function uploadFile(
   userId: string,
@@ -25,7 +26,7 @@ export async function uploadFile(
   console.log(title);
   console.log(description);
 
-  const azureBlobKey = `${userId}_${file.name.replace(/\s/g, "-")}`;
+  const azureBlobKey = `${randomUUID()}_${file.name.replace(/\s/g, "-")}`;
   const azureResponse = await assetsContainer
     .getBlockBlobClient(azureBlobKey)
     .uploadData(await file.arrayBuffer());
