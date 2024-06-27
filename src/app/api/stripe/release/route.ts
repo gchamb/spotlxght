@@ -7,7 +7,7 @@ import { applications, stripeTransfers, timeslots } from "~/server/db/schema";
 // release the funds from account to a stripe connected account
 export async function POST(request: Request) {
   try {
-    const data = await request.json();
+    const data = await request.json() as unknown;
 
     // validate the request
     const valid = releaseFundsRequest.safeParse(data);
