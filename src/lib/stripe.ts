@@ -16,17 +16,20 @@ import Stripe from "stripe";
 export function createCheckoutSession(
   amount: number,
   redirect: string,
+  productDescription?: string,
   metadata?: Record<string, string>,
 ) {
+  const platformFee = amount * 0.05;
+
   return stripe.checkout.sessions.create({
     line_items: [
       {
         price_data: {
           currency: "usd",
           product_data: {
-            name: "Creating an event for musicians to apply.",
+            name: productDescription ?? "Creating an event for musicians to apply.",
           },
-          unit_amount: amount * 100,
+          unit_amount: (amount + platformFee) * 100,
         },
         quantity: 1,
       },

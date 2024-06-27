@@ -36,7 +36,7 @@ export default function CreateEventDialog({
   const [timeslots, setTimeslots] = useState([crypto.randomUUID()]);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
-  const [date, setDate] = useState<string>(new Date());
+  const [date, setDate] = useState<Date>(new Date());
 
   const eventOnClose = () => {
     onClose();
@@ -217,22 +217,32 @@ export default function CreateEventDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button
-              disabled={isPending}
-              className="flex w-full items-center gap-x-2 text-lg font-semibold"
-              onClick={eventOnClose}
-              type="button"
-            >
-              Close
-            </Button>
-            <Button
-              disabled={isPending}
-              className="flex w-full items-center gap-x-2 text-lg font-semibold"
-              type="submit"
-            >
-              {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-              Checkout
-            </Button>
+            <div className="flex w-full flex-col justify-center gap-2">
+              <div className="flex gap-2">
+                <Button
+                  disabled={isPending}
+                  className="flex w-full items-center gap-x-2 text-lg font-semibold"
+                  onClick={eventOnClose}
+                  type="button"
+                >
+                  Close
+                </Button>
+                <Button
+                  disabled={isPending}
+                  className="flex w-full items-center gap-x-2 text-lg font-semibold"
+                  type="submit"
+                >
+                  {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Checkout
+                </Button>
+              </div>
+
+              <div>
+                <p className="text-center text-sm text-muted-foreground">
+                  Platform fee will be 5% of the total
+                </p>
+              </div>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>

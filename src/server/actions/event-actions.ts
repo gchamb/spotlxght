@@ -67,6 +67,7 @@ export async function createEvent(data: FormData) {
     stripeCheckoutSession = await createCheckoutSession(
       pay * dataTimeslots.length,
       stripeRedirect,
+      `Creating ${name.toLowerCase()} event for musicians to apply.`,
       {
         userId: session.userId,
         eventId,

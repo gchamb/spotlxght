@@ -59,8 +59,10 @@ export async function POST(request: Request) {
     }
 
     // transfer funds to the stripe connect account
+    const platformFee = applicant.event.amount * 0.05;
+    const amountPaid = (applicant.event.amount - platformFee) * 100;
     const transfer = await stripe.transfers.create({
-      amount: applicant.event.amount * 100, // have to convert to cents
+      amount: amountPaid, // have to convert to cents
       currency: "usd",
       destination: applicant.user.stripeAccountId,
       transfer_group: eventId,
