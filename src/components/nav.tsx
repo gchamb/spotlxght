@@ -14,14 +14,10 @@ export default async function Nav() {
           </Link>
           <div className="flex items-end gap-12">
             {session?.user.type === "venue" && (
-              <a className="hover:font-semibold" href="/my-events">
-                My Events
-              </a>
+              <a href="/my-events">My Events</a>
             )}
             {session?.user.type === "musician" && (
-              <a className="hover:font-semibold" href="/listings">
-                Listings
-              </a>
+              <a href="/listings">Listings</a>
             )}
             {session?.user.type === "musician" && (
               <a href="/bookings">Bookings</a>
