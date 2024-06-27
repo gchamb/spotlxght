@@ -31,7 +31,7 @@ export default async function Nav() {
           <Link href="/">
             <h1 className="text-xl font-semibold">underground</h1>
           </Link>
-          <div className=" hidden justify-between gap-x-10 lg:flex">
+          <div className="hidden justify-between gap-x-10 lg:flex">
             <Link className="hover:font-semibold" href="/listings">
               Listings
             </Link>
@@ -56,7 +56,7 @@ export default async function Nav() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <Link href={`/profile/${session.userId}`}>
-                <DropdownMenuItem className="md:text-md flex items-center gap-x-4 text-xs">
+                <DropdownMenuItem className="md:text-md flex cursor-pointer items-center gap-x-4 text-xs">
                   <User className="h-4 w-4 text-muted-foreground" />
                   Profile
                 </DropdownMenuItem>
