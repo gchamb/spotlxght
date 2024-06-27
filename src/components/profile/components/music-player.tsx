@@ -33,6 +33,9 @@ export default function MusicPlayer({
 
   useEffect(() => {
     const handlePlay = async () => {
+      setProgress(
+        (audioRef.current.currentTime / audioRef.current.duration) * 100,
+      );
       if (isPlaying) {
         await audioRef.current.play();
       } else {
@@ -69,10 +72,6 @@ export default function MusicPlayer({
               className="pt-7"
               onClick={() => {
                 setIsPlaying((prev) => !prev);
-                setProgress(
-                  (audioRef.current.currentTime / audioRef.current.duration) *
-                    100,
-                );
               }}
             >
               {isPlaying ? (

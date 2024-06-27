@@ -16,10 +16,12 @@ import { type Asset } from "~/lib/types";
 export default function MusicianContent({
   content,
   userId,
+  profilePictureSasUrl,
   isCurrentUser,
 }: {
   content: (Asset & { sasUrl?: string })[];
   userId: string;
+  profilePictureSasUrl: string;
   isCurrentUser: boolean;
 }) {
   return (
@@ -34,7 +36,10 @@ export default function MusicianContent({
             <div key={asset.id} className="relative gap-6 xl:flex">
               <div className="hidden xl:block">
                 <Avatar>
-                  <AvatarImage src="/images/edm.jpg" alt="profile picture" />
+                  <AvatarImage
+                    src={profilePictureSasUrl}
+                    alt="profile picture"
+                  />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
               </div>

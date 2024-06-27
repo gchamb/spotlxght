@@ -54,7 +54,7 @@ export function AuthScreen({ screenType, type }: AuthProps) {
       }
 
       if (screenType === "sign-in") {
-        await emailSignInAction(values, type);
+        await emailSignInAction(values);
       } else {
         await emailSignUpAction({ ...values, type });
       }

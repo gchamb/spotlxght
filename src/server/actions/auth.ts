@@ -8,23 +8,16 @@ import { cookies, headers } from "next/headers";
 import { OAuth2Client } from "google-auth-library";
 import { env } from "~/env";
 
-export async function emailSignInAction(
-  credentials: Credentials,
-  userType: UserType,
-) {
+export async function emailSignInAction(credentials: Credentials) {
   const user = await emailSignIn(credentials);
-  if (!user.type) {
-    redirect(`/${userType}/onboarding`);
-  } else {
-    redirect(`/profile/${user.id}`);
-  }
+  redirect(`/profile/${user.id}`);
 }
 
 export async function googleSignIn(userType: UserType) {
   const referer = headers().get("referer");
   const url = new URL(referer ?? "");
 
-  const oAuth2Client: OAuth2Client = new OAuth2Client(
+  const oAuth2Client = new OAuth2Client(
     env.AUTH_GOOGLE_ID,
     env.AUTH_GOOGLE_SECRET,
     `${url.origin}/api/auth/callback/google`,

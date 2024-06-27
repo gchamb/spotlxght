@@ -1,6 +1,11 @@
 import { getSession } from "~/lib/auth";
 import { getUserAssets } from "~/lib/profile";
-import type { Asset, Review, User } from "~/lib/types";
+import {
+  type Asset,
+  AzureBlobContainer,
+  type Review,
+  type User,
+} from "~/lib/types";
 import { getUserReviews } from "~/server/actions/profile";
 import ProfileBanner from "~/components/profile/components/profile-banner";
 import SideNav from "~/components/profile/components/side-nav";
@@ -11,6 +16,7 @@ import Reviews from "~/components/profile/components/reviews";
 import { db } from "~/server/db";
 import { eq } from "drizzle-orm";
 import { users } from "~/server/db/schema";
+import { getSasUrl } from "~/lib/azure";
 
 export const revalidate = 3000;
 
@@ -34,6 +40,13 @@ export default async function Profile({ userId }: { userId: string }) {
   const isCurrentUser = session?.user.id === userProfile?.id;
 
   // For both user types
+  const profilePictureSasUrl = userProfile.profilePicImage
+    ? (await getSasUrl(
+        userProfile.profilePicImage,
+        AzureBlobContainer.PROFILE,
+      )) || "/images/default-profile.png"
+    : "/images/default-profile.png";
+
   const userReviews: ({ review: Review } & { user: User })[] =
     await getUserReviews(userProfile.id);
   userReviews.sort(
@@ -55,7 +68,11 @@ export default async function Profile({ userId }: { userId: string }) {
 
   return (
     <>
-      <ProfileBanner userProfile={userProfile} isCurrentUser={isCurrentUser} />
+      <ProfileBanner
+        userProfile={userProfile}
+        profilePictureSasUrl={profilePictureSasUrl}
+        isCurrentUser={isCurrentUser}
+      />
 
       <div className="my-16 w-full justify-between gap-20 xl:flex">
         {userProfile.type === "musician" && (
@@ -90,6 +107,7 @@ export default async function Profile({ userId }: { userId: string }) {
                 <MusicianContent
                   content={content}
                   userId={userProfile.id}
+                  profilePictureSasUrl={profilePictureSasUrl}
                   isCurrentUser={isCurrentUser}
                 />
               )}

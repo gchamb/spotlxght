@@ -2,7 +2,12 @@ import { db } from "~/server/db";
 import { desc, eq, sql } from "drizzle-orm";
 import { assets, reviews } from "~/server/db/schema";
 import { getSasUrl } from "~/lib/azure";
-import { type Asset, AzureBlobContainer, type UserProfile } from "~/lib/types";
+import {
+  type Asset,
+  AzureBlobContainer,
+  type Rating,
+  type UserProfile,
+} from "~/lib/types";
 
 export async function getUserAssets(userProfile: UserProfile) {
   const userAssets: (Asset & { sasUrl?: string })[] =
@@ -35,5 +40,5 @@ export async function getUserRating(userId: string) {
   const reviewResults = queryResults[0];
   if (!reviewResults) throw new Error("Error getting reviews");
   if (!reviewResults?.count) return 5;
-  return reviewResults.avg;
+  return reviewResults.avg as Rating;
 }

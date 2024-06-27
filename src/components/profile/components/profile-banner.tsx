@@ -2,24 +2,20 @@ import { AzureBlobContainer, type UserProfile } from "~/lib/types";
 import { getSasUrl } from "~/lib/azure";
 import { Loader2 } from "lucide-react";
 import React, { Suspense } from "react";
-import { StarRatings } from "~/components/profile/components/star-ratings";
 import { getUserRating } from "~/lib/profile";
 import CreateEventButton from "~/components/profile/components/create-event-button";
 import UploadButton from "~/components/profile/components/upload-button";
+import Ratings from "~/components/ui/ratings";
 
 export default async function ProfileBanner({
   userProfile,
+  profilePictureSasUrl,
   isCurrentUser,
 }: {
   userProfile: UserProfile;
+  profilePictureSasUrl: string;
   isCurrentUser: boolean;
 }) {
-  const profilePictureSasUrl = userProfile.profilePicImage
-    ? (await getSasUrl(
-        userProfile.profilePicImage,
-        AzureBlobContainer.PROFILE,
-      )) || "/images/default-profile.png"
-    : "/images/default-profile.png";
   const profileBannerSasUrl = userProfile.profileBannerImage
     ? (await getSasUrl(
         userProfile.profileBannerImage,
@@ -64,7 +60,7 @@ export default async function ProfileBanner({
           <div className="container flex h-full flex-col items-center justify-between sm:items-end">
             <div className="flex h-full flex-col items-center justify-between sm:items-end">
               <div className="my-4 sm:my-0">
-                <StarRatings rating={userRating} />
+                <Ratings rating={userRating} />
               </div>
               {isCurrentUser && userProfile.type === "venue" && (
                 <CreateEventButton />

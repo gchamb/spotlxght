@@ -1,4 +1,4 @@
-import { UserProfile } from "~/lib/types";
+import { type UserProfile } from "~/lib/types";
 import { getVenueEventListings } from "~/lib/events";
 import TimeslotsButton from "~/components/profile/components/timeslots-button";
 
@@ -20,7 +20,9 @@ export default async function VenueContent({
             <div className="container flex h-full flex-col justify-between gap-8 pb-6 pt-10">
               <div className="flex justify-between gap-12">
                 <h1 className="w-fit text-2xl">{event.name}</h1>
-                <h1 className="w-fit pt-1 text-2xl font-bold">$50</h1>
+                <h1 className="w-fit pt-1 text-2xl font-bold">
+                  ${event.amount}
+                </h1>
               </div>
               <TimeslotsButton event={event} />
             </div>
