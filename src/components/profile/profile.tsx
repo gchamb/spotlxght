@@ -21,7 +21,6 @@ async function getUserProfile(userId: string) {
     where: eq(users.id, userId),
     with: {
       genres: true,
-      reviews: true,
       assets: true,
     },
   });
