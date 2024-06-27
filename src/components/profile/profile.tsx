@@ -12,6 +12,7 @@ import { db } from "~/server/db";
 import { eq } from "drizzle-orm";
 import { users } from "~/server/db/schema";
 import { getSasUrl } from "~/lib/azure";
+import UserNotFound from "~/components/profile/components/user-not-found";
 
 export const revalidate = 3000;
 
@@ -29,7 +30,7 @@ async function getUserProfile(userId: string) {
 export default async function Profile({ userId }: { userId: string }) {
   const userProfile = await getUserProfile(userId);
   if (!userProfile) {
-    return <div>User not found</div>;
+    return <UserNotFound />;
   }
   const session = await getSession();
   const isCurrentUser = session?.user.id === userProfile?.id;
