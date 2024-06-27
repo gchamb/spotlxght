@@ -17,6 +17,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Button } from "~/components/ui/button";
 import { deleteAsset } from "~/server/actions/profile";
+import { toast } from "sonner";
 
 export default function MusicPlayer({
   asset,
@@ -141,7 +142,13 @@ export default function MusicPlayer({
                 {/*  </AlertDialog>*/}
                 {/*</DropdownMenuItem>*/}
                 <DropdownMenuItem
-                  onClick={async () => deleteAsset(asset.id, userId)}
+                  onClick={async () => {
+                    const error = await deleteAsset(asset.id, userId);
+
+                    if (error) {
+                      toast(error.message);
+                    }
+                  }}
                 >
                   <p className="font-bold text-red-600">Delete</p>
                 </DropdownMenuItem>

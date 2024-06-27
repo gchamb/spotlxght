@@ -30,20 +30,19 @@ export default function ApplicantCard({ applicant }: ApplicantRowProps) {
     status: SetApplicantStatusRequest["status"],
   ) => {
     startTransition(async () => {
-      try {
-        setSelectedStatus(status);
-        await setEventApplicantStatus({
-          eventId: applicant.applicantData?.eventId ?? "",
-          applicantId: applicant.applicantData?.userId ?? "",
-          timeslotId: applicant.applicantData?.timeslotId ?? "",
-          status,
-        });
-      } catch (err) {
-        const error = err as Error;
+      setSelectedStatus(status);
+      const error = await setEventApplicantStatus({
+        eventId: applicant.applicantData?.eventId ?? "",
+        applicantId: applicant.applicantData?.userId ?? "",
+        timeslotId: applicant.applicantData?.timeslotId ?? "",
+        status,
+      });
+
+      if (error) {
         toast(error.message);
-      } finally {
-        setSelectedStatus(undefined);
       }
+
+      setSelectedStatus(undefined);
     });
   };
 

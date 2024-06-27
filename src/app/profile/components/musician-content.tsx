@@ -12,6 +12,7 @@ import { Button } from "~/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { deleteAsset } from "~/server/actions/profile";
 import { type Asset } from "~/lib/types";
+import { toast } from "sonner";
 
 export default function MusicianContent({
   videos,
@@ -103,7 +104,13 @@ export default function MusicianContent({
                           {/*  </AlertDialog>*/}
                           {/*</DropdownMenuItem>*/}
                           <DropdownMenuItem
-                            onClick={async () => deleteAsset(asset.id, userId)}
+                            onClick={async () => {
+                              const error = await deleteAsset(asset.id, userId);
+
+                              if (error) {
+                                toast(error.message);
+                              }
+                            }}
                           >
                             <p className="font-bold text-red-600">Delete</p>
                           </DropdownMenuItem>
