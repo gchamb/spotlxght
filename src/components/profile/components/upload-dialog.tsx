@@ -26,7 +26,7 @@ import { Input } from "~/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { uploadFile } from "~/server/actions/profile";
 
-export default function UploadButton({ userId }: { userId: string }) {
+export default function UploadDialog({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false);
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [loading, setLoading] = useState(false);

@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import React, { Suspense } from "react";
 import { getUserRating } from "~/lib/profile";
 import CreateEventButton from "~/components/profile/components/create-event-button";
-import UploadButton from "~/components/profile/components/upload-button";
+import UploadDialog from "~/components/profile/components/upload-dialog";
 import Ratings from "~/components/ui/ratings";
 
 export default async function ProfileBanner({
@@ -64,7 +64,7 @@ export default async function ProfileBanner({
                 <CreateEventButton />
               )}
               {isCurrentUser && userProfile.type === "musician" && (
-                <UploadButton userId={userProfile.id} />
+                <UploadDialog userId={userProfile.id} />
               )}
             </div>
           </div>
