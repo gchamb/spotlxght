@@ -49,7 +49,7 @@ export default function MusicianContent({
                     <div className="mr-6 xl:hidden">
                       <Avatar>
                         <AvatarImage
-                          src="/images/edm.jpg"
+                          src={profilePictureSasUrl}
                           alt="profile picture"
                         />
                         <AvatarFallback>underground</AvatarFallback>
