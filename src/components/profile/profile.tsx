@@ -67,7 +67,7 @@ export default async function Profile({ userId }: { userId: string }) {
   });
 
   return (
-    <>
+    <div className="container mt-10 max-w-screen-xl px-4">
       <ProfileBanner
         userProfile={userProfile}
         profilePictureSasUrl={profilePictureSasUrl}
@@ -118,6 +118,6 @@ export default async function Profile({ userId }: { userId: string }) {
           </Tabs>
         </div>
       </div>
-    </>
+    </div>
   );
 }

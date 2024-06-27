@@ -18,7 +18,7 @@ import { and, eq } from "drizzle-orm";
 export async function createEvent(data: FormData) {
   const session = await getSession();
 
-  if (!session) {
+  if (session === null) {
     return redirect("/venue/auth");
   }
 
@@ -86,7 +86,7 @@ export async function createEvent(data: FormData) {
 export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
   const session = await getSession();
 
-  if (!session) return redirect("/venue/auth");
+  if (session === null) return redirect("/venue/auth");
 
   if (session.user.type !== "venue") return redirect("/");
 
@@ -159,7 +159,7 @@ export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
 export async function applyToTimeslot(data: ApplyTimeslotRequest) {
   const session = await getSession();
 
-  if (!session) return redirect("/musician/auth");
+  if (session === null) return redirect("/musician/auth");
 
   if (session.user.type !== "musician") return redirect("/");
 

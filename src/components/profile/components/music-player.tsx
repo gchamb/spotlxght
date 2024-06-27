@@ -92,7 +92,7 @@ export default function MusicPlayer({
             className="hover:cursor-pointer"
             draggable={true}
             onValueChange={(value) => {
-              if (value[0] && audioRef.current) {
+              if (value[0] && audioRef) {
                 audioRef.current.currentTime =
                   (value[0] / 100) * audioRef.current.duration;
               }
