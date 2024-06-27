@@ -48,7 +48,7 @@ export default function TimeslotSelect({
           })}
         </SelectContent>
       </Select>
-      <div>
+      <div className="flex flex-col gap-4">
         {applicants
           .filter(
             (applicant) => applicant.applicantData?.timeslotId === timeslotId,
