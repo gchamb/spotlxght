@@ -1,15 +1,15 @@
-import { eq, and, param } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
-import { ApplicationStatus } from "~/lib/types";
+import { type ApplicationStatus } from "~/lib/types";
 import { db } from "~/server/db";
 import { assets, events, users } from "~/server/db/schema";
 import TimeslotTabs from "../components/timeslot-tabs";
 import TimeslotSelect from "../components/timeslot-select";
-import { getSaSUrl } from "~/lib/azure";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { ArrowRight, Home } from "lucide-react";
+import { getSasUrl } from "~/lib/azure";
 
 async function getEventData(id: string, userId: string) {
   // returns all the timeslots and applicants
@@ -142,7 +142,7 @@ export default async function EventDetailsPage({
       const assets = await Promise.all(
         applicant.assets.map(
           async (asset): Promise<(typeof applicant)["assets"][number]> => {
-            const sasUrl = await getSaSUrl(asset.azureBlobKey, "assets");
+            const sasUrl = await getSasUrl(asset.azureBlobKey, "assets");
 
             return { ...asset, azureBlobKey: sasUrl };
           },
@@ -154,7 +154,7 @@ export default async function EventDetailsPage({
         applicant.profilePicImage &&
         !applicant.profilePicImage.includes("google")
       ) {
-        profilePicSasUrl = await getSaSUrl(
+        profilePicSasUrl = await getSasUrl(
           applicant.profilePicImage,
           "profile-pic",
         );

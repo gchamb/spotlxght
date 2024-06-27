@@ -1,6 +1,6 @@
 "use client";
 import { PauseCircle, PlayCircle } from "lucide-react";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
 
 export default function Audio({
@@ -44,14 +44,17 @@ export default function Audio({
         </div>
       </div>
 
-      <audio
-        ref={(audioRef) => {
-          if (!ref) return;
-          ref.current = audioRef;
-        }}
-      >
-        <source src={src} type={mimetype} />
-      </audio>
+      <React.Fragment key={src}>
+        <audio
+          key={src}
+          ref={(audioRef) => {
+            if (!ref) return;
+            ref.current = audioRef;
+          }}
+        >
+          <source key={src} src={src} type={mimetype} />
+        </audio>
+      </React.Fragment>
     </div>
   );
 }

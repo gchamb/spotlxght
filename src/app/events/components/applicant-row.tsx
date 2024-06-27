@@ -55,6 +55,7 @@ export default function ApplicantCard({ applicant }: ApplicantRowProps) {
             <img
               className="h-full w-full rounded object-cover"
               src={applicant.profilePicImage ?? "/images/default-profile2.png"}
+              alt="profile picture"
             />
           </div>
 

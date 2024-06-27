@@ -1,10 +1,33 @@
 import { z } from "zod";
 import { constructZodLiteralUnionType } from "./zod-utilities";
-import { timeslots, genres } from "~/server/db/schema";
-
-// this file will include zod schemas and typescript types
+import {
+  type assets,
+  type genres,
+  type reviews,
+  type timeslots,
+  type users,
+} from "~/server/db/schema";
+import { type getSession } from "~/lib/auth";
+import { type InferSelectModel } from "drizzle-orm";
 
 export type Credentials = z.infer<typeof credentialsSchema>;
+
+export type User = InferSelectModel<typeof users>;
+
+export type Session = Awaited<ReturnType<typeof getSession>>;
+
+export type Genre = InferSelectModel<typeof genres>;
+
+export type Review = InferSelectModel<typeof reviews>;
+
+export type Rating = 1 | 2 | 3 | 4 | 5;
+
+export type Asset = InferSelectModel<typeof assets>;
+
+export type UserProfile = User & {
+  assets: Asset[];
+  genres: Genre[];
+};
 
 export type UserType = "venue" | "musician";
 
@@ -12,9 +35,9 @@ export type EventStatus = "open" | "in-progress" | "completed" | "closed";
 
 export type ApplicationStatus = (typeof applicantStatuses)[number];
 
-export type MyEvents = z.infer<typeof myEventsDataSchema>;
+export type MyEvent = z.infer<typeof myEventsDataSchema>;
 
-export type EventListings = MyEvents & {
+export type EventListing = MyEvent & {
   venueName: string;
   venueId: string;
   timeslots: (typeof timeslots.$inferSelect)[];
@@ -127,6 +150,19 @@ export const payArray = [
 
 export const MAX_FILE_SIZE = 1024 * 1024 * 5; // 5 MB
 export const ACCEPTED_IMAGE_TYPES = ["image/jpg", "image/jpeg", "image/png"];
+export const ACCEPTED_AUDIO_TYPES = [
+  "audio/mpeg",
+  "audio/wav",
+  "audio/ogg",
+  "audio/mp3",
+];
+export const ACCEPTED_VIDEO_TYPES = ["video/mp4", "video/ogg", "video/webm"];
+
+export enum AzureBlobContainer {
+  PROFILE = "profile",
+  BANNER = "banner",
+  ASSET = "asset",
+}
 
 export const credentialsSchema = z.object({
   email: z
@@ -151,6 +187,30 @@ export const imageZodSchema = z
     return ACCEPTED_IMAGE_TYPES.includes(file.type);
   }, "Only JPG, JPEG, and PNG are allowed to be uploaded.")
   .nullable();
+
+export const uploadFileFormSchema = z.object({
+  title: z
+    .string({ message: "Title is required" })
+    .min(1, "Title is required")
+    .max(50, "Title should be at most 50 characters"),
+  description: z
+    .string()
+    .max(100, "Description should be at most 100 characters")
+    .nullish(),
+  uploadItem: z
+    .instanceof(File, { message: "An upload is required." })
+    .refine((file) => file !== null, "An upload is required.")
+    .refine(
+      (file) => file.size <= MAX_FILE_SIZE,
+      "The upload must be a maximum of 5MB.",
+    )
+    .refine((file) => {
+      return [...ACCEPTED_AUDIO_TYPES, ...ACCEPTED_VIDEO_TYPES].includes(
+        file.type,
+      );
+    }, "Only MP3, WAV, OGG, MP4, OGG, and WEBM files are allowed to be uploaded.")
+    .nullable(),
+});
 
 export const venueFormSchema = z.object({
   venueName: z
