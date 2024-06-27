@@ -55,37 +55,28 @@ export default async function Nav() {
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Link
-                  className="md:text-md flex items-center gap-x-4 text-xs"
-                  href={`/profile/${session.userId}`}
-                >
+              <Link href={`/profile/${session.userId}`}>
+                <DropdownMenuItem className="md:text-md flex items-center gap-x-4 text-xs">
                   <User className="h-4 w-4 text-muted-foreground" />
                   Profile
-                </Link>
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </Link>
 
-              <DropdownMenuItem className="lg:hidden">
-                <Link
-                  className="md:text-md flex items-center gap-x-4 text-xs"
-                  href="/listings"
-                >
+              <Link className="lg:hidden" href="/listings">
+                <DropdownMenuItem className="md:text-md flex items-center gap-x-4 text-xs">
                   <MicVocal className="h-4 w-4 text-muted-foreground" />
                   Listings
-                </Link>
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </Link>
 
               {session.user.type === "venue" ? (
                 <>
-                  <DropdownMenuItem className="lg:hidden">
-                    <Link
-                      href="/my-events"
-                      className="md:text-md flex flex items-center gap-x-4 text-xs "
-                    >
+                  <Link href="/my-events" className="lg:hidden">
+                    <DropdownMenuItem className="md:text-md flex flex items-center gap-x-4 text-xs ">
                       <CalendarDays className="h-4 w-4 text-muted-foreground" />
                       My Events
-                    </Link>
-                  </DropdownMenuItem>
+                    </DropdownMenuItem>
+                  </Link>
                 </>
               ) : (
                 <>{/* musician specific links such as bookings */}</>
@@ -101,15 +92,12 @@ export default async function Nav() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Link
-                  className="md:text-md flex items-center gap-x-4 text-xs"
-                  href="/listings"
-                >
+              <Link href="/listings">
+                <DropdownMenuItem className="md:text-md flex items-center gap-x-4 text-xs">
                   <MicVocal className="h-4 w-4 text-muted-foreground" />
                   Listings
-                </Link>
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
