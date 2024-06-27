@@ -14,25 +14,25 @@ import { deleteAsset } from "~/server/actions/profile";
 import { type Asset } from "~/lib/types";
 
 export default function MusicianContent({
-  content,
+  videos,
   userId,
   profilePictureSasUrl,
   isCurrentUser,
 }: {
-  content: (Asset & { sasUrl?: string })[];
+  videos: (Asset & { sasUrl?: string })[];
   userId: string;
   profilePictureSasUrl: string;
   isCurrentUser: boolean;
 }) {
   return (
     <div className="xl:flex xl:flex-col xl:gap-8">
-      {!content.length ? (
+      {!videos.length ? (
         <div className="flex justify-center">
           <h1 className="text-center">No performances yet.</h1>
         </div>
       ) : (
         <>
-          {content.map((asset) => (
+          {videos.map((asset) => (
             <div key={asset.id} className="relative gap-6 xl:flex">
               <div className="hidden xl:block">
                 <Avatar>

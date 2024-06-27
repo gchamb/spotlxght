@@ -49,13 +49,13 @@ export default async function Profile({ userId }: { userId: string }) {
   // For musicians
   const userAssets =
     userProfile?.type === "musician" ? await getUserAssets(userProfile) : [];
-  const content: (Asset & { sasUrl?: string })[] = [];
+  const videos: (Asset & { sasUrl?: string })[] = [];
   const songs: (Asset & { sasUrl?: string })[] = [];
   userAssets.forEach((asset) => {
     if (asset.mimetype.includes("audio")) {
       songs.push(asset);
     } else if (asset.mimetype.includes("video")) {
-      content.push(asset);
+      videos.push(asset);
     }
   });
 
@@ -98,7 +98,7 @@ export default async function Profile({ userId }: { userId: string }) {
                 <VenueContent userProfile={userProfile} />
               ) : (
                 <MusicianContent
-                  content={content}
+                  videos={videos}
                   userId={userProfile.id}
                   profilePictureSasUrl={profilePictureSasUrl}
                   isCurrentUser={isCurrentUser}
