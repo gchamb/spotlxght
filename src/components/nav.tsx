@@ -10,10 +10,13 @@ export default async function Nav() {
         <Link href="/">
           <h1 className="text-xl font-semibold">underground</h1>
         </Link>
-        <div>
+        <div className="flex items-end gap-12">
           {session?.user.type === "venue" && <a href="/my-events">My Events</a>}
           {session?.user.type === "musician" && (
             <a href="/listings">Listings</a>
+          )}
+          {session?.user.type === "musician" && (
+            <a href="/bookings">Bookings</a>
           )}
         </div>
       </div>

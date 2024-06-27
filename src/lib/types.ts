@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { constructZodLiteralUnionType } from "./zod-utilities";
-import { timeslots, genres } from "~/server/db/schema";
+import { type genres, type timeslots } from "~/server/db/schema";
 
 // this file will include zod schemas and typescript types
 
@@ -13,6 +13,8 @@ export type EventStatus = "open" | "in-progress" | "completed" | "closed";
 export type ApplicationStatus = (typeof applicantStatuses)[number];
 
 export type MyEvents = z.infer<typeof myEventsDataSchema>;
+
+// export type MyBookings =
 
 export type EventListings = MyEvents & {
   venueName: string;
@@ -186,6 +188,21 @@ export const myEventsDataSchema = z.object({
   date: z.date(),
   amount: z.number(),
   venueId: z.string().uuid(),
+  createdAt: z.date(),
+});
+
+export const myBookinsDataSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  status: z.union([
+    z.literal("open"),
+    z.literal("in-progress"),
+    z.literal("completed"),
+    z.literal("closed"),
+  ]),
+  date: z.date(),
+  amount: z.number(),
+  userId: z.string().uuid(),
   createdAt: z.date(),
 });
 
