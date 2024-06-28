@@ -36,10 +36,9 @@ export default async function Nav() {
               <Link href="/my-events">My Events</Link>
             )}
 
-            <Link href="/listings">Listings</Link>
-
             {session?.user.type === "musician" && (
               <>
+                <Link href="/listings">Listings</Link>
                 <Link href="/bookings">Bookings</Link>
               </>
             )}
@@ -64,13 +63,6 @@ export default async function Nav() {
                 </DropdownMenuItem>
               </Link>
 
-              <Link className="lg:hidden" href="/listings">
-                <DropdownMenuItem className="md:text-md flex cursor-pointer items-center gap-x-4 text-xs">
-                  <MicVocal className="h-4 w-4 text-muted-foreground" />
-                  Listings
-                </DropdownMenuItem>
-              </Link>
-
               {session.user.type === "venue" ? (
                 <>
                   <Link href="/my-events" className="lg:hidden">
@@ -82,6 +74,13 @@ export default async function Nav() {
                 </>
               ) : (
                 <>
+                  <Link className="lg:hidden" href="/listings">
+                    <DropdownMenuItem className="md:text-md flex cursor-pointer items-center gap-x-4 text-xs">
+                      <MicVocal className="h-4 w-4 text-muted-foreground" />
+                      Listings
+                    </DropdownMenuItem>
+                  </Link>
+
                   <Link className="lg:hidden" href="/bookings">
                     <DropdownMenuItem className="md:text-md flex cursor-pointer items-center gap-x-4 text-xs">
                       <Book className="h-4 w-4 text-muted-foreground" />
