@@ -1,7 +1,7 @@
 import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
-import { applications, events, timeslots } from "~/server/db/schema";
+import { applications, events, timeslots, users } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
 import { DataTable } from "~/app/bookings/components/data-table";
 import { columns } from "~/app/bookings/components/columns";
@@ -12,6 +12,7 @@ async function getBookings(userId: string) {
     .from(events)
     .innerJoin(applications, eq(events.id, applications.eventId))
     .where(eq(applications.userId, userId))
+    .innerJoin(users, eq(events.venueId, users.id))
     .innerJoin(timeslots, eq(events.id, timeslots.eventId));
 }
 

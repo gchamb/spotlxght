@@ -10,6 +10,11 @@ import { type MyBooking } from "~/lib/types";
 
 export const columns: ColumnDef<MyBooking>[] = [
   {
+    accessorKey: "user.name",
+    id: "venueName",
+    header: () => "Venue Name",
+  },
+  {
     accessorKey: "event.name",
     id: "name",
     header: () => "Event Name",

@@ -263,19 +263,6 @@ export const myBookinsDataSchema = z.object({
     eventId: z.string().uuid(),
     appliedAt: z.date(),
   }),
-  timeslot: z.object({
-    id: z.string().uuid(),
-    startTime: z.enum(timeslotsTimes),
-    endTime: z.enum(timeslotsTimes),
-    timezone: z.string(),
-    status: z.union([
-      z.literal("open"),
-      z.literal("in-progress"),
-      z.literal("completed"),
-      z.literal("closed"),
-    ]),
-    eventId: z.string().uuid(),
-  }),
   event: z.object({
     id: z.string().uuid(),
     name: z.string(),
@@ -290,6 +277,20 @@ export const myBookinsDataSchema = z.object({
     venueId: z.string().uuid(),
     createdAt: z.date(),
   }),
+  timeslot: z.object({
+    id: z.string().uuid(),
+    startTime: z.enum(timeslotsTimes),
+    endTime: z.enum(timeslotsTimes),
+    timezone: z.string(),
+    status: z.union([
+      z.literal("open"),
+      z.literal("in-progress"),
+      z.literal("completed"),
+      z.literal("closed"),
+    ]),
+    eventId: z.string().uuid(),
+  }),
+  user: z.custom<User>(),
 });
 
 export const createEventSchema = z.object({
