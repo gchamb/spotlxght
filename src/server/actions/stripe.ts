@@ -87,8 +87,11 @@ export async function transfer(data: ReleaseFundsRequest) {
 
     revalidatePath(`/events/${valid.data.eventId}`, "page");
   } catch (err) {
-    throw new Error(
-      err instanceof Error ? err.message : "Unable to process this request",
-    );
+    return {
+      message:
+        err instanceof Error
+          ? err.message
+          : "Unable to process your request. Try again.",
+    };
   }
 }

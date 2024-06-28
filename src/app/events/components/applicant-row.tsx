@@ -35,9 +35,7 @@ export default function ApplicantCard({
   const [selectedStatus, setSelectedStatus] =
     useState<SetApplicantStatusRequest["status"]>();
 
-  const setApplicantStatus = async (
-    status: SetApplicantStatusRequest["status"],
-  ) => {
+  const setApplicantStatus = (status: SetApplicantStatusRequest["status"]) => {
     startTransition(async () => {
       setSelectedStatus(status);
       const error = await setEventApplicantStatus({
@@ -55,19 +53,18 @@ export default function ApplicantCard({
     });
   };
 
-  const releaseFunds = async (data: ReleaseFundsRequest) => {
+  const releaseFunds = (data: ReleaseFundsRequest) => {
     if (data.eventId === "" || data.userId === "" || data.timeslotId === "") {
       toast("Unable to release funds");
       return;
     }
 
     startTransition(async () => {
-      try {
-        await transfer(data);
-        toast("Successfully released the funds.");
-      } catch (err) {
-        const error = err as Error;
+      const error = await transfer(data);
+      if (error) {
         toast(error.message);
+      } else {
+        toast("Successfully released the funds.");
       }
     });
   };
