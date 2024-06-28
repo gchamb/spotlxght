@@ -24,13 +24,13 @@ export const columns: ColumnDef<MyEvent>[] = [
           size="xs"
           text={status}
           color={
-            status === "open"
+            status === "open" || status === "draft"
               ? "gray"
               : status === "in-progress"
                 ? "yellow"
                 : status === "closed" || status === "completed"
-                  ? "red"
-                  : "gray"
+                  ? "green"
+                  : "red"
           }
         />
       );
@@ -66,11 +66,7 @@ export const columns: ColumnDef<MyEvent>[] = [
     cell: ({ row }) => {
       const date = row.original.date;
 
-      return (
-        <div className="text-right font-medium">
-          {date.toLocaleDateString()}
-        </div>
-      );
+      return <div className="text-right font-medium">{date}</div>;
     },
   },
   {

@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { useState, useTransition } from "react";
 import { applyToTimeslot } from "~/server/actions/event-actions";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 type TimeslotApplyDialogProps = {
   open: boolean;
@@ -107,28 +108,37 @@ export default function ApplyDialog({
             );
           })}
         </div>
-        <DialogFooter className="gap-2 md:gap-0">
-          <Button
-            disabled={isPending}
-            onClick={() => {
-              setError("");
-              setSelectedTimeslot(null);
-              onClose();
-            }}
-            className="w-full text-2xl font-semibold"
-          >
-            Close
-          </Button>
-          <form className="w-full" action={applyForTimeslot}>
-            <Button
-              disabled={selectedTimeslot === null || isPending}
-              className="flex w-full items-center gap-x-2 text-2xl font-semibold"
-              type="submit"
-            >
-              {isPending && <Loader2 className="animate-spin" />}
-              Apply
-            </Button>
-          </form>
+        <DialogFooter>
+          <div className="flex w-full flex-col gap-2">
+            <div className="flex gap-2 ">
+              <Button
+                disabled={isPending}
+                onClick={() => {
+                  setError("");
+                  setSelectedTimeslot(null);
+                  onClose();
+                }}
+                className="w-full text-2xl font-semibold"
+              >
+                Close
+              </Button>
+              <form className="w-full" action={applyForTimeslot}>
+                <Button
+                  disabled={selectedTimeslot === null || isPending}
+                  className="flex w-full items-center gap-x-2 text-2xl font-semibold"
+                  type="submit"
+                >
+                  {isPending && <Loader2 className="animate-spin" />}
+                  Apply
+                </Button>
+              </form>
+            </div>
+            <div>
+              <p className="text-center text-sm text-muted-foreground">
+                Once timeslot is completed, platform fee is 5%
+              </p>
+            </div>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

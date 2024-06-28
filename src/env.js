@@ -24,6 +24,7 @@ export const env = createEnv({
     ),
     AZURE_STORAGE_ACCOUNT_CONNECTION: z.string(),
     STRIPE_API_KEY: z.string(),
+    STRIPE_WEBHOOK_SECRET: z.string(),
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
   },
@@ -47,6 +48,7 @@ export const env = createEnv({
     AZURE_STORAGE_ACCOUNT_CONNECTION:
       process.env.AZURE_STORAGE_ACCOUNT_CONNECTION,
     STRIPE_API_KEY: process.env.STRIPE_API_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_URL: process.env.AUTH_URL, // TODO: Make sure this is defined at runtime automatically by next-auth
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,

@@ -31,7 +31,12 @@ export type UserProfile = User & {
 
 export type UserType = "venue" | "musician";
 
-export type EventStatus = "open" | "in-progress" | "completed" | "closed";
+export type EventStatus =
+  | "draft"
+  | "open"
+  | "in-progress"
+  | "completed"
+  | "closed";
 
 export type ApplicationStatus = (typeof applicantStatuses)[number];
 
@@ -53,6 +58,8 @@ export type SetApplicantStatusRequest = z.infer<
 >;
 
 export type ApplyTimeslotRequest = z.infer<typeof applyTimeslotRequest>;
+
+export type ReleaseFundsRequest = z.infer<typeof releaseFundsRequest>;
 
 export type GoogleInfo = {
   id: string;
@@ -238,12 +245,13 @@ export const myEventsDataSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   status: z.union([
+    z.literal("draft"),
     z.literal("open"),
     z.literal("in-progress"),
     z.literal("completed"),
     z.literal("closed"),
   ]),
-  date: z.date(),
+  date: z.string(),
   amount: z.number(),
   venueId: z.string().uuid(),
   createdAt: z.date(),
@@ -280,4 +288,10 @@ export const setApplicantStatusRequest = z.object({
 export const applyTimeslotRequest = z.object({
   eventId: z.string(),
   timeslotId: z.string(),
+});
+
+export const releaseFundsRequest = z.object({
+  eventId: z.string().min(1, "Invalid Request"),
+  timeslotId: z.string().min(1, "Invalid Request"),
+  userId: z.string().min(1, "Invalid Request"),
 });

@@ -52,7 +52,7 @@ export default function TimeslotTabs({ timeslots, applicants }: TimeslotProps) {
       {timeslots.map((timeslot) => {
         return (
           <TabsContent
-            className="py-4 grid grid-cols-3 gap-4 md:grid-cols-2 2xl:grid-cols-3"
+            className="grid grid-cols-3 gap-4 py-4 md:grid-cols-2 2xl:grid-cols-3"
             key={`${timeslot.id}-content`}
             value={timeslot.id}
           >
@@ -63,7 +63,11 @@ export default function TimeslotTabs({ timeslots, applicants }: TimeslotProps) {
               )
               .map((applicant) => {
                 return (
-                  <ApplicantRow key={applicant.id} applicant={applicant} />
+                  <ApplicantRow
+                    key={applicant.id}
+                    applicant={applicant}
+                    timeslotStatus={timeslot.status}
+                  />
                 );
               })}
           </TabsContent>

@@ -105,7 +105,7 @@ export default function CreateEventDialog({
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="pay" className="text-right">
-                Pay
+                Pay Per Slot
               </Label>
               <Select name="pay">
                 <SelectTrigger className="w-[200px] ">
@@ -216,22 +216,32 @@ export default function CreateEventDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button
-              disabled={isPending}
-              className="flex w-full items-center gap-x-2 text-lg font-semibold"
-              onClick={eventOnClose}
-              type="button"
-            >
-              Close
-            </Button>
-            <Button
-              disabled={isPending}
-              className="flex w-full items-center gap-x-2 text-lg font-semibold"
-              type="submit"
-            >
-              {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-              Save changes
-            </Button>
+            <div className="flex w-full flex-col justify-center gap-2">
+              <div className="flex gap-2">
+                <Button
+                  disabled={isPending}
+                  className="flex w-full items-center gap-x-2 text-lg font-semibold"
+                  onClick={eventOnClose}
+                  type="button"
+                >
+                  Close
+                </Button>
+                <Button
+                  disabled={isPending}
+                  className="flex w-full items-center gap-x-2 text-lg font-semibold"
+                  type="submit"
+                >
+                  {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Checkout
+                </Button>
+              </div>
+
+              <div>
+                <p className="text-center text-sm text-muted-foreground">
+                  Platform fee will be 5% of the total
+                </p>
+              </div>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>

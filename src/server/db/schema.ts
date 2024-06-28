@@ -1,9 +1,11 @@
 import { relations } from "drizzle-orm";
 import {
   bigint,
+  boolean,
   date,
   float,
   index,
+  int,
   mysqlTableCreator,
   primaryKey,
   smallint,
@@ -12,7 +14,13 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-import { type ApplicationStatus, type EventStatus, type Rating, type TimeslotTimes, type UserType, } from "~/lib/types";
+import {
+  type ApplicationStatus,
+  type EventStatus,
+  type Rating,
+  type TimeslotTimes,
+  type UserType,
+} from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -38,6 +46,7 @@ export const users = createTable("user", {
   profilePicImage: varchar("profilePicImage", { length: 255 }),
   profileBannerImage: varchar("profileBannerImage", { length: 255 }),
   type: varchar("type", { length: 10 }).$type<UserType>(),
+  stripeAccountId: varchar("stripeAccountId", { length: 100 }),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -47,6 +56,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   assets: many(assets),
   applications: many(applications),
   genres: many(genres),
+  stripeCheckouts: many(stripeCheckouts),
+  stripePayouts: many(stripePayouts),
 }));
 
 export const accounts = createTable(
@@ -188,9 +199,9 @@ export const events = createTable(
     status: varchar("status", { length: 15 })
       .$type<EventStatus>()
       .notNull()
-      .default("open"),
+      .default("draft"),
     amount: float("amount").notNull(),
-    date: date("date", { mode: "date" }).notNull(),
+    date: date("date", { mode: "string" }).notNull(),
     createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
     venueId: varchar("venueId", { length: 191 })
       .notNull()
@@ -277,3 +288,106 @@ export const applicantsRelations = relations(applications, ({ one }) => ({
     references: [events.id],
   }),
 }));
+
+export const stripeCheckouts = createTable(
+  "stripe_checkout",
+  {
+    checkoutSessionId: varchar("checkoutSessionId", { length: 191 })
+      .notNull()
+      .primaryKey(),
+    status: varchar("status", { length: 10 }).notNull(),
+    paymentStatus: varchar("paymentStatus", { length: 10 }).notNull(),
+    amount: int("amount").notNull(),
+    eventId: varchar("eventId", { length: 191 })
+      .notNull()
+      .references(() => events.id),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (checkout) => ({
+    userIdIdx: index("checkout_userId_idx").on(checkout.userId),
+  }),
+);
+
+export const stripeCheckoutsRelations = relations(
+  stripeCheckouts,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [stripeCheckouts.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const stripePayouts = createTable(
+  "stripe_payout",
+  {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    status: varchar("status", { length: 10 }).notNull(),
+    currency: varchar("currency", { length: 5 }).notNull().default("usd"),
+    amount: int("amount").notNull(),
+    stripeAccountId: varchar("stripeAccountId", { length: 191 })
+      .notNull()
+      .references(() => users.stripeAccountId),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (payout) => ({
+    accountIdIdx: index("payout_accountId_idx").on(payout.stripeAccountId),
+  }),
+);
+
+export const stripePayoutsRelations = relations(stripePayouts, ({ one }) => ({
+  user: one(users, {
+    fields: [stripePayouts.stripeAccountId],
+    references: [users.stripeAccountId],
+  }),
+}));
+
+export const stripeTransfers = createTable(
+  "stripe_transfer",
+  {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    currency: varchar("currency", { length: 5 }).notNull().default("usd"),
+    amount: int("amount").notNull(),
+    reversed: boolean("reversed").notNull(),
+    balanceTransaction: varchar("balanceTransaction", {
+      length: 191,
+    }).notNull(),
+    transferGroup: varchar("transferGroup", { length: 191 })
+      .notNull()
+      .references(() => events.id),
+    timeslotId: varchar("timeslotId", { length: 191 })
+      .notNull()
+      .references(() => timeslots.id),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id),
+    destination: varchar("destination", { length: 191 })
+      .notNull()
+      .references(() => users.stripeAccountId),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (transfers) => ({
+    accountIdIdx: index("transfer_accountId_idx").on(transfers.destination),
+  }),
+);
+
+export const stripeTransfersRelations = relations(
+  stripeTransfers,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [stripeTransfers.userId],
+      references: [users.id],
+    }),
+    event: one(events, {
+      fields: [stripeTransfers.transferGroup],
+      references: [events.id],
+    }),
+    timeslot: one(timeslots, {
+      fields: [stripeTransfers.timeslotId],
+      references: [timeslots.id],
+    }),
+  }),
+);

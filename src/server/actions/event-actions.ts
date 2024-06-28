@@ -14,9 +14,14 @@ import { applications, events, timeslots } from "../db/schema";
 import { revalidatePath } from "next/cache";
 import { normalizeCreateEventData, validTimeslots } from "~/lib/utils";
 import { and, eq } from "drizzle-orm";
+import { createCheckoutSession } from "~/lib/stripe";
+import { headers } from "next/headers";
+import Stripe from "stripe";
 
 export async function createEvent(data: FormData) {
   const session = await getSession();
+  const stripeRedirect = `${headers().get("origin")}/my-events`;
+  let stripeCheckoutSession: Stripe.Response<Stripe.Checkout.Session>;
 
   if (session === null) {
     return redirect("/venue/auth");
@@ -57,14 +62,28 @@ export async function createEvent(data: FormData) {
         acceptableTimeslotRange.push(timeslotIndex);
       }
     }
-
     const eventId = crypto.randomUUID();
+
+    stripeCheckoutSession = await createCheckoutSession(
+      pay * dataTimeslots.length,
+      stripeRedirect,
+      `Creating ${name.toLowerCase()} event for musicians to apply.`,
+      {
+        userId: session.userId,
+        eventId,
+      },
+    );
+
+    if (!stripeCheckoutSession.url) {
+      throw new Error("Unable to process this request.");
+    }
+
     await db.insert(events).values({
       id: eventId,
       venueId: session.userId,
+      date: date.toISOString().split("T")[0]!,
       amount: pay,
       name,
-      date,
     });
 
     await Promise.allSettled(
@@ -82,6 +101,8 @@ export async function createEvent(data: FormData) {
           : "Unable to process your request. Try again.",
     };
   }
+
+  redirect(stripeCheckoutSession.url);
 }
 
 export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
@@ -166,6 +187,11 @@ export async function applyToTimeslot(data: ApplyTimeslotRequest) {
   if (session === null) return redirect("/musician/auth");
 
   if (session.user.type !== "musician") return redirect("/");
+
+  if (session.user.stripeAccountId === null) {
+    // maybe redirect instead.
+    throw new Error("You must link your bank account to apply.");
+  }
 
   try {
     // validate input

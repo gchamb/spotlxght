@@ -1,4 +1,4 @@
-import { Check, Loader2, User, X } from "lucide-react";
+import { Check, HandCoins, Loader, Loader2, User, X } from "lucide-react";
 import { TimeslotProps } from "./timeslot-tabs";
 import { Button } from "~/components/ui/button";
 // import Ratings from "~/components/ui/ratings";
@@ -15,20 +15,27 @@ import {
 } from "~/components/ui/card";
 import { setEventApplicantStatus } from "~/server/actions/event-actions";
 import { toast } from "sonner";
-import { SetApplicantStatusRequest } from "~/lib/types";
+import {
+  EventStatus,
+  ReleaseFundsRequest,
+  SetApplicantStatusRequest,
+} from "~/lib/types";
+import { transfer } from "~/server/actions/stripe";
 
 type ApplicantRowProps = {
   applicant: TimeslotProps["applicants"][number];
+  timeslotStatus: EventStatus;
 };
 
-export default function ApplicantCard({ applicant }: ApplicantRowProps) {
+export default function ApplicantCard({
+  applicant,
+  timeslotStatus,
+}: ApplicantRowProps) {
   const [isPending, startTransition] = useTransition();
   const [selectedStatus, setSelectedStatus] =
     useState<SetApplicantStatusRequest["status"]>();
 
-  const setApplicantStatus = async (
-    status: SetApplicantStatusRequest["status"],
-  ) => {
+  const setApplicantStatus = (status: SetApplicantStatusRequest["status"]) => {
     startTransition(async () => {
       setSelectedStatus(status);
       const error = await setEventApplicantStatus({
@@ -43,6 +50,22 @@ export default function ApplicantCard({ applicant }: ApplicantRowProps) {
       }
 
       setSelectedStatus(undefined);
+    });
+  };
+
+  const releaseFunds = (data: ReleaseFundsRequest) => {
+    if (data.eventId === "" || data.userId === "" || data.timeslotId === "") {
+      toast("Unable to release funds");
+      return;
+    }
+
+    startTransition(async () => {
+      const error = await transfer(data);
+      if (error) {
+        toast(error.message);
+      } else {
+        toast("Successfully released the funds.");
+      }
     });
   };
 
@@ -143,6 +166,27 @@ export default function ApplicantCard({ applicant }: ApplicantRowProps) {
             </div>
           </div>
         )}
+
+        {applicant.applicantData?.status === "accepted" &&
+          timeslotStatus === "completed" && (
+            <div>
+              <Button
+                disabled={isPending}
+                onClick={() =>
+                  releaseFunds({
+                    eventId: applicant.applicantData?.eventId ?? "",
+                    userId: applicant.applicantData?.userId ?? "",
+                    timeslotId: applicant.applicantData?.timeslotId ?? "",
+                  })
+                }
+                className="flex items-center gap-x-2"
+              >
+                {isPending && <Loader2 className="animate-spin" />}
+                <HandCoins />
+                Release Funds
+              </Button>
+            </div>
+          )}
       </CardFooter>
     </Card>
   );
