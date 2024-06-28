@@ -383,7 +383,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
             </Form>
           )}
         </div>
-        <div className=" flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl bg-underground-dark-grey 2xl:block">
+        <div className=" flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl bg-spotlxght-dark-grey 2xl:block">
           <div className="h-[200px] w-full rounded-t-xl">
             {type === "venue" && venueForm.watch("bannerImage") ? (
               <img

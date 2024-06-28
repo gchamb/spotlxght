@@ -34,7 +34,7 @@ export default async function Reviews({
                             src={profilePictureSasUrl}
                             alt="profile picture"
                           />
-                          <AvatarFallback>underground</AvatarFallback>
+                          <AvatarFallback>spotlxght</AvatarFallback>
                         </Avatar>
                         <h1 className="ml-3 font-semibold">
                           {userReview.user.name}

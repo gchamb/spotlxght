@@ -18,7 +18,7 @@ export function getInitials(name: string) {
   const nameSplit = name.split(" ");
 
   if (nameSplit.length == 0) {
-    return "UG"; // underground initials
+    return "UG"; // spotlxght initials
   }
 
   // first and last night

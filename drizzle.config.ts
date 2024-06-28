@@ -8,5 +8,5 @@ export default {
   dbCredentials: {
     url: env.DATABASE_URL,
   },
-  // tablesFilter: ["underground_*"],
+  // tablesFilter: ["spotlxght_*"],
 } satisfies Config;
