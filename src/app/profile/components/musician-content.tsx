@@ -37,7 +37,7 @@ export default function MusicianContent({
                     src={profilePictureSasUrl}
                     alt="profile picture"
                   />
-                  <AvatarFallback>underground</AvatarFallback>
+                  <AvatarFallback>spotlxght</AvatarFallback>
                 </Avatar>
               </div>
               <div>
@@ -49,7 +49,7 @@ export default function MusicianContent({
                           src={profilePictureSasUrl}
                           alt="profile picture"
                         />
-                        <AvatarFallback>underground</AvatarFallback>
+                        <AvatarFallback>spotlxght</AvatarFallback>
                       </Avatar>
                     </div>
                     <div className="my-1">

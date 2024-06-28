@@ -14,6 +14,22 @@ export function shortenOrNot(word: string, maxLength = 25) {
   return `${word.substring(0, maxLength)}...`;
 }
 
+export function getInitials(name: string) {
+  const nameSplit = name.split(" ");
+
+  if (nameSplit.length == 0) {
+    return "UG"; // spotlxght initials
+  }
+
+  // first and last night
+  if (nameSplit.length > 1) {
+    return `${nameSplit[0]?.charAt(0)}${nameSplit[1]?.charAt(0)}`.toUpperCase();
+  }
+
+  // just first name
+  return nameSplit[0]?.charAt(0).toUpperCase();
+}
+
 export function getRandomColorPair() {
   // Helper function to generate a random integer between min and max (inclusive)
   function getRandomInt(min: number, max: number) {

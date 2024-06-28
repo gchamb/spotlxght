@@ -178,7 +178,7 @@ export default async function EventDetailsPage({
           <div className="flex flex-col items-center gap-y-2">
             <h2 className="text-lg font-semibold">Date</h2>
             <span className="text-sm">
-              {event.eventDetails.date.toLocaleDateString()}
+              {event.eventDetails.date}
             </span>
           </div>
           <div className="flex flex-col items-center gap-y-2">
@@ -201,7 +201,7 @@ export default async function EventDetailsPage({
           </div>
           <div className="hidden grid-cols-3 items-center justify-center md:grid">
             <span className="text-center text-lg">
-              {event.eventDetails.date.toLocaleDateString()}
+              {event.eventDetails.date}
             </span>
             <span className="text-center text-lg">
               ${event.eventDetails.amount}
