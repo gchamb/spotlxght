@@ -28,7 +28,7 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = mysqlTableCreator((name) => `underground_${name}`);
+export const createTable = mysqlTableCreator((name) => `spotlxght_${name}`);
 
 export const users = createTable("user", {
   id: varchar("id", { length: 191 })
