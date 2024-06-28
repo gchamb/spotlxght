@@ -75,11 +75,12 @@ export async function createEvent(data: FormData) {
 
     revalidatePath("/my-events", "page");
   } catch (err) {
-    throw new Error(
-      err instanceof Error
-        ? err.message
-        : "Unable to process your request. Try again.",
-    );
+    return {
+      message:
+        err instanceof Error
+          ? err.message
+          : "Unable to process your request. Try again.",
+    };
   }
 }
 
@@ -150,9 +151,12 @@ export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
 
     // send the email to the musician
   } catch (err) {
-    throw new Error(
-      err instanceof Error ? err.message : "Unable to handle this request.",
-    );
+    return {
+      message:
+        err instanceof Error
+          ? err.message
+          : "Unable to process your request. Try again.",
+    };
   }
 }
 
@@ -202,10 +206,11 @@ export async function applyToTimeslot(data: ApplyTimeslotRequest) {
 
     revalidatePath("/listings", "page");
   } catch (err) {
-    throw new Error(
-      err instanceof Error
-        ? err.message
-        : "Unable to process this request. Try Again.",
-    );
+    return {
+      message:
+        err instanceof Error
+          ? err.message
+          : "Unable to process your request. Try again.",
+    };
   }
 }

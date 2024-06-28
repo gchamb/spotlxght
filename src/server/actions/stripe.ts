@@ -36,11 +36,12 @@ export async function onboardUser() {
       type: "account_onboarding",
     });
   } catch (err) {
-    throw new Error(
-      err instanceof Error
-        ? err.message
-        : "Unable to process this request. Try again.",
-    );
+    return {
+      message:
+        err instanceof Error
+          ? err.message
+          : "Unable to process your request. Try again.",
+    };
   }
 
   // you have to do the redirect outside of try/catch

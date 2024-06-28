@@ -51,18 +51,18 @@ export default function ApplyDialog({
     }
 
     startTransition(async () => {
-      try {
-        await applyToTimeslot({
-          eventId: timeslots[0]!.eventId,
-          timeslotId: selectedTimeslot,
-        });
+      const error = await applyToTimeslot({
+        eventId: timeslots[0]!.eventId,
+        timeslotId: selectedTimeslot,
+      });
 
-        setSelectedTimeslot(null);
-        onClose();
-      } catch (err) {
-        const error = err as Error;
+      if (error) {
         setError(error.message);
+        return;
       }
+
+      setSelectedTimeslot(null);
+      onClose();
     });
   };
 

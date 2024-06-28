@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
 
-export async function createProfile(data: FormData): Promise<void> {
+export async function createProfile(data: FormData) {
   const session = await getSession();
 
   if (!session || !session.user) {
@@ -22,15 +22,15 @@ export async function createProfile(data: FormData): Promise<void> {
   const name = data.get("name");
   const genreList = data.get("genres");
 
-  if (type === null || (type !== "venue" && type !== "musician")) {
-    throw new Error("Invalid Request");
-  }
-  // validate genres (will validate and refactor once we know all the genres we want in)
-  if (genreList === null || typeof genreList !== "string") {
-    throw new Error("Invalid request");
-  }
-
   try {
+    if (type === null || (type !== "venue" && type !== "musician")) {
+      throw new Error("Invalid Request");
+    }
+    // validate genres (will validate and refactor once we know all the genres we want in)
+    if (genreList === null || typeof genreList !== "string") {
+      throw new Error("Invalid request");
+    }
+
     if (type === "venue") {
       const valid = venueFormSchema.safeParse({
         venueName,
@@ -121,11 +121,12 @@ export async function createProfile(data: FormData): Promise<void> {
 
     await Promise.allSettled(genreInserts);
   } catch (err: unknown) {
-    throw new Error(
-      err instanceof Error
-        ? err.message
-        : "Unable to handle this request. Try again.",
-    );
+    return {
+      message:
+        err instanceof Error
+          ? err.message
+          : "Unable to process your request. Try again.",
+    };
   }
 
   if (type === "venue") {
