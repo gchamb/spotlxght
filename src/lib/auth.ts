@@ -6,112 +6,55 @@ import { sessions, users } from "~/server/db/schema";
 import { eq, lt } from "drizzle-orm";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
+import { redirect } from "next/navigation";
 
 // TODO(future): Use server-side caching to speed up session retrieval?
 // TODO(future): Handle client-side session caching
 export async function getSession() {
-  console.log("Getting session...");
-
-  // 1. Get session token from cookies
   const userCookies = cookies();
-  const customSessionToken = userCookies.get("session-token")?.value;
+  const sessionToken = userCookies.get("session-token")?.value;
+  if (!sessionToken) return null;
 
-  if (!customSessionToken) return null;
-
-  // 2. Invalidate expired sessions
   await invalidateExpiredSessions();
-
-  // 3. Find valid session in database
   const session = await db.query.sessions.findFirst({
-    where: eq(sessions.sessionToken, customSessionToken),
+    where: eq(sessions.sessionToken, sessionToken),
     with: { user: true },
   });
   if (!session) return null;
-
-  // 4. Update session expiration
-  await db
-    .update(sessions)
-    .set({ expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) })
-    .where(eq(sessions.sessionToken, customSessionToken));
-
   return session;
 }
 
-export async function emailSignIn(credentials: Credentials) {
-  console.log("Email sign in...");
-
-  const { email, password } = await credentialsSchema.parseAsync({
-    email: credentials.email,
-    password: credentials.password,
-  });
-  if (!email || !password) throw new Error("Invalid email or password");
-
-  // 1. Find user in database
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
-  if (!user) throw new Error("Invalid email or password");
-
-  if (user.password === null) throw new Error("No password for this account.");
-
-  // 2. Compare password
-  const passwordsMatch = await bcrypt.compare(password, user.password);
-  if (!passwordsMatch) throw new Error("Invalid email or password");
-
-  // 3. Invalidate expired sessions
-  await invalidateExpiredSessions();
-
-  // 4. Create session
-  const session = {
-    sessionToken: crypto.randomUUID(),
-    userId: user.id,
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
-  };
-
-  // 5. Create session or update existing session
-  await db.insert(sessions).values(session);
-
-  // 6. Set session token in cookies
+export async function signOut() {
   const userCookies = cookies();
-  userCookies.set("session-token", session.sessionToken, {
-    expires: session.expires,
-    httpOnly: true,
-    secure: true,
-  });
+  const sessionToken = userCookies.get("session-token")?.value;
 
-  // 7. Return user
-  return user;
+  if (sessionToken) {
+    userCookies.delete("session-token");
+    await db.delete(sessions).where(eq(sessions.sessionToken, sessionToken));
+  }
+  redirect("/");
 }
 
-export async function emailSignInCredentials(credentials: Credentials) {
-  console.log("Email sign in...");
+export async function emailSignIn(credentials: Credentials) {
   const { email, password } = await credentialsSchema.parseAsync(credentials);
   if (!email || !password) throw new Error("Invalid email or password");
 
-  // 1. Find user in database
   const user = await db.query.users.findFirst({
     where: eq(users.email, email),
   });
   if (!user) throw new Error("Invalid email or password");
-
-  // 2. Compare password
-  const passwordsMatch = await bcrypt.compare(password, user.password!);
+  if (user.password === null) throw new Error("No password for this account.");
+  const passwordsMatch = await bcrypt.compare(password, user.password);
   if (!passwordsMatch) throw new Error("Invalid email or password");
 
-  // 3. Invalidate expired sessions
   await invalidateExpiredSessions();
-
-  // 4. Create session
   const session = {
     sessionToken: crypto.randomUUID(),
     userId: user.id,
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 7 days
   };
-
-  // 5. Create session or update existing session
   await db.insert(sessions).values(session);
 
-  // 6. Set session token in cookies
   const userCookies = cookies();
   userCookies.set("session-token", session.sessionToken, {
     expires: session.expires,
@@ -119,28 +62,12 @@ export async function emailSignInCredentials(credentials: Credentials) {
     secure: true,
   });
 
-  // 7. Return user
   return user;
 }
 
-async function invalidateExpiredSessions() {
-  console.log("Invalidating expired sessions...");
-  await db
-    .delete(sessions)
-    .where(
-      lt(sessions.expires, new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)),
-    );
-}
-
-export async function signUp(credentials: Credentials) {
+export async function emailSignUp(credentials: Credentials) {
   // TODO: Add email verification
-  const { email: formEmail, password: formPassword } = credentials;
-
-  console.log("Signing up...");
-  const { email, password } = await credentialsSchema.parseAsync({
-    email: formEmail,
-    password: formPassword,
-  });
+  const { email, password } = await credentialsSchema.parseAsync(credentials);
 
   const existingUser = await db.query.users.findFirst({
     where: eq(users.email, email),
@@ -152,6 +79,7 @@ export async function signUp(credentials: Credentials) {
     email,
     password: hashedPassword,
   });
+
   const createdUser = await db.query.users.findFirst({
     where: eq(users.email, email),
   });
@@ -174,15 +102,10 @@ export async function signUp(credentials: Credentials) {
   return createdUser;
 }
 
-export async function signOut() {
-  console.log("Signing out...");
-  const userCookies = cookies();
-  const customSessionToken = userCookies.get("session-token")?.value;
-
-  if (customSessionToken) {
-    userCookies.delete("session-token");
-    await db
-      .delete(sessions)
-      .where(eq(sessions.sessionToken, customSessionToken));
-  }
+async function invalidateExpiredSessions() {
+  await db
+    .delete(sessions)
+    .where(
+      lt(sessions.expires, new Date(Date.now() - 1000 * 60 * 60 * 24 * 7)),
+    );
 }

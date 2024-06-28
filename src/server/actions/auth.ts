@@ -1,22 +1,31 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { type UserType } from "~/lib/types";
-import { emailSignIn, emailSignInCredentials, signUp } from "~/lib/auth";
-import { type Credentials } from "~/lib/types";
-import { OAuth2Client } from "google-auth-library";
+import { type Credentials, type UserType } from "~/lib/types";
+import { emailSignIn, emailSignUp } from "~/lib/auth";
 import { randomUUID } from "crypto";
 import { cookies, headers } from "next/headers";
+import { OAuth2Client } from "google-auth-library";
 import { env } from "~/env";
 
 export async function emailSignInAction(credentials: Credentials) {
-  const user = await emailSignIn(credentials);
-  redirect(`/profile/${user.id}`);
+  let user: Awaited<ReturnType<typeof emailSignIn>> | null = null;
+  try {
+    user = await emailSignIn(credentials);
+  } catch (err) {
+    return {
+      message:
+        err instanceof Error ? err.message : "Unable to process this request",
+    };
+  }
+
+  if (user) {
+    redirect(`/profile/${user.id}`);
+  }
 }
 
 export async function googleSignIn(userType: UserType) {
   const referer = headers().get("referer");
-
   const url = new URL(referer ?? "");
 
   const oAuth2Client = new OAuth2Client(
@@ -48,15 +57,21 @@ export async function googleSignIn(userType: UserType) {
   return redirect(authorizeUrl);
 }
 
-export async function emailSignInCredentialsAction(credentials: Credentials) {
-  await emailSignInCredentials(credentials);
-}
-
 export async function emailSignUpAction(
   credentials: Credentials & { type: UserType },
 ) {
+  let user: Awaited<ReturnType<typeof emailSignIn>> | null = null;
   const { type, ...creds } = credentials;
-  await signUp(creds);
+  try {
+    user = await emailSignUp(creds);
+  } catch (err) {
+    return {
+      message:
+        err instanceof Error ? err.message : "Unable to process this request",
+    };
+  }
 
-  redirect(`/${type}/onboarding`);
+  if (user) {
+    redirect(`/${type}/onboarding`);
+  }
 }

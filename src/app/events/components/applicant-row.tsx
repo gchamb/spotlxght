@@ -39,20 +39,19 @@ export default function ApplicantCard({
     status: SetApplicantStatusRequest["status"],
   ) => {
     startTransition(async () => {
-      try {
-        setSelectedStatus(status);
-        await setEventApplicantStatus({
-          eventId: applicant.applicantData?.eventId ?? "",
-          applicantId: applicant.applicantData?.userId ?? "",
-          timeslotId: applicant.applicantData?.timeslotId ?? "",
-          status,
-        });
-      } catch (err) {
-        const error = err as Error;
+      setSelectedStatus(status);
+      const error = await setEventApplicantStatus({
+        eventId: applicant.applicantData?.eventId ?? "",
+        applicantId: applicant.applicantData?.userId ?? "",
+        timeslotId: applicant.applicantData?.timeslotId ?? "",
+        status,
+      });
+
+      if (error) {
         toast(error.message);
-      } finally {
-        setSelectedStatus(undefined);
       }
+
+      setSelectedStatus(undefined);
     });
   };
 
@@ -81,6 +80,7 @@ export default function ApplicantCard({
             <img
               className="h-full w-full rounded object-cover"
               src={applicant.profilePicImage ?? "/images/default-profile2.png"}
+              alt="profile picture"
             />
           </div>
 

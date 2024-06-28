@@ -5,20 +5,15 @@ import {
   date,
   float,
   index,
-  int,
   mysqlTableCreator,
   primaryKey,
+  smallint,
   text,
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
 
-import {
-  TimeslotTimes,
-  type ApplicationStatus,
-  type EventStatus,
-  type UserType,
-} from "~/lib/types";
+import { type ApplicationStatus, type EventStatus, type Rating, type TimeslotTimes, type UserType, } from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -128,6 +123,7 @@ export const genresRelations = relations(genres, ({ one }) => ({
   user: one(users, { fields: [genres.userId], references: [users.id] }),
 }));
 
+// TODO: Create [reviewerId, userId] composite key (unique)
 export const reviews = createTable(
   "review",
   {
@@ -135,20 +131,21 @@ export const reviews = createTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    reviewer: varchar("id", { length: 191 })
+    reviewerId: varchar("reviewerId", { length: 191 })
       .notNull()
       .references(() => users.id),
-    message: varchar("message", { length: 255 }),
+    message: varchar("message", { length: 255 }), // TODO: change to text
     reviewedAt: timestamp("reviewedAt", { mode: "date" })
       .notNull()
       .defaultNow(),
-    rate: int("rate").notNull(),
+    rating: smallint("rate").$type<Rating>().notNull(),
     userId: varchar("userId", { length: 191 })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   (review) => ({
     userIdIdx: index("reviews_userId_idx").on(review.userId),
+    reviewerIdIdx: index("reviews_reviewerId_idx").on(review.reviewerId),
   }),
 );
 
@@ -164,6 +161,8 @@ export const assets = createTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     type: varchar("type", { length: 25 }).notNull(),
+    title: varchar("title", { length: 255 }),
+    description: text("description"),
     mimetype: varchar("mimetype", { length: 25 }).notNull(),
     azureBlobKey: varchar("azureBlobKey", { length: 191 }).notNull(),
     uploadedAt: timestamp("uploadedAt", { mode: "date" })

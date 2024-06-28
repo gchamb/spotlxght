@@ -46,7 +46,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
     },
   });
 
-  const onSubmit = async (
+  const onSubmit = (
     values:
       | z.infer<typeof venueFormSchema>
       | z.infer<typeof musicianFormSchema>,
@@ -109,25 +109,28 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
       }
     }
 
-    try {
-      startTransition(async () => {
-        await createProfile(data);
+    startTransition(async () => {
+      try {
+        const error = await createProfile(data);
+        if (error) {
+          throw new Error(error.message);
+        }
 
         if (type === "musician") {
           setSlide(3);
         }
-      });
-    } catch (err) {
-      if (isVenue) {
-        venueForm.setError("root", {
-          message: err instanceof Error ? err.message : String(err),
-        });
-      } else {
-        musicianForm.setError("root", {
-          message: err instanceof Error ? err.message : String(err),
-        });
+      } catch (err) {
+        if (isVenue) {
+          venueForm.setError("root", {
+            message: err instanceof Error ? err.message : String(err),
+          });
+        } else {
+          musicianForm.setError("root", {
+            message: err instanceof Error ? err.message : String(err),
+          });
+        }
       }
-    }
+    });
   };
 
   if (slide === 1) {

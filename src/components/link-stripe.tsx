@@ -15,14 +15,14 @@ import { toast } from "sonner";
 export default function LinkStripe() {
   const [isPending, startTransition] = useTransition();
 
-  const handleStripeLink = async () => {
-    try {
-      startTransition(async () => {
-        await onboardUser();
-      });
-    } catch (err) {
-      toast(err instanceof Error ? err.message : String(err));
-    }
+  const handleStripeLink = () => {
+    startTransition(async () => {
+      const error = await onboardUser();
+
+      if (error) {
+        toast(error.message);
+      }
+    });
   };
 
   return (

@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
+import { type Rating } from "~/lib/types";
 
-export default function Ratings({ rating }: { rating: 1 | 2 | 3 | 4 | 5 }) {
+export default function Ratings({ rating }: { rating: Rating }) {
   return (
     <div className="flex items-center gap-x-2">
       {new Array(5).fill(null).map((_, idx) => {

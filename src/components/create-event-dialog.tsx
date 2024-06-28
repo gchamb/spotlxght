@@ -7,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -59,17 +58,17 @@ export default function CreateEventDialog({
         <form
           action={(data) => {
             startTransition(async () => {
-              try {
-                if (error !== "") {
-                  setError("");
-                }
-
-                await createEvent(data);
-                eventOnClose();
-              } catch (err) {
-                const error = err as Error;
-                setError(error.message);
+              if (error !== "") {
+                setError("");
               }
+
+              const serverError = await createEvent(data);
+              if (serverError) {
+                setError(serverError.message);
+                return;
+              }
+
+              eventOnClose();
             });
           }}
         >

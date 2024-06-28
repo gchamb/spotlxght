@@ -6,10 +6,10 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import Chip from "~/components/ui/chip";
 
-import { EventListings } from "~/lib/types";
+import { EventListing } from "~/lib/types";
 import Actions from "./actions";
 
-export const columns: ColumnDef<EventListings>[] = [
+export const columns: ColumnDef<EventListing>[] = [
   {
     accessorKey: "venueName",
     header: () => "Venue",

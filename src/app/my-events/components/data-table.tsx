@@ -2,14 +2,13 @@
 
 import {
   ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getPaginationRowModel,
-  SortingState,
-  getSortedRowModel,
   ColumnFiltersState,
+  getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
 } from "@tanstack/react-table";
 import { Filter } from "lucide-react";
 import { useState } from "react";
@@ -32,17 +31,14 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-import { MyEvents } from "~/lib/types";
+import { MyEvent } from "~/lib/types";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<MyEvents, TValue>[];
-  data: MyEvents[];
+  columns: ColumnDef<MyEvent, TValue>[];
+  data: MyEvent[];
 }
 
-export function DataTable({
-  columns,
-  data,
-}: DataTableProps<MyEvents, unknown>) {
+export function DataTable({ columns, data }: DataTableProps<MyEvent, unknown>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
