@@ -37,7 +37,7 @@ export type ApplicationStatus = (typeof applicantStatuses)[number];
 
 export type MyEvent = z.infer<typeof myEventsDataSchema>;
 
-// export type MyBooking =
+export type MyBooking = z.infer<typeof myBookinsDataSchema>;
 
 export type EventListing = MyEvent & {
   venueName: string;
@@ -252,18 +252,44 @@ export const myEventsDataSchema = z.object({
 });
 
 export const myBookinsDataSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  status: z.union([
-    z.literal("open"),
-    z.literal("in-progress"),
-    z.literal("completed"),
-    z.literal("closed"),
-  ]),
-  date: z.date(),
-  amount: z.number(),
-  userId: z.string().uuid(),
-  createdAt: z.date(),
+  application: z.object({
+    userId: z.string().uuid(),
+    timeslotId: z.string().uuid(),
+    status: z.union([
+      z.literal("requested"),
+      z.literal("accepted"),
+      z.literal("rejected"),
+    ]),
+    eventId: z.string().uuid(),
+    appliedAt: z.date(),
+  }),
+  timeslot: z.object({
+    id: z.string().uuid(),
+    startTime: z.enum(timeslotsTimes),
+    endTime: z.enum(timeslotsTimes),
+    timezone: z.string(),
+    status: z.union([
+      z.literal("open"),
+      z.literal("in-progress"),
+      z.literal("completed"),
+      z.literal("closed"),
+    ]),
+    eventId: z.string().uuid(),
+  }),
+  event: z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    status: z.union([
+      z.literal("open"),
+      z.literal("in-progress"),
+      z.literal("completed"),
+      z.literal("closed"),
+    ]),
+    date: z.date(),
+    amount: z.number(),
+    venueId: z.string().uuid(),
+    createdAt: z.date(),
+  }),
 });
 
 export const createEventSchema = z.object({

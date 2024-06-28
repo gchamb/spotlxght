@@ -1,15 +1,18 @@
 import { db } from "~/server/db";
 import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
-import { applications, events } from "~/server/db/schema";
+import { applications, events, timeslots } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
+import { DataTable } from "~/app/bookings/components/data-table";
+import { columns } from "~/app/bookings/components/columns";
 
-async function getEvents(userId: string) {
+async function getBookings(userId: string) {
   return db
     .select()
     .from(events)
     .innerJoin(applications, eq(events.id, applications.eventId))
-    .where(eq(applications.userId, userId));
+    .where(eq(applications.userId, userId))
+    .innerJoin(timeslots, eq(events.id, timeslots.eventId));
 }
 
 export default async function Bookings() {
@@ -23,12 +26,11 @@ export default async function Bookings() {
     return redirect("/");
   }
 
-  const data = await getEvents(session.user.id);
-  console.log(data);
+  const data = await getBookings(session.user.id);
 
   return (
-    <div className="mx-auto w-11/12 py-10 md:max-w-screen-xl">
-      {/*<DataTable columns={columns} data={data} />*/}
+    <div className="container w-11/12 max-w-screen-xl py-10">
+      <DataTable columns={columns} data={data} />
     </div>
   );
 }

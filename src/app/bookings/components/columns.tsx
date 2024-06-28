@@ -1,34 +1,35 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { ArrowRight, ArrowUpDown, Filter, MoreHorizontal } from "lucide-react";
-import Link from "next/link";
+import { type ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import Chip from "~/components/ui/chip";
 
-import { MyEvents } from "~/lib/types";
+import { type MyBooking } from "~/lib/types";
 
-export const columns: ColumnDef<MyEvents>[] = [
+export const columns: ColumnDef<MyBooking>[] = [
   {
-    accessorKey: "name",
+    accessorKey: "event.name",
+    id: "name",
     header: () => "Event Name",
   },
   {
-    accessorKey: "status",
+    accessorKey: "application.status",
+    id: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original.status;
+      const status = row.original.application.status;
       return (
         <Chip
           size="xs"
           text={status}
           color={
-            status === "open"
-              ? "gray"
-              : status === "in-progress"
-                ? "yellow"
-                : status === "closed" || status === "completed"
+            status === "accepted"
+              ? "green"
+              : status === "requested"
+                ? "gray"
+                : status === "rejected"
                   ? "red"
                   : "gray"
           }
@@ -36,12 +37,12 @@ export const columns: ColumnDef<MyEvents>[] = [
       );
     },
   },
-
   {
-    accessorKey: "amount",
+    accessorKey: "event.amount",
+    id: "amount",
     header: () => <div className="text-right">Amount</div>,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const amount = parseFloat(row.original.event.amount.toString());
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -51,65 +52,70 @@ export const columns: ColumnDef<MyEvents>[] = [
     },
   },
   {
-    accessorKey: "date",
+    accessorKey: "application.appliedAt",
+    id: "appliedAt",
     header: ({ column }) => (
       <div className="text-right">
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Date
+          Application Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       </div>
     ),
     cell: ({ row }) => {
-      const date = row.original.date;
+      const appliedAt = row.original.application.appliedAt;
 
       return (
-        <div className="text-right font-medium">
-          {date.toLocaleDateString()}
+        <div className="pr-4 text-right font-medium">
+          {appliedAt.toLocaleDateString()}
         </div>
       );
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "timeslot.startTime",
+    id: "startTime",
     header: ({ column }) => (
       <div className="text-right">
         <Button
-          //   className=""
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Created At
+          Start Time
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       </div>
     ),
     cell: ({ row }) => {
-      const createdtAt = row.original.createdAt;
+      const startTime = row.original.timeslot.startTime;
 
       return (
-        <div className="text-right font-medium">
-          {createdtAt.toLocaleDateString()}
-        </div>
+        <div className="pr-4 text-right font-medium">{`${startTime.slice(0, -2)} ${startTime.slice(-2)}`}</div>
       );
     },
   },
   {
-    id: "actions",
+    accessorKey: "timeslot.endTime",
+    id: "endTime",
+    header: ({ column }) => (
+      <div className="text-right">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          End Time
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    ),
     cell: ({ row }) => {
-      const eventDetails = row.original;
+      const endTime = row.original.timeslot.endTime;
+
       return (
-        <div className="flex justify-end">
-          <Link href={`/events/${eventDetails.id}`}>
-            <Button className="flex items-center gap-x-2" variant="link">
-              View Applicants
-              <ArrowRight />
-            </Button>
-          </Link>
-        </div>
+        <div className="pr-4 text-right font-medium">{`${endTime.slice(0, -2)} ${endTime.slice(-2)}`}</div>
       );
     },
   },
