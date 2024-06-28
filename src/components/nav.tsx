@@ -39,7 +39,7 @@ export default async function Nav() {
             {session?.user.type === "musician" && (
               <>
                 <Link href="/listings">Listings</Link>
-                <Link href="/bookings">Bookings</Link>
+                <Link href="/applications">Applications</Link>
               </>
             )}
           </div>
@@ -81,10 +81,10 @@ export default async function Nav() {
                     </DropdownMenuItem>
                   </Link>
 
-                  <Link className="lg:hidden" href="/bookings">
+                  <Link className="lg:hidden" href="/applications">
                     <DropdownMenuItem className="md:text-md flex cursor-pointer items-center gap-x-4 text-xs">
                       <Book className="h-4 w-4 text-muted-foreground" />
-                      Bookings
+                      Applications
                     </DropdownMenuItem>
                   </Link>
                 </>

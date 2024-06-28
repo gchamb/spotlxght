@@ -275,12 +275,13 @@ export const myBookinsDataSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
     status: z.union([
+      z.literal("draft"),
       z.literal("open"),
       z.literal("in-progress"),
       z.literal("completed"),
       z.literal("closed"),
     ]),
-    date: z.date(),
+    date: z.string(),
     amount: z.number(),
     venueId: z.string().uuid(),
     createdAt: z.date(),
@@ -291,6 +292,7 @@ export const myBookinsDataSchema = z.object({
     endTime: z.enum(timeslotsTimes),
     timezone: z.string(),
     status: z.union([
+      z.literal("draft"),
       z.literal("open"),
       z.literal("in-progress"),
       z.literal("completed"),

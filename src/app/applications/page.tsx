@@ -3,10 +3,10 @@ import { redirect } from "next/navigation";
 import { getSession } from "~/lib/auth";
 import { applications, events, timeslots, users } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
-import { DataTable } from "~/app/bookings/components/data-table";
-import { columns } from "~/app/bookings/components/columns";
+import { columns } from "~/app/applications/components/columns";
+import { DataTable } from "~/app/applications/components/data-table";
 
-async function getBookings(userId: string) {
+async function getApplications(userId: string) {
   return db
     .select()
     .from(events)
@@ -16,7 +16,7 @@ async function getBookings(userId: string) {
     .innerJoin(timeslots, eq(events.id, timeslots.eventId));
 }
 
-export default async function Bookings() {
+export default async function Applications() {
   const session = await getSession();
 
   if (session === null) {
@@ -27,7 +27,7 @@ export default async function Bookings() {
     return redirect("/");
   }
 
-  const data = await getBookings(session.user.id);
+  const data = await getApplications(session.user.id);
 
   return (
     <div className="container w-11/12 max-w-screen-xl py-10">
