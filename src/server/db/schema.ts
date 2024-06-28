@@ -5,6 +5,7 @@ import {
   date,
   float,
   index,
+  int,
   mysqlTableCreator,
   primaryKey,
   smallint,
@@ -13,7 +14,13 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 
-import { type ApplicationStatus, type EventStatus, type Rating, type TimeslotTimes, type UserType, } from "~/lib/types";
+import {
+  type ApplicationStatus,
+  type EventStatus,
+  type Rating,
+  type TimeslotTimes,
+  type UserType,
+} from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -320,7 +327,7 @@ export const stripePayouts = createTable(
     id: varchar("id", { length: 191 }).notNull().primaryKey(),
     status: varchar("status", { length: 10 }).notNull(),
     currency: varchar("currency", { length: 5 }).notNull().default("usd"),
-    amount: int("amount"),
+    amount: int("amount").notNull(),
     stripeAccountId: varchar("stripeAccountId", { length: 191 })
       .notNull()
       .references(() => users.stripeAccountId),
