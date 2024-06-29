@@ -11,6 +11,7 @@ import {
   Text,
   Tailwind,
 } from "@react-email/components";
+import { env } from "~/env";
 
 interface DefaultEmailTemplateProps {
   message: string;
@@ -20,9 +21,10 @@ interface DefaultEmailTemplateProps {
   };
 }
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const baseUrl =
+  env.NODE_ENV === "development"
+    ? `https://dev.spotlxght.com`
+    : "http://spotlxght.com";
 
 export default function DefaultEmailTemplate({
   message,
@@ -31,7 +33,6 @@ export default function DefaultEmailTemplate({
   return (
     <Html>
       <Head />
-      <Preview>Netlify Welcome</Preview>
       <Tailwind
         config={{
           theme: {
