@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     const { error } = await resend.emails.send({
-      from: "Spotlxgth <delivered@resend.dev>",
+      from: "spotlxght <delivered@spotlxght.com>",
       to: [email],
       react: DefaultEmailTemplate({ message }),
       subject,

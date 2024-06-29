@@ -52,7 +52,7 @@ export default function DefaultEmailTemplate({
         <Body className="bg-offwhite font-sans text-base">
           <Container className="p-45 bg-white">
             <Heading className="my-0 text-center font-bold leading-8">
-              Spotlxgth
+              Spotlxght
             </Heading>
 
             <Section>

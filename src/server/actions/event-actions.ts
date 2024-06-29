@@ -174,12 +174,9 @@ export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
         ),
       );
 
-    // revalidate path
-    revalidatePath(`/events/${eventId}`, "page");
-
     // send the email to the musician
-    await resend.emails.send({
-      from: "Spotlxgth <noreply@spotlxgth.com>",
+    const { error } = await resend.emails.send({
+      from: "Spotlxght <noreply@spotlxght.com>",
       to: [application.user.email],
       react: DefaultEmailTemplate({
         message: `Your application has been ${status}`,
@@ -190,6 +187,11 @@ export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
       }),
       subject: `Your ${application.event.name} application has been ${status}`,
     });
+
+    console.log(error);
+
+    // revalidate path
+    revalidatePath(`/events/${eventId}`, "page");
   } catch (err) {
     return {
       message:
@@ -207,12 +209,11 @@ export async function applyToTimeslot(data: ApplyTimeslotRequest) {
 
   if (session.user.type !== "musician") return redirect("/");
 
-  if (session.user.stripeAccountId === null) {
-    // maybe redirect instead.
-    throw new Error("You must link your bank account to apply.");
-  }
-
   try {
+    if (session.user.stripeAccountId === null) {
+      // maybe redirect instead.
+      throw new Error("You must link your bank account to apply.");
+    }
     // validate input
     const valid = applyTimeslotRequest.safeParse(data);
 

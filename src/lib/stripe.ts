@@ -182,7 +182,7 @@ export async function handleStripeCheckoutFailure(
 
   // send email that it failed
   await resend.emails.send({
-    from: "Spotlxgth <noreply@spotlxgth.com>",
+    from: "Spotlxght <noreply@spotlxght.com>",
     to: [user.email],
     react: DefaultEmailTemplate({
       message:

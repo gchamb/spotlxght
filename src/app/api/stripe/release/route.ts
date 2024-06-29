@@ -62,11 +62,11 @@ export async function POST(request: Request) {
     if (applicant.user.stripeAccountId === null) {
       // NOTE: email user so they can get paid
       const { error } = await resend.emails.send({
-        from: "Spotlxgth <noreply@spotlxgth.com>",
+        from: "Spotlxght <noreply@spotlxght.com>",
         to: [applicant.user.email],
         react: DefaultEmailTemplate({
           message:
-            "You are unable to receive funds. Please link your account to Spotlxgth.",
+            "You are unable to receive funds. Please link your account to spotlxght.",
           redirect: {
             page: "linking",
             buttonText: "Link your account",
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
 
     // notify the venue and musician that funds have been released.
     await resend.emails.send({
-      from: "Spotlxgth <noreply@spotlxgth.com>",
+      from: "spotlxght <noreply@spotlxght.com>",
       to: [applicant.user.email, applicant.event.user.email],
       react: DefaultEmailTemplate({
         message: `Funds for ${applicant.event.name} have been released.`,
