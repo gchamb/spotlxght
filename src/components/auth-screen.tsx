@@ -54,7 +54,7 @@ export function AuthScreen({ screenType, type }: AuthProps) {
 
     let error: Awaited<ReturnType<typeof emailSignInAction> | undefined>;
     if (screenType === "sign-in") {
-      error = await emailSignInAction(values);
+      error = await emailSignInAction({ ...values, type });
     } else {
       error = await emailSignUpAction({ ...values, type });
     }
