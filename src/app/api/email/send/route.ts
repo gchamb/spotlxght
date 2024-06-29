@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     return Response.json(null, { status: 400 });
   }
 
-  const { email, subject, message } = valid.data;
+  const { emails, subject, message } = valid.data;
 
   try {
     const key = await db.query.apiKeys.findFirst({
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     const { error } = await resend.emails.send({
       from: "spotlxght <delivered@spotlxght.com>",
-      to: [email],
+      to: emails,
       react: DefaultEmailTemplate({ message }),
       subject,
     });

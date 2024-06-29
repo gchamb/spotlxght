@@ -343,7 +343,7 @@ export const releaseFundsRequest = z.object({
 });
 
 export const sendEmailRequest = z.object({
-  email: z.string().email(),
+  emails: z.array(z.string().email()),
   subject: z.string().min(1, "heading must be at least 1 character."),
   message: z.string(),
   type: z.union([
