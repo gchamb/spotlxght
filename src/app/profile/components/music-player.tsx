@@ -61,16 +61,14 @@ export default function MusicPlayer({
 
   return (
     <div>
-      <React.Fragment key={asset.id}>
-        <audio ref={audioRef}>
-          <source src={asset.sasUrl} />
-        </audio>
+      <React.Fragment key={asset?.id}>
+        <audio ref={audioRef}>{/*<source src={asset.sasUrl} />*/}</audio>
       </React.Fragment>
       <div className="flex">
         <div className="w-30 h-30 block">
           <div className="w-30 h-30 relative">
             <button
-              className="pt-7"
+              className="pr-4 pt-7"
               onClick={() => {
                 setIsPlaying((prev) => !prev);
               }}
@@ -84,7 +82,7 @@ export default function MusicPlayer({
           </div>
         </div>
         <div className="w-full pl-3 pr-2">
-          <h2 className="mb-4">{asset.title}</h2>
+          <h2 className="mb-4">Hey</h2>
           <Slider
             defaultValue={[0]}
             value={[progress]}
@@ -141,17 +139,19 @@ export default function MusicPlayer({
                 {/*    </AlertDialogContent>*/}
                 {/*  </AlertDialog>*/}
                 {/*</DropdownMenuItem>*/}
-                <DropdownMenuItem
-                  onClick={async () => {
-                    const error = await deleteAsset(asset.id, userId);
+                {userId && (
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      const error = await deleteAsset(asset.id, userId);
 
-                    if (error) {
-                      toast(error.message);
-                    }
-                  }}
-                >
-                  <p className="font-bold text-red-600">Delete</p>
-                </DropdownMenuItem>
+                      if (error) {
+                        toast(error.message);
+                      }
+                    }}
+                  >
+                    <p className="font-bold text-red-600">Delete</p>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
