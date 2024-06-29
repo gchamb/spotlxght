@@ -506,6 +506,5 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
     );
   }
 
-  // if user has type, but not stripe account
   return <LinkStripe />;
 }
