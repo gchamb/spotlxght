@@ -22,12 +22,9 @@ import { createProfile } from "~/server/actions/onboarding-actions";
 import { shortenOrNot } from "~/lib/utils";
 import { toast } from "sonner";
 import LinkStripe from "./link-stripe";
-import { useSearchParams } from "next/navigation";
 
 export default function Onboarding({ type }: { type: "venue" | "musician" }) {
-  const searchParams = useSearchParams();
-  const searchParamsSlide = Number(searchParams.get("slide")) as 1 | 2 | 3 | 0;
-  const [slide, setSlide] = useState<1 | 2 | 3>(searchParamsSlide || 1);
+  const [slide, setSlide] = useState<1 | 2 | 3>(1);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
 
@@ -386,7 +383,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
             </Form>
           )}
         </div>
-        <div className=" flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl bg-spotlxght-dark-grey 2xl:block">
+        <div className="bg-spotlxght-dark-grey flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl 2xl:block">
           <div className="h-[200px] w-full rounded-t-xl">
             {type === "venue" && venueForm.watch("bannerImage") ? (
               <img

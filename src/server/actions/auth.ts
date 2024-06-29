@@ -28,7 +28,7 @@ export async function emailSignInAction(
         if (user.stripeAccountId) {
           redirect(`/profile/${user.id}`);
         } else {
-          redirect(`/${userType}/onboarding?slide=3`);
+          redirect("/linking");
         }
       } else {
         // venues don't need a stripe account

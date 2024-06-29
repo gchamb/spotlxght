@@ -95,21 +95,19 @@ export async function GET(request: Request) {
     redirect = `${url.origin}/${userType.value}/onboarding`;
   } else {
     // redirect to profile if this user already exist
-    if (user) {
-      if (user.type) {
-        if (user.type == "musician") {
-          if (user.stripeAccountId) {
-            redirect = `${url.origin}/profile/${user.id}`;
-          } else {
-            redirect = `${url.origin}/${userType.value}/onboarding?slide=3`;
-          }
-        } else {
-          // venues don't need a stripe account
+    if (user.type) {
+      if (user.type == "musician") {
+        if (user.stripeAccountId) {
           redirect = `${url.origin}/profile/${user.id}`;
+        } else {
+          redirect = `${url.origin}/linking`;
         }
       } else {
-        redirect = `${url.origin}/${userType.value}/onboarding`;
+        // venues don't need a stripe account
+        redirect = `${url.origin}/profile/${user.id}`;
       }
+    } else {
+      redirect = `${url.origin}/${userType.value}/onboarding`;
     }
   }
 
