@@ -42,6 +42,8 @@ export type ApplicationStatus = (typeof applicantStatuses)[number];
 
 export type MyEvent = z.infer<typeof myEventsDataSchema>;
 
+export type MyBooking = z.infer<typeof myBookinsDataSchema>;
+
 export type EventListing = MyEvent & {
   venueName: string;
   venueId: string;
@@ -255,6 +257,50 @@ export const myEventsDataSchema = z.object({
   amount: z.number(),
   venueId: z.string().uuid(),
   createdAt: z.date(),
+});
+
+export const myBookinsDataSchema = z.object({
+  application: z.object({
+    userId: z.string().uuid(),
+    timeslotId: z.string().uuid(),
+    status: z.union([
+      z.literal("requested"),
+      z.literal("accepted"),
+      z.literal("rejected"),
+    ]),
+    eventId: z.string().uuid(),
+    appliedAt: z.date(),
+  }),
+  event: z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    status: z.union([
+      z.literal("draft"),
+      z.literal("open"),
+      z.literal("in-progress"),
+      z.literal("completed"),
+      z.literal("closed"),
+    ]),
+    date: z.string(),
+    amount: z.number(),
+    venueId: z.string().uuid(),
+    createdAt: z.date(),
+  }),
+  timeslot: z.object({
+    id: z.string().uuid(),
+    startTime: z.enum(timeslotsTimes),
+    endTime: z.enum(timeslotsTimes),
+    timezone: z.string(),
+    status: z.union([
+      z.literal("draft"),
+      z.literal("open"),
+      z.literal("in-progress"),
+      z.literal("completed"),
+      z.literal("closed"),
+    ]),
+    eventId: z.string().uuid(),
+  }),
+  user: z.custom<User>(),
 });
 
 export const createEventSchema = z.object({

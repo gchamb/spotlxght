@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { getSession, signOut } from "~/lib/auth";
+import { getSession } from "~/lib/auth";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { CalendarDays, Menu, MicVocal, User } from "lucide-react";
+import { Book, CalendarDays, Menu, MicVocal, User } from "lucide-react";
 import SignOut from "./signout-dropdown-item";
 import { getSasUrl } from "~/lib/azure";
 import { getInitials } from "~/lib/utils";
@@ -31,15 +31,16 @@ export default async function Nav() {
           <Link href="/">
             <h1 className="text-xl font-semibold">spotlxght</h1>
           </Link>
-          <div className="hidden justify-between gap-x-10 lg:flex">
-            <Link className="hover:font-semibold" href="/listings">
-              Listings
-            </Link>
-
+          <div className="hidden items-end gap-12 lg:flex">
             {session?.user.type === "venue" && (
-              <Link className="hover:font-semibold" href="/my-events">
-                My Events
-              </Link>
+              <Link href="/my-events">My Events</Link>
+            )}
+
+            {session?.user.type === "musician" && (
+              <>
+                <Link href="/listings">Listings</Link>
+                <Link href="/applications">Applications</Link>
+              </>
             )}
           </div>
         </div>
@@ -62,24 +63,31 @@ export default async function Nav() {
                 </DropdownMenuItem>
               </Link>
 
-              <Link className="lg:hidden" href="/listings">
-                <DropdownMenuItem className="md:text-md flex items-center gap-x-4 text-xs">
-                  <MicVocal className="h-4 w-4 text-muted-foreground" />
-                  Listings
-                </DropdownMenuItem>
-              </Link>
-
               {session.user.type === "venue" ? (
                 <>
                   <Link href="/my-events" className="lg:hidden">
-                    <DropdownMenuItem className="md:text-md flex flex items-center gap-x-4 text-xs ">
+                    <DropdownMenuItem className="md:text-md flex cursor-pointer items-center gap-x-4 text-xs ">
                       <CalendarDays className="h-4 w-4 text-muted-foreground" />
                       My Events
                     </DropdownMenuItem>
                   </Link>
                 </>
               ) : (
-                <>{/* musician specific links such as bookings */}</>
+                <>
+                  <Link className="lg:hidden" href="/listings">
+                    <DropdownMenuItem className="md:text-md flex cursor-pointer items-center gap-x-4 text-xs">
+                      <MicVocal className="h-4 w-4 text-muted-foreground" />
+                      Listings
+                    </DropdownMenuItem>
+                  </Link>
+
+                  <Link className="lg:hidden" href="/applications">
+                    <DropdownMenuItem className="md:text-md flex cursor-pointer items-center gap-x-4 text-xs">
+                      <Book className="h-4 w-4 text-muted-foreground" />
+                      Applications
+                    </DropdownMenuItem>
+                  </Link>
+                </>
               )}
               <SignOut />
             </DropdownMenuContent>
