@@ -13,6 +13,14 @@ import { getEventListings } from "~/lib/events";
 import { columns } from "~/app/listings/components/columns";
 import { Instagram, Twitter } from "lucide-react";
 import Link from "next/link";
+import TimeslotsButton from "~/app/profile/components/timeslots-button";
+
+const musicSamples = [
+  {
+    title: "rich bobby lee",
+    blobKey: "",
+  },
+];
 
 export default async function LandingPage() {
   const listings = await getEventListings();
@@ -21,7 +29,7 @@ export default async function LandingPage() {
     <>
       <div className="container flex flex-col gap-14 px-20">
         <div className="mt-20 flex h-[28rem] w-full gap-8">
-          <div className="relative flex h-full w-full items-center justify-center rounded-2xl bg-gray-800 drop-shadow-lg">
+          <div className="relative flex h-full w-full items-center justify-center rounded-2xl bg-slate-800 drop-shadow-lg">
             <img
               src="/images/venue.jpg"
               alt="venues"
@@ -29,7 +37,7 @@ export default async function LandingPage() {
             />
             <h1 className="absolute text-2xl font-bold">Venues</h1>
           </div>
-          <div className="relative flex h-full w-full items-center justify-center rounded-2xl bg-gray-800 drop-shadow-lg">
+          <div className="relative flex h-full w-full items-center justify-center rounded-2xl bg-slate-800 drop-shadow-lg">
             <img
               src="/images/rock.jpg"
               alt="musicians"
@@ -38,7 +46,7 @@ export default async function LandingPage() {
             <h1 className="absolute text-2xl font-bold">Musicians</h1>
           </div>
         </div>
-        <h1 className="mt-10 text-center text-xl font-semibold">
+        <h1 className="mt-10 text-center text-xl font-semibold text-slate-200">
           Our Musicians
         </h1>
         <div className="flex h-96 w-full gap-8 px-8">
@@ -55,13 +63,11 @@ export default async function LandingPage() {
                           </span>
                           {/*<React.Fragment key={2}>*/}
                           {/*  <video*/}
-                          {/*    className="h-full w-full object-cover"*/}
+                          {/*    className=""*/}
+                          {/*    src="/public/videos/sample.mp4"*/}
                           {/*    controls={true}*/}
                           {/*  >*/}
-                          {/*    <source*/}
-                          {/*      src="/Users/jorge/Movies/2024-06-23 09-00-16.mp4"*/}
-                          {/*      type="video/mp4"*/}
-                          {/*    />*/}
+                          {/*    <source src="/public/videos/sample.mp4" />*/}
                           {/*  </video>*/}
                           {/*</React.Fragment>*/}
                         </CardContent>
@@ -75,25 +81,37 @@ export default async function LandingPage() {
             </Carousel>
           </div>
           <div className="flex h-full w-full flex-col justify-center gap-2 px-14 py-10">
-            <MusicPlayer />
-            <MusicPlayer />
-            <MusicPlayer />
-            <MusicPlayer />
-            <MusicPlayer />
+            <MusicPlayer
+              title="rich bobby lee"
+              sasUrl="public/music/funny.wav"
+            />
+            <MusicPlayer title="hey" />
+            <MusicPlayer title="hey" />
+            <MusicPlayer title="hey" />
+            <MusicPlayer title="hey" />
+            {/*<MusicPlayer />*/}
+            {/*<MusicPlayer />*/}
           </div>
         </div>
         <div className="container mt-10">
-          <h1 className="mb-10 text-center text-xl font-semibold">
+          <h1 className="mb-10 text-center text-xl font-semibold text-slate-200">
             Available Events
           </h1>
           <DataTable columns={columns} data={listings} />
+          <div className="mt-10">
+            <div className="flex justify-between">
+              <h3>Howl at the moon</h3>
+              <h3>100 Main St Chicago, IL, 60605</h3>
+              <TimeslotsButton event={event} />
+            </div>
+          </div>
         </div>
       </div>
-      <footer className="bg-spotlxght-dark-grey mt-36 h-fit">
-        <div className="container flex h-80 justify-center gap-8 px-28 py-14 text-gray-200">
+      <footer className="mt-36 h-fit bg-spotlxght-dark-grey">
+        <div className="container flex h-80 justify-center gap-8 px-28 py-14 text-slate-200">
           <div className="h-full w-full">
             <h1 className="text-2xl font-semibold">spotlxhgt</h1>
-            <p className="my-2 text-sm font-normal text-gray-300">
+            <p className="my-2 text-sm font-normal text-slate-300">
               Copyright ©2024 All Rights Reversed
             </p>
             <div className="mt-8 flex justify-start gap-4">
@@ -106,27 +124,27 @@ export default async function LandingPage() {
             </div>
           </div>
           <div className="flex h-full w-full justify-start gap-16">
-            <div className="flex h-full w-24 flex-col gap-4 text-center text-gray-200">
+            <div className="flex h-full w-24 flex-col gap-4 text-center text-slate-200">
               <h2 className="font-semibold">Company</h2>
-              <Link href="#" className="text-xs text-gray-400">
+              <Link href="#" className="text-xs text-slate-300">
                 About us
               </Link>
-              <Link href="#" className="text-xs text-gray-400">
+              <Link href="#" className="text-xs text-slate-300">
                 Mission
               </Link>
-              <Link href="#" className="text-xs text-gray-400">
+              <Link href="#" className="text-xs text-slate-300">
                 Pricing
               </Link>
-              <Link href="#" className="text-xs text-gray-400">
+              <Link href="#" className="text-xs text-slate-300">
                 Contact us
               </Link>
             </div>
-            <div className="flex h-full w-24 flex-col gap-4 text-center text-gray-200">
+            <div className="flex h-full w-24 flex-col gap-4 text-center text-slate-200">
               <h2 className="font-semibold">Legal</h2>
-              <Link href="#" className="text-xs text-gray-400">
+              <Link href="#" className="text-xs text-slate-300">
                 Terms of service
               </Link>
-              <Link href="#" className="text-xs text-gray-400">
+              <Link href="#" className="text-xs text-slate-300">
                 Privacy policy
               </Link>
             </div>

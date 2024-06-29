@@ -23,10 +23,14 @@ export default function MusicPlayer({
   asset,
   userId,
   isCurrentUser,
+  title,
+  sasUrl,
 }: {
-  asset: Asset & { sasUrl?: string };
-  userId: string;
-  isCurrentUser: boolean;
+  asset?: Asset & { sasUrl?: string };
+  userId?: string;
+  isCurrentUser?: boolean;
+  title?: string;
+  sasUrl?: string;
 }) {
   const audioRef = useRef() as MutableRefObject<HTMLAudioElement>;
   const [isPlaying, setIsPlaying] = useState(false);
@@ -82,7 +86,7 @@ export default function MusicPlayer({
           </div>
         </div>
         <div className="w-full pl-3 pr-2">
-          <h2 className="mb-4">Hey</h2>
+          <h2 className="mb-4">{asset?.title ?? title}</h2>
           <Slider
             defaultValue={[0]}
             value={[progress]}
@@ -142,7 +146,8 @@ export default function MusicPlayer({
                 {userId && (
                   <DropdownMenuItem
                     onClick={async () => {
-                      const error = await deleteAsset(asset.id, userId);
+                      const error =
+                        asset?.id && (await deleteAsset(asset.id, userId));
 
                       if (error) {
                         toast(error.message);
