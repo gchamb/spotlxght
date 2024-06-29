@@ -5,7 +5,7 @@ import { ArrowRight, Loader2, Star } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { type z } from "zod";
 import { Button } from "~/components/ui/button";
 import { musicianFormSchema, venueFormSchema } from "~/lib/types";
 import {
@@ -22,9 +22,12 @@ import { createProfile } from "~/server/actions/onboarding-actions";
 import { shortenOrNot } from "~/lib/utils";
 import { toast } from "sonner";
 import LinkStripe from "./link-stripe";
+import { useSearchParams } from "next/navigation";
 
 export default function Onboarding({ type }: { type: "venue" | "musician" }) {
-  const [slide, setSlide] = useState<1 | 2 | 3>(1);
+  const searchParams = useSearchParams();
+  const searchParamsSlide = Number(searchParams.get("slide")) as 1 | 2 | 3 | 0;
+  const [slide, setSlide] = useState<1 | 2 | 3>(searchParamsSlide || 1);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
 
@@ -503,5 +506,6 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
     );
   }
 
+  // if user has type, but not stripe account
   return <LinkStripe />;
 }

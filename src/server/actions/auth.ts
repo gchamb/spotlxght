@@ -8,7 +8,9 @@ import { cookies, headers } from "next/headers";
 import { OAuth2Client } from "google-auth-library";
 import { env } from "~/env";
 
-export async function emailSignInAction(credentials: Credentials) {
+export async function emailSignInAction(
+  credentials: Credentials & { type: UserType },
+) {
   let user: Awaited<ReturnType<typeof emailSignIn>> | null = null;
   try {
     user = await emailSignIn(credentials);
@@ -19,9 +21,24 @@ export async function emailSignInAction(credentials: Credentials) {
     };
   }
 
+  const { type: userType } = credentials;
   if (user) {
-    redirect(`/profile/${user.id}`);
+    if (user.type) {
+      if (user.type == "musician") {
+        if (user.stripeAccountId) {
+          redirect(`/profile/${user.id}`);
+        } else {
+          redirect(`/${userType}/onboarding?slide=3`);
+        }
+      } else {
+        // venues don't need a stripe account
+        redirect(`/profile/${user.id}`);
+      }
+    } else {
+      redirect(`/${userType}/onboarding`);
+    }
   }
+  // else if !user, stay on same page (authenticated pages should handle getSession() and redirecting)
 }
 
 export async function googleSignIn(userType: UserType) {

@@ -15,6 +15,9 @@ import { Button } from "./ui/button";
 
 export default async function Nav() {
   const session = await getSession();
+  const showNavItems =
+    session?.user.type === "venue" ||
+    (session?.user.type === "musician" && session?.user.stripeAccountId);
 
   let profilePicImage = "/images/default-profile2.png";
   if (session?.user.profilePicImage) {
@@ -32,20 +35,24 @@ export default async function Nav() {
             <h1 className="text-xl font-semibold">spotlxght</h1>
           </Link>
           <div className="hidden items-end gap-12 lg:flex">
-            {session?.user.type === "venue" && (
-              <Link href="/my-events">My Events</Link>
-            )}
-
-            {session?.user.type === "musician" && (
+            {showNavItems && (
               <>
-                <Link href="/listings">Listings</Link>
-                <Link href="/applications">Applications</Link>
+                {session?.user.type === "venue" && (
+                  <Link href="/my-events">My Events</Link>
+                )}
+
+                {session?.user.type === "musician" && (
+                  <>
+                    <Link href="/listings">Listings</Link>
+                    <Link href="/applications">Applications</Link>
+                  </>
+                )}
               </>
             )}
           </div>
         </div>
 
-        {session ? (
+        {showNavItems ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
