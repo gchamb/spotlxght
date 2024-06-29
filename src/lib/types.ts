@@ -341,3 +341,13 @@ export const releaseFundsRequest = z.object({
   timeslotId: z.string().min(1, "Invalid Request"),
   userId: z.string().min(1, "Invalid Request"),
 });
+
+export const sendEmailRequest = z.object({
+  email: z.string().email(),
+  subject: z.string().min(1, "heading must be at least 1 character."),
+  message: z.string(),
+  type: z.union([
+    z.literal("default"),
+    z.literal("other"), // will lead to more in the future
+  ]),
+});
