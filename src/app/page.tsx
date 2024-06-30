@@ -65,7 +65,7 @@ const listingSamples = [
 export default async function LandingPage() {
   return (
     <>
-      <div className="px-8/ container flex flex-col gap-24 lg:px-20">
+      <div className="flex flex-col gap-24 px-8 lg:px-20">
         <div className="mt-20 flex min-h-[28rem] w-full flex-col gap-8 lg:flex-row">
           <div className="relative flex h-full w-full items-center justify-center rounded-2xl drop-shadow-lg">
             <img
@@ -136,7 +136,7 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
-        <div className="container rounded-2xl bg-[#222] px-14 pb-14 pt-10 drop-shadow md:mt-10">
+        <div className="container rounded-2xl bg-[#222] pb-14 pt-10 drop-shadow md:mt-10 md:px-14">
           <h1 className="mb-10 text-center text-xl font-semibold text-slate-200">
             Available Events
           </h1>
@@ -146,16 +146,21 @@ export default async function LandingPage() {
                 key={index}
                 className="flex flex-col items-center justify-between text-left md:flex-row lg:text-center"
               >
-                <h3>Howl at the moon</h3>
-                <h3>100 Main St Chicago, IL, 60605</h3>
+                <h3 className="text-center">Howl at the moon</h3>
+                <h3 className="text-center">100 Main St Chicago, IL, 60605</h3>
                 <Link
                   href="/listings"
-                  className="group flex items-end justify-between rounded-2xl"
+                  className="group flex items-end justify-between rounded-2xl md:pr-4"
                 >
-                  <h1 className="my-auto mr-4 mt-2 w-fit lg:mt-0">
+                  <h1 className="my-auto mr-4 mt-2 w-fit text-center lg:mt-0">
                     View Timeslots
                   </h1>
-                  <MoveRight size={30} className="pt-[1px]" />
+                  <div className="relative w-fit">
+                    <MoveRight
+                      size={30}
+                      className="absolute bottom-[-4px] md:block md:pt-[1px]"
+                    />
+                  </div>
                 </Link>
               </div>
             ))}

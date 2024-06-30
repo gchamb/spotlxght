@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
+  type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import { Filter } from "lucide-react";
@@ -31,7 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-import { MyEvent } from "~/lib/types";
+import { type MyEvent } from "~/lib/types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<MyEvent, TValue>[];

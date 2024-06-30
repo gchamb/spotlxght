@@ -40,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.className} dark`}>
       <body>
-        <main className="container flex h-screen flex-col items-center">
+        <main className="flex h-screen flex-col">
           <Nav />
           <Providers>{children}</Providers>
         </main>
