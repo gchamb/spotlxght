@@ -2,8 +2,15 @@ import { stripe } from "~/server/stripe";
 import crypto from "crypto";
 import { eq } from "drizzle-orm";
 import { db } from "~/server/db";
-import { events, stripeCheckouts, stripePayouts } from "~/server/db/schema";
+import {
+  events,
+  stripeCheckouts,
+  stripePayouts,
+  users,
+} from "~/server/db/schema";
 import Stripe from "stripe";
+import { resend } from "~/server/resend";
+import DefaultEmailTemplate from "~/components/email-templates/default";
 
 /**
  *
@@ -130,6 +137,20 @@ export async function handleStripeCheckoutFailure(
     );
   }
 
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+    columns: { email: true },
+  });
+
+  if (user === undefined) {
+    return Response.json(
+      {
+        error: "Invalid Request",
+      },
+      { status: 400 },
+    );
+  }
+
   await db.transaction(async (transaction) => {
     const [session] = await transaction
       .select()
@@ -159,7 +180,16 @@ export async function handleStripeCheckoutFailure(
       .where(eq(stripeCheckouts.checkoutSessionId, data.id));
   });
 
-  // send email to user that the payment failed so the event will not be available
+  // send email that it failed
+  await resend.emails.send({
+    from: "Spotlxght <noreply@spotlxght.com>",
+    to: [user.email],
+    react: DefaultEmailTemplate({
+      message:
+        "Your payment has failed when trying to create an event. Please try again.",
+    }),
+    subject: "Event Payment Failed.",
+  });
 }
 
 export function insertPayout(values: typeof stripePayouts.$inferInsert) {

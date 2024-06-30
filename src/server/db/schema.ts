@@ -391,3 +391,10 @@ export const stripeTransfersRelations = relations(
     }),
   }),
 );
+
+export const apiKeys = createTable("api_key", {
+  id: varchar("id", { length: 191 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+});
