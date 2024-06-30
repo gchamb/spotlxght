@@ -65,7 +65,7 @@ const listingSamples = [
 export default async function LandingPage() {
   return (
     <>
-      <div className="flex flex-col gap-24 px-6 xl:container xl:px-20">
+      <div className="flex flex-col gap-24 px-4 xl:container xl:px-20">
         <div className="mt-20 flex min-h-[28rem] w-full flex-col gap-8 lg:flex-row">
           <div className="relative flex h-full w-full items-center justify-center rounded-2xl drop-shadow-lg">
             <img
