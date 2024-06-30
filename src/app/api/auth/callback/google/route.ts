@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { OAuth2Client } from "google-auth-library";
 import { cookies } from "next/headers";
 import { env } from "~/env";
-import { GoogleInfo } from "~/lib/types";
+import { type GoogleInfo } from "~/lib/types";
 import { db } from "~/server/db";
 import { accounts, sessions, users } from "~/server/db/schema";
 
@@ -54,13 +54,13 @@ export async function GET(request: Request) {
     where: eq(users.email, googleInfo.email),
   });
 
-  if (user === undefined) {
-    if (userType === undefined) {
-      return new Response(null, {
-        status: 400,
-      });
-    }
+  if (userType === undefined) {
+    return new Response(null, {
+      status: 400,
+    });
+  }
 
+  if (user === undefined) {
     // create user
     await db.insert(users).values({
       email: googleInfo.email,
@@ -95,7 +95,20 @@ export async function GET(request: Request) {
     redirect = `${url.origin}/${userType.value}/onboarding`;
   } else {
     // redirect to profile if this user already exist
-    redirect = `${url.origin}/profile/${user.id}`;
+    if (user.type) {
+      if (user.type == "musician") {
+        if (user.stripeAccountId) {
+          redirect = `${url.origin}/profile/${user.id}`;
+        } else {
+          redirect = `${url.origin}/linking`;
+        }
+      } else {
+        // venues don't need a stripe account
+        redirect = `${url.origin}/profile/${user.id}`;
+      }
+    } else {
+      redirect = `${url.origin}/${userType.value}/onboarding`;
+    }
   }
 
   // create session

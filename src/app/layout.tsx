@@ -4,11 +4,28 @@ import { Toaster } from "~/components/ui/sonner";
 import { Inter } from "next/font/google";
 import Nav from "~/components/nav";
 import Providers from "~/components/providers";
+import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Spotlxght",
   description: "Streamline booking between musicians and venues.",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/images/icon.png" }],
+  openGraph: {
+    type: "website",
+    description: "Streamline booking between musicians and venues.",
+    siteName: "Spotlxght",
+    images: [
+      {
+        url: "https://spotlxght.com/images/og-card.png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    description: "Streamline booking between musicians and venues.",
+    site: "Spotlxght",
+    images: "https://spotlxght.com/images/twitter-card.png",
+  },
 };
 
 const inter = Inter({
