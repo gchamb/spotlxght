@@ -7,15 +7,16 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Book, CalendarDays, Menu, MicVocal, User } from "lucide-react";
+import { Book, CalendarDays, MicVocal, User } from "lucide-react";
 import SignOut from "./signout-dropdown-item";
-import { getSasUrl } from "~/lib/azure";
 import { getInitials } from "~/lib/utils";
-import { Button } from "./ui/button";
+import { getSasUrl } from "~/lib/azure";
+import SignOutNavItems from "~/components/signed-out-nav-items";
 
 export default async function Nav() {
   const session = await getSession();
-  const showNavItems =
+
+  const showLoggedInNavItems =
     session?.user.type === "venue" ||
     (session?.user.type === "musician" && session?.user.stripeAccountId);
 
@@ -35,24 +36,25 @@ export default async function Nav() {
             <h1 className="text-xl font-semibold sm:pl-1">spotlxght</h1>
           </Link>
           <div className="hidden items-end gap-12 lg:flex">
-            {showNavItems && (
-              <>
-                {session?.user.type === "venue" && (
-                  <Link href="/my-events">My Events</Link>
-                )}
+            <>
+              {session?.user.type === "venue" && (
+                <Link href="/my-events">My Events</Link>
+              )}
 
-                {session?.user.type === "musician" && (
-                  <>
-                    <Link href="/listings">Listings</Link>
-                    <Link href="/applications">Applications</Link>
-                  </>
-                )}
-              </>
-            )}
+              {session?.user.type !== "venue" && (
+                <Link href="/listings">Listings</Link>
+              )}
+
+              {session?.user.type === "musician" && (
+                <>
+                  <Link href="/applications">Applications</Link>
+                </>
+              )}
+            </>
           </div>
         </div>
 
-        {showNavItems ? (
+        {showLoggedInNavItems ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
@@ -100,21 +102,9 @@ export default async function Nav() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger className="lg:hidden" asChild>
-              <Button variant="ghost">
-                <Menu />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <Link href="/listings">
-                <DropdownMenuItem className="md:text-md flex items-center gap-x-4 text-xs">
-                  <MicVocal className="h-4 w-4 text-muted-foreground" />
-                  Listings
-                </DropdownMenuItem>
-              </Link>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <>
+            <SignOutNavItems />
+          </>
         )}
       </div>
     </nav>

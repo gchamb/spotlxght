@@ -23,10 +23,14 @@ export default function MusicPlayer({
   asset,
   userId,
   isCurrentUser,
+  title,
+  sasUrl,
 }: {
-  asset: Asset & { sasUrl?: string };
-  userId: string;
-  isCurrentUser: boolean;
+  asset?: Asset & { sasUrl?: string };
+  userId?: string;
+  isCurrentUser?: boolean;
+  title?: string;
+  sasUrl?: string;
 }) {
   const audioRef = useRef() as MutableRefObject<HTMLAudioElement>;
   const [isPlaying, setIsPlaying] = useState(false);
@@ -61,30 +65,31 @@ export default function MusicPlayer({
 
   return (
     <div>
-      <React.Fragment key={asset.id}>
+      <React.Fragment key={asset?.id}>
         <audio ref={audioRef}>
-          <source src={asset.sasUrl} />
+          <source src={asset?.sasUrl ?? sasUrl} />
         </audio>
       </React.Fragment>
       <div className="flex">
         <div className="w-30 h-30 block">
           <div className="w-30 h-30 relative">
-            <button
-              className="pt-7"
-              onClick={() => {
-                setIsPlaying((prev) => !prev);
-              }}
-            >
-              {isPlaying ? (
-                <Pause size={30} className="text-gray-100" />
-              ) : (
-                <Play size={30} className="text-gray-100" />
-              )}
-            </button>
+            <div className="pr-4 pt-7">
+              <button
+                onClick={() => {
+                  setIsPlaying((prev) => !prev);
+                }}
+              >
+                {isPlaying ? (
+                  <Pause size={30} className="text-gray-100" />
+                ) : (
+                  <Play size={30} className="text-gray-100" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
         <div className="w-full pl-3 pr-2">
-          <h2 className="mb-4">{asset.title}</h2>
+          <h2 className="mb-4">{asset?.title ?? title}</h2>
           <Slider
             defaultValue={[0]}
             value={[progress]}
@@ -141,17 +146,20 @@ export default function MusicPlayer({
                 {/*    </AlertDialogContent>*/}
                 {/*  </AlertDialog>*/}
                 {/*</DropdownMenuItem>*/}
-                <DropdownMenuItem
-                  onClick={async () => {
-                    const error = await deleteAsset(asset.id, userId);
+                {userId && (
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      const error =
+                        asset?.id && (await deleteAsset(asset.id, userId));
 
-                    if (error) {
-                      toast(error.message);
-                    }
-                  }}
-                >
-                  <p className="font-bold text-red-600">Delete</p>
-                </DropdownMenuItem>
+                      if (error) {
+                        toast(error.message);
+                      }
+                    }}
+                  >
+                    <p className="font-bold text-red-600">Delete</p>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
