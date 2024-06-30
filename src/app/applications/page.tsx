@@ -35,7 +35,7 @@ export default async function Applications() {
   const data = await getApplications(session.user.id);
 
   return (
-    <div className="container w-11/12 max-w-screen-xl py-10">
+    <div className="mx-auto w-11/12 py-10 md:max-w-screen-xl">
       <DataTable columns={columns} data={data} />
     </div>
   );
