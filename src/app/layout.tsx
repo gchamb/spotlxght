@@ -4,7 +4,7 @@ import { Toaster } from "~/components/ui/sonner";
 import { Inter } from "next/font/google";
 import Nav from "~/components/nav";
 import Providers from "~/components/providers";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Spotlxght",
@@ -40,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.className} dark`}>
       <body>
-        <main className="flex h-screen flex-col">
+        <main className="container flex h-screen flex-col items-center">
           <Nav />
           <Providers>{children}</Providers>
         </main>

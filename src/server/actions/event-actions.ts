@@ -17,6 +17,8 @@ import { and, eq } from "drizzle-orm";
 import { createCheckoutSession } from "~/lib/stripe";
 import { headers } from "next/headers";
 import Stripe from "stripe";
+import { resend } from "../resend";
+import DefaultEmailTemplate from "~/components/email-templates/default";
 
 export async function createEvent(data: FormData) {
   const session = await getSession();
@@ -131,6 +133,11 @@ export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
       ),
       with: {
         event: true,
+        user: {
+          columns: {
+            email: true,
+          },
+        },
       },
     });
 
@@ -167,10 +174,24 @@ export async function setEventApplicantStatus(data: SetApplicantStatusRequest) {
         ),
       );
 
+    // send the email to the musician
+    const { error } = await resend.emails.send({
+      from: "Spotlxght <noreply@spotlxght.com>",
+      to: [application.user.email],
+      react: DefaultEmailTemplate({
+        message: `Your application has been ${status}`,
+        redirect: {
+          page: "applications",
+          buttonText: "See your application",
+        },
+      }),
+      subject: `Your ${application.event.name} application has been ${status}`,
+    });
+
+    console.log(error);
+
     // revalidate path
     revalidatePath(`/events/${eventId}`, "page");
-
-    // send the email to the musician
   } catch (err) {
     return {
       message:
@@ -188,12 +209,11 @@ export async function applyToTimeslot(data: ApplyTimeslotRequest) {
 
   if (session.user.type !== "musician") return redirect("/");
 
-  if (session.user.stripeAccountId === null) {
-    // maybe redirect instead.
-    throw new Error("You must link your bank account to apply.");
-  }
-
   try {
+    if (session.user.stripeAccountId === null) {
+      // maybe redirect instead.
+      throw new Error("You must link your bank account to apply.");
+    }
     // validate input
     const valid = applyTimeslotRequest.safeParse(data);
 
