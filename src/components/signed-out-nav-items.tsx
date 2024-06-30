@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { KeyRound, Menu, MicVocal } from "lucide-react";
+import { Key, Menu, MicVocal } from "lucide-react";
 
 export default function SignedOutNavItems() {
   const pathname = usePathname();
@@ -42,13 +42,13 @@ export default function SignedOutNavItems() {
               <>
                 <Link href="/venue/auth">
                   <DropdownMenuItem className="md:text-md flex items-center gap-x-4 text-xs">
-                    <KeyRound className="h-4 w-4 text-muted-foreground" />
+                    <Key className="h-4 w-4 text-muted-foreground" />
                     Venue Login
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/musician/auth">
                   <DropdownMenuItem className="md:text-md flex items-center gap-x-4 text-xs">
-                    <KeyRound className="h-4 w-4 text-muted-foreground" />
+                    <Key className="h-4 w-4 text-muted-foreground" />
                     Musician Login
                   </DropdownMenuItem>
                 </Link>

@@ -29,12 +29,35 @@ const musicSamples = [
 
 const videoSamples = ["band.mp4", "carnival.mp4", "vinyl.mp4"];
 
+const listingSamples = [
+  {
+    title: "Howl at the moon",
+    location: "100 Main St Chicago, IL, 60605",
+  },
+  {
+    title: "Howl at the moon",
+    location: "100 Main St Chicago, IL, 60605",
+  },
+  {
+    title: "Howl at the moon",
+    location: "100 Main St Chicago, IL, 60605",
+  },
+  {
+    title: "Howl at the moon",
+    location: "100 Main St Chicago, IL, 60605",
+  },
+  {
+    title: "Howl at the moon",
+    location: "100 Main St Chicago, IL, 60605",
+  },
+];
+
 export default async function LandingPage() {
   return (
     <>
-      <div className="container flex flex-col gap-24 px-20">
-        <div className="mt-20 flex h-[28rem] w-full gap-8">
-          <div className="relative flex h-full w-full items-center justify-center rounded-2xl bg-slate-800 drop-shadow-lg">
+      <div className="px-8/ container flex flex-col gap-24 lg:px-20">
+        <div className="mt-20 flex min-h-[28rem] w-full flex-col gap-8 lg:flex-row">
+          <div className="relative flex h-full w-full items-center justify-center rounded-2xl drop-shadow-lg">
             <img
               src="/images/venue.jpg"
               alt="venues"
@@ -42,7 +65,7 @@ export default async function LandingPage() {
             />
             <h1 className="absolute text-2xl font-bold">Venues</h1>
           </div>
-          <div className="relative flex h-full w-full items-center justify-center rounded-2xl bg-slate-800 drop-shadow-lg">
+          <div className="relative flex h-full w-full items-center justify-center rounded-2xl drop-shadow-lg">
             <img
               src="/images/rock.jpg"
               alt="musicians"
@@ -55,7 +78,7 @@ export default async function LandingPage() {
           <h1 className="mb-14 mt-10 text-center text-xl font-semibold text-slate-200">
             Our Musicians
           </h1>
-          <div className="flex h-96 w-full gap-8 px-8">
+          <div className="flex min-h-96 w-full flex-col gap-8 px-8 lg:flex-row">
             <div className="flex h-full w-full items-center justify-center">
               <Carousel className="w-full max-w-sm">
                 <CarouselContent>
@@ -89,7 +112,7 @@ export default async function LandingPage() {
                 <CarouselNext />
               </Carousel>
             </div>
-            <div className="flex h-full w-full flex-col justify-center gap-2 px-14 py-10">
+            <div className="flex h-full w-full flex-col justify-center gap-2 py-10 lg:px-14">
               {musicSamples.map(async (sample) => {
                 const sasUrl = await getSasUrl(sample.blobKey, "assets");
                 return (
@@ -103,77 +126,40 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
-        <div className="container mt-10 rounded-2xl bg-[#222] px-14 pb-14 pt-10 drop-shadow">
+        <div className="container rounded-2xl bg-[#222] px-14 pb-14 pt-10 drop-shadow md:mt-10">
           <h1 className="mb-10 text-center text-xl font-semibold text-slate-200">
             Available Events
           </h1>
-          <div className="mt-10 flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h3>Howl at the moon</h3>
-              <h3>100 Main St Chicago, IL, 60605</h3>
-              <Link
-                href="/listings"
-                className="group flex items-end justify-between rounded-2xl"
+          <div className="mt-10 flex flex-col gap-10 lg:gap-4">
+            {listingSamples.map((listing, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center justify-between text-left md:flex-row lg:text-center"
               >
-                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
-                <MoveRight size={30} className="pt-[1px]" />
-              </Link>
-            </div>
-            <div className="flex items-center justify-between">
-              <h3>Howl at the moon</h3>
-              <h3>100 Main St Chicago, IL, 60605</h3>
-              <Link
-                href="/listings"
-                className="group flex items-end justify-between rounded-2xl"
-              >
-                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
-                <MoveRight size={30} className="pt-[1px]" />
-              </Link>
-            </div>
-            <div className="flex items-center justify-between">
-              <h3>Howl at the moon</h3>
-              <h3>100 Main St Chicago, IL, 60605</h3>
-              <Link
-                href="/listings"
-                className="group flex items-end justify-between rounded-2xl"
-              >
-                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
-                <MoveRight size={30} className="pt-[1px]" />
-              </Link>
-            </div>
-            <div className="flex items-center justify-between">
-              <h3>Howl at the moon</h3>
-              <h3>100 Main St Chicago, IL, 60605</h3>
-              <Link
-                href="/listings"
-                className="group flex items-end justify-between rounded-2xl"
-              >
-                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
-                <MoveRight size={30} className="pt-[1px]" />
-              </Link>
-            </div>
-            <div className="flex items-center justify-between">
-              <h3>Howl at the moon</h3>
-              <h3>100 Main St Chicago, IL, 60605</h3>
-              <Link
-                href="/listings"
-                className="group flex items-end justify-between rounded-2xl"
-              >
-                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
-                <MoveRight size={30} className="pt-[1px]" />
-              </Link>
-            </div>
+                <h3>Howl at the moon</h3>
+                <h3>100 Main St Chicago, IL, 60605</h3>
+                <Link
+                  href="/listings"
+                  className="group flex items-end justify-between rounded-2xl"
+                >
+                  <h1 className="my-auto mr-4 mt-2 w-fit lg:mt-0">
+                    View Timeslots
+                  </h1>
+                  <MoveRight size={30} className="pt-[1px]" />
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </div>
       <footer className="mt-36 h-fit bg-spotlxght-dark-grey">
-        <div className="container flex h-80 justify-center gap-8 px-28 py-14 text-slate-200">
-          <div className="h-full w-full">
+        <div className="container flex min-h-80 flex-col justify-center gap-8 px-10 py-14 text-slate-200 md:flex-row md:px-28">
+          <div className="h-full w-full text-center md:text-left">
             <h1 className="text-2xl font-semibold">spotlxhgt</h1>
             <p className="my-2 text-sm font-normal text-slate-300">
               Copyright ©2024 All Rights Reversed
             </p>
-            <div className="mt-8 flex justify-start gap-4">
+            <div className="mx-auto mt-8 flex justify-center gap-4 md:justify-start">
               <Link href="#">
                 <Twitter size={30} />
               </Link>
@@ -182,7 +168,7 @@ export default async function LandingPage() {
               </Link>
             </div>
           </div>
-          <div className="flex h-full w-full justify-start gap-16">
+          <div className="flex h-full w-full justify-center gap-16 md:justify-start">
             <div className="flex h-full w-24 flex-col gap-4 text-center text-slate-200">
               <h2 className="font-semibold">Company</h2>
               <Link href="#" className="text-xs text-slate-300">
