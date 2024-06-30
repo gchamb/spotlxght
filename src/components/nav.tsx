@@ -28,11 +28,11 @@ export default async function Nav() {
   }
 
   return (
-    <nav className="mx-auto w-full max-w-screen-xl p-4">
+    <nav className="container mx-auto w-full max-w-screen-xl p-4">
       <div className="flex items-center justify-between gap-x-24">
         <div className="flex items-center gap-24">
           <Link href="/">
-            <h1 className="text-xl font-semibold">spotlxght</h1>
+            <h1 className="pl-3 text-xl font-semibold">spotlxght</h1>
           </Link>
           <div className="hidden items-end gap-12 lg:flex">
             {showNavItems && (
