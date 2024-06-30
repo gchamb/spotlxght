@@ -95,7 +95,7 @@ export default function MusicPlayer({
             value={[progress]}
             max={100}
             step={1}
-            className="hover:cursor-pointer"
+            className="w-11/12 hover:cursor-pointer sm:w-full"
             draggable={true}
             onValueChange={(value) => {
               if (value[0] && audioRef) {

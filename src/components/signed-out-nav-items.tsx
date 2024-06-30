@@ -33,7 +33,7 @@ export default function SignedOutNavItems() {
       <div className="lg:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger className="lg:hidden" asChild>
-            <Button variant="ghost">
+            <Button className="pr-1" variant="ghost">
               <Menu />
             </Button>
           </DropdownMenuTrigger>

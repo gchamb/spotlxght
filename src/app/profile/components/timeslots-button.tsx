@@ -38,11 +38,8 @@ export default function TimeslotsButton({ event }: { event?: EventListing }) {
         }}
         className="group flex items-end justify-between rounded-2xl py-4"
       >
-        <h1 className="my-auto w-fit group-hover:font-bold">Timeslots</h1>
-        <MoveRight
-          size={30}
-          className="group-hover:h-9 group-hover:w-9 group-hover:font-bold"
-        />
+        <h1 className="my-auto w-fit">Timeslots</h1>
+        <MoveRight size={30} />
       </button>
       {event && (
         <ApplyDialog

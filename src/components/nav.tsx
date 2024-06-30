@@ -33,7 +33,7 @@ export default async function Nav() {
       <div className="flex items-center justify-between gap-x-24">
         <div className="flex items-center gap-24">
           <Link href="/">
-            <h1 className="text-xl font-semibold sm:pl-1">spotlxght</h1>
+            <h1 className="text-xl font-semibold lg:pl-1">spotlxght</h1>
           </Link>
           <div className="hidden items-end gap-12 lg:flex">
             <>
