@@ -1,16 +1,13 @@
 "use client";
 
-import {
-  type Credentials,
-  credentialsSchema,
-  type UserType,
-} from "~/lib/types";
+import { UserType } from "~/lib/types";
 import { Separator } from "~/components/ui/separator";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Credentials, credentialsSchema } from "~/types/zod";
 import {
   Form,
   FormControl,
@@ -19,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { type z } from "zod";
+import { z } from "zod";
 import {
   emailSignInAction,
   emailSignUpAction,
@@ -44,26 +41,27 @@ export function AuthScreen({ screenType, type }: AuthProps) {
   });
 
   async function onSubmit(values: z.infer<typeof credentialsSchema>) {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    if (form.formState.errors.root?.message !== undefined) {
+      if (form.formState.errors.root?.message !== undefined) {
+        form.setError("root", {
+          message: undefined,
+        });
+      }
+
+      if (screenType === "sign-in") {
+        await emailSignInAction(values);
+      } else {
+        await emailSignUpAction({ ...values, type });
+      }
+    } catch (err) {
       form.setError("root", {
-        message: undefined,
+        message: err instanceof Error ? err.message : String(err),
       });
+    } finally {
+      setLoading(false);
     }
-
-    let error: Awaited<ReturnType<typeof emailSignInAction> | undefined>;
-    if (screenType === "sign-in") {
-      error = await emailSignInAction({ ...values, type });
-    } else {
-      error = await emailSignUpAction({ ...values, type });
-    }
-
-    if (error) {
-      form.setError("root", { message: error.message });
-    }
-
-    setLoading(false);
   }
 
   return (

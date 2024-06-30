@@ -5,12 +5,17 @@ import { db } from "../db";
 import { genres, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { getSession } from "~/lib/auth";
+import { getSession } from "../auth/lib";
 
-export async function createProfile(data: FormData) {
+export async function createProfile(data: FormData): Promise<void> {
   const session = await getSession();
 
-  if (!session || !session.user) {
+  if (
+    session === null ||
+    session === undefined ||
+    session.user === undefined ||
+    session.user.id === undefined
+  ) {
     return redirect("/");
   }
 
@@ -22,15 +27,15 @@ export async function createProfile(data: FormData) {
   const name = data.get("name");
   const genreList = data.get("genres");
 
-  try {
-    if (type === null || (type !== "venue" && type !== "musician")) {
-      throw new Error("Invalid Request");
-    }
-    // validate genres (will validate and refactor once we know all the genres we want in)
-    if (genreList === null || typeof genreList !== "string") {
-      throw new Error("Invalid request");
-    }
+  if (type === null || (type !== "venue" && type !== "musician")) {
+    throw new Error("Invalid Request");
+  }
+  // validate genres (will validate and refactor once we know all the genres we want in)
+  if (genreList === null || typeof genreList !== "string") {
+    throw new Error("Invalid request");
+  }
 
+  try {
     if (type === "venue") {
       const valid = venueFormSchema.safeParse({
         venueName,
@@ -116,17 +121,16 @@ export async function createProfile(data: FormData) {
     const genreInserts = genreList
       .split(",")
       .map((genre) =>
-        db.insert(genres).values({ genre, userId: session.user.id }),
+        db.insert(genres).values({ genre, userId: session.user!.id! }),
       );
 
     await Promise.allSettled(genreInserts);
-  } catch (err: unknown) {
-    return {
-      message:
-        err instanceof Error
-          ? err.message
-          : "Unable to process your request. Try again.",
-    };
+  } catch (err) {
+    throw new Error(
+      err instanceof Error
+        ? err.message
+        : "Unable to handle this request. Try again.",
+    );
   }
 
   if (type === "venue") {
