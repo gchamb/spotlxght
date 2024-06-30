@@ -66,7 +66,9 @@ export default function MusicPlayer({
   return (
     <div>
       <React.Fragment key={asset?.id}>
-        <audio ref={audioRef}>{/*<source src={asset.sasUrl} />*/}</audio>
+        <audio ref={audioRef}>
+          <source src={asset?.sasUrl ?? sasUrl} />
+        </audio>
       </React.Fragment>
       <div className="flex">
         <div className="w-30 h-30 block">

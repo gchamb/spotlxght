@@ -8,26 +8,31 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "~/components/ui/carousel";
-import { DataTable } from "~/app/listings/components/data-table";
-import { getEventListings } from "~/lib/events";
-import { columns } from "~/app/listings/components/columns";
-import { Instagram, Twitter } from "lucide-react";
+import { Instagram, MoveRight, Twitter } from "lucide-react";
 import Link from "next/link";
-import TimeslotsButton from "~/app/profile/components/timeslots-button";
+import { getSasUrl } from "~/lib/azure";
 
 const musicSamples = [
   {
-    title: "rich bobby lee",
-    blobKey: "",
+    title: "space invaders",
+    blobKey: "3227e3cf-7177-4a6f-9b38-3ae1a24001b5_file_example_WAV_2MG.wav",
+  },
+  {
+    title: "space invaders part two",
+    blobKey: "56b57c1f-7411-405e-9003-08558023ab4e_file_example_WAV_2MG.wav",
+  },
+  {
+    title: "space invaders part three",
+    blobKey: "db1ee8e3-bc34-4add-9c8d-aa2397fb6cb8_file_example_WAV_2MG.wav",
   },
 ];
 
-export default async function LandingPage() {
-  const listings = await getEventListings();
+const videoSamples = ["band.mp4", "carnival.mp4", "vinyl.mp4"];
 
+export default async function LandingPage() {
   return (
     <>
-      <div className="container flex flex-col gap-14 px-20">
+      <div className="container flex flex-col gap-24 px-20">
         <div className="mt-20 flex h-[28rem] w-full gap-8">
           <div className="relative flex h-full w-full items-center justify-center rounded-2xl bg-slate-800 drop-shadow-lg">
             <img
@@ -46,63 +51,117 @@ export default async function LandingPage() {
             <h1 className="absolute text-2xl font-bold">Musicians</h1>
           </div>
         </div>
-        <h1 className="mt-10 text-center text-xl font-semibold text-slate-200">
-          Our Musicians
-        </h1>
-        <div className="flex h-96 w-full gap-8 px-8">
-          <div className="ice flex h-full w-full items-center justify-center">
-            <Carousel className="w-full max-w-sm">
-              <CarouselContent>
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <CarouselItem key={index}>
-                    <div className="p-1">
-                      <Card>
-                        <CardContent className="flex aspect-square items-center justify-center">
-                          <span className="text-4xl font-semibold">
-                            {index + 1}
-                          </span>
-                          {/*<React.Fragment key={2}>*/}
-                          {/*  <video*/}
-                          {/*    className=""*/}
-                          {/*    src="/public/videos/sample.mp4"*/}
-                          {/*    controls={true}*/}
-                          {/*  >*/}
-                          {/*    <source src="/public/videos/sample.mp4" />*/}
-                          {/*  </video>*/}
-                          {/*</React.Fragment>*/}
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
+        <section>
+          <h1 className="mb-14 mt-10 text-center text-xl font-semibold text-slate-200">
+            Our Musicians
+          </h1>
+          <div className="flex h-96 w-full gap-8 px-8">
+            <div className="flex h-full w-full items-center justify-center">
+              <Carousel className="w-full max-w-sm">
+                <CarouselContent>
+                  {Array.from({ length: 3 }).map(async (_, index) => {
+                    const sasUrl = await getSasUrl(
+                      videoSamples[index]!,
+                      "assets",
+                    );
+
+                    return (
+                      <CarouselItem key={index}>
+                        <div className="p-1">
+                          <Card>
+                            <CardContent className="flex aspect-square items-center justify-center">
+                              <React.Fragment key={index}>
+                                <video
+                                  controls={true}
+                                  className="h-full w-full rounded-lg object-cover"
+                                >
+                                  <source src={sasUrl} />
+                                </video>
+                              </React.Fragment>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      </CarouselItem>
+                    );
+                  })}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+            <div className="flex h-full w-full flex-col justify-center gap-2 px-14 py-10">
+              {musicSamples.map(async (sample) => {
+                const sasUrl = await getSasUrl(sample.blobKey, "assets");
+                return (
+                  <MusicPlayer
+                    key={sample.blobKey}
+                    title={sample.title}
+                    sasUrl={sasUrl}
+                  />
+                );
+              })}
+            </div>
           </div>
-          <div className="flex h-full w-full flex-col justify-center gap-2 px-14 py-10">
-            <MusicPlayer
-              title="rich bobby lee"
-              sasUrl="public/music/funny.wav"
-            />
-            <MusicPlayer title="hey" />
-            <MusicPlayer title="hey" />
-            <MusicPlayer title="hey" />
-            <MusicPlayer title="hey" />
-            {/*<MusicPlayer />*/}
-            {/*<MusicPlayer />*/}
-          </div>
-        </div>
-        <div className="container mt-10">
+        </section>
+        <div className="container mt-10 rounded-2xl bg-[#222] px-14 pb-14 pt-10 drop-shadow">
           <h1 className="mb-10 text-center text-xl font-semibold text-slate-200">
             Available Events
           </h1>
-          <DataTable columns={columns} data={listings} />
-          <div className="mt-10">
-            <div className="flex justify-between">
+          <div className="mt-10 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
               <h3>Howl at the moon</h3>
               <h3>100 Main St Chicago, IL, 60605</h3>
-              <TimeslotsButton event={event} />
+              <Link
+                href="/listings"
+                className="group flex items-end justify-between rounded-2xl"
+              >
+                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
+                <MoveRight size={30} className="pt-[1px]" />
+              </Link>
+            </div>
+            <div className="flex items-center justify-between">
+              <h3>Howl at the moon</h3>
+              <h3>100 Main St Chicago, IL, 60605</h3>
+              <Link
+                href="/listings"
+                className="group flex items-end justify-between rounded-2xl"
+              >
+                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
+                <MoveRight size={30} className="pt-[1px]" />
+              </Link>
+            </div>
+            <div className="flex items-center justify-between">
+              <h3>Howl at the moon</h3>
+              <h3>100 Main St Chicago, IL, 60605</h3>
+              <Link
+                href="/listings"
+                className="group flex items-end justify-between rounded-2xl"
+              >
+                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
+                <MoveRight size={30} className="pt-[1px]" />
+              </Link>
+            </div>
+            <div className="flex items-center justify-between">
+              <h3>Howl at the moon</h3>
+              <h3>100 Main St Chicago, IL, 60605</h3>
+              <Link
+                href="/listings"
+                className="group flex items-end justify-between rounded-2xl"
+              >
+                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
+                <MoveRight size={30} className="pt-[1px]" />
+              </Link>
+            </div>
+            <div className="flex items-center justify-between">
+              <h3>Howl at the moon</h3>
+              <h3>100 Main St Chicago, IL, 60605</h3>
+              <Link
+                href="/listings"
+                className="group flex items-end justify-between rounded-2xl"
+              >
+                <h1 className="my-auto mr-4 w-fit">View Timeslots</h1>
+                <MoveRight size={30} className="pt-[1px]" />
+              </Link>
             </div>
           </div>
         </div>

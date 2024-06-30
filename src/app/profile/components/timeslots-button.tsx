@@ -7,7 +7,7 @@ import { MoveRight } from "lucide-react";
 import ApplyDialog from "~/components/apply-dialog";
 import { type EventListing } from "~/lib/types";
 
-export default function TimeslotsButton({ event }: { event: EventListing }) {
+export default function TimeslotsButton({ event }: { event?: EventListing }) {
   const router = useRouter();
   const session = useSession();
   const [open, setOpen] = useState(false);
@@ -24,7 +24,9 @@ export default function TimeslotsButton({ event }: { event: EventListing }) {
     <>
       <button
         onClick={() => {
-          if (session.data) {
+          if (!event) {
+            router.push("/listings");
+          } else if (session.data) {
             if (session.data?.type === "musician") {
               handleOpen();
             } else {
@@ -42,12 +44,14 @@ export default function TimeslotsButton({ event }: { event: EventListing }) {
           className="group-hover:h-9 group-hover:w-9 group-hover:font-bold"
         />
       </button>
-      <ApplyDialog
-        open={open}
-        onClose={handleClose}
-        timeslots={event.timeslots}
-        eventName={event.name}
-      />
+      {event && (
+        <ApplyDialog
+          open={open}
+          onClose={handleClose}
+          timeslots={event.timeslots}
+          eventName={event.name}
+        />
+      )}
     </>
   );
 }
