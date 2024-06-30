@@ -1,7 +1,26 @@
 import { relations } from "drizzle-orm";
-import { float, index, int, mysqlTableCreator, primaryKey, text, timestamp, varchar, } from "drizzle-orm/mysql-core";
-import { type AdapterAccount } from "next-auth/adapters";
-import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/types";
+import {
+  bigint,
+  boolean,
+  date,
+  float,
+  index,
+  int,
+  mysqlTableCreator,
+  primaryKey,
+  smallint,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/mysql-core";
+
+import {
+  type ApplicationStatus,
+  type EventStatus,
+  type Rating,
+  type TimeslotTimes,
+  type UserType,
+} from "~/lib/types";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -9,7 +28,7 @@ import { type ApplicationStatus, type EventStatus, type UserType, } from "~/lib/
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = mysqlTableCreator((name) => `underground_${name}`);
+export const createTable = mysqlTableCreator((name) => `spotlxght_${name}`);
 
 export const users = createTable("user", {
   id: varchar("id", { length: 191 })
@@ -27,6 +46,7 @@ export const users = createTable("user", {
   profilePicImage: varchar("profilePicImage", { length: 255 }),
   profileBannerImage: varchar("profileBannerImage", { length: 255 }),
   type: varchar("type", { length: 10 }).$type<UserType>(),
+  stripeAccountId: varchar("stripeAccountId", { length: 100 }),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -36,6 +56,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   assets: many(assets),
   applications: many(applications),
   genres: many(genres),
+  stripeCheckouts: many(stripeCheckouts),
+  stripePayouts: many(stripePayouts),
 }));
 
 export const accounts = createTable(
@@ -44,14 +66,12 @@ export const accounts = createTable(
     userId: varchar("userId", { length: 191 })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: varchar("type", { length: 255 })
-      .$type<AdapterAccount["type"]>()
-      .notNull(),
+    type: varchar("type", { length: 255 }).notNull(),
     provider: varchar("provider", { length: 255 }).notNull(),
     providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
-    expires_at: int("expires_at"),
+    expires_at: bigint("expires_at", { mode: "number" }),
     token_type: varchar("token_type", { length: 255 }),
     scope: varchar("scope", { length: 255 }),
     id_token: text("id_token"),
@@ -110,6 +130,7 @@ export const genresRelations = relations(genres, ({ one }) => ({
   user: one(users, { fields: [genres.userId], references: [users.id] }),
 }));
 
+// TODO: Create [reviewerId, userId] composite key (unique)
 export const reviews = createTable(
   "review",
   {
@@ -117,20 +138,21 @@ export const reviews = createTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    reviewer: varchar("id", { length: 191 })
+    reviewerId: varchar("reviewerId", { length: 191 })
       .notNull()
       .references(() => users.id),
-    message: varchar("message", { length: 255 }),
+    message: varchar("message", { length: 255 }), // TODO: change to text
     reviewedAt: timestamp("reviewedAt", { mode: "date" })
       .notNull()
       .defaultNow(),
-    rate: int("rate").notNull(),
+    rating: smallint("rate").$type<Rating>().notNull(),
     userId: varchar("userId", { length: 191 })
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   (review) => ({
     userIdIdx: index("reviews_userId_idx").on(review.userId),
+    reviewerIdIdx: index("reviews_reviewerId_idx").on(review.reviewerId),
   }),
 );
 
@@ -146,6 +168,8 @@ export const assets = createTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     type: varchar("type", { length: 25 }).notNull(),
+    title: varchar("title", { length: 255 }),
+    description: text("description"),
     mimetype: varchar("mimetype", { length: 25 }).notNull(),
     azureBlobKey: varchar("azureBlobKey", { length: 191 }).notNull(),
     uploadedAt: timestamp("uploadedAt", { mode: "date" })
@@ -172,9 +196,13 @@ export const events = createTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     name: varchar("name", { length: 100 }).notNull(),
-    status: varchar("status", { length: 15 }).$type<EventStatus>().notNull(),
+    status: varchar("status", { length: 15 })
+      .$type<EventStatus>()
+      .notNull()
+      .default("draft"),
     amount: float("amount").notNull(),
-    createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+    date: date("date", { mode: "string" }).notNull(),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
     venueId: varchar("venueId", { length: 191 })
       .notNull()
       .references(() => users.id),
@@ -197,9 +225,17 @@ export const timeslots = createTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    startDate: timestamp("startDate", { mode: "date" }).notNull(),
-    endDate: timestamp("endDate", { mode: "date" }).notNull(),
+    startTime: varchar("startTime", { length: 10 })
+      .$type<TimeslotTimes>()
+      .notNull(),
+    endTime: varchar("endTime", { length: 10 })
+      .$type<TimeslotTimes>()
+      .notNull(),
     timezone: varchar("timezone", { length: 5 }).default("CST").notNull(),
+    status: varchar("status", { length: 15 })
+      .$type<EventStatus>()
+      .notNull()
+      .default("open"),
     eventId: varchar("eventId", { length: 191 })
       .notNull()
       .references(() => events.id, { onDelete: "cascade" }),
@@ -228,7 +264,7 @@ export const applications = createTable(
     status: varchar("status", { length: 15 })
       .$type<ApplicationStatus>()
       .notNull(),
-    appliedAt: timestamp("endDate", { mode: "date" }).notNull(),
+    appliedAt: timestamp("appliedAt", { mode: "date" }).notNull().defaultNow(),
   },
   (application) => ({
     pk: primaryKey({
@@ -241,7 +277,7 @@ export const applications = createTable(
   }),
 );
 
-export const applicantsRelations = relations(applications, ({ one, many }) => ({
+export const applicantsRelations = relations(applications, ({ one }) => ({
   timeslot: one(timeslots, {
     fields: [applications.timeslotId],
     references: [timeslots.id],
@@ -252,3 +288,106 @@ export const applicantsRelations = relations(applications, ({ one, many }) => ({
     references: [events.id],
   }),
 }));
+
+export const stripeCheckouts = createTable(
+  "stripe_checkout",
+  {
+    checkoutSessionId: varchar("checkoutSessionId", { length: 191 })
+      .notNull()
+      .primaryKey(),
+    status: varchar("status", { length: 10 }).notNull(),
+    paymentStatus: varchar("paymentStatus", { length: 10 }).notNull(),
+    amount: int("amount").notNull(),
+    eventId: varchar("eventId", { length: 191 })
+      .notNull()
+      .references(() => events.id),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (checkout) => ({
+    userIdIdx: index("checkout_userId_idx").on(checkout.userId),
+  }),
+);
+
+export const stripeCheckoutsRelations = relations(
+  stripeCheckouts,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [stripeCheckouts.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const stripePayouts = createTable(
+  "stripe_payout",
+  {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    status: varchar("status", { length: 10 }).notNull(),
+    currency: varchar("currency", { length: 5 }).notNull().default("usd"),
+    amount: int("amount").notNull(),
+    stripeAccountId: varchar("stripeAccountId", { length: 191 })
+      .notNull()
+      .references(() => users.stripeAccountId),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (payout) => ({
+    accountIdIdx: index("payout_accountId_idx").on(payout.stripeAccountId),
+  }),
+);
+
+export const stripePayoutsRelations = relations(stripePayouts, ({ one }) => ({
+  user: one(users, {
+    fields: [stripePayouts.stripeAccountId],
+    references: [users.stripeAccountId],
+  }),
+}));
+
+export const stripeTransfers = createTable(
+  "stripe_transfer",
+  {
+    id: varchar("id", { length: 191 }).notNull().primaryKey(),
+    currency: varchar("currency", { length: 5 }).notNull().default("usd"),
+    amount: int("amount").notNull(),
+    reversed: boolean("reversed").notNull(),
+    balanceTransaction: varchar("balanceTransaction", {
+      length: 191,
+    }).notNull(),
+    transferGroup: varchar("transferGroup", { length: 191 })
+      .notNull()
+      .references(() => events.id),
+    timeslotId: varchar("timeslotId", { length: 191 })
+      .notNull()
+      .references(() => timeslots.id),
+    userId: varchar("userId", { length: 191 })
+      .notNull()
+      .references(() => users.id),
+    destination: varchar("destination", { length: 191 })
+      .notNull()
+      .references(() => users.stripeAccountId),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (transfers) => ({
+    accountIdIdx: index("transfer_accountId_idx").on(transfers.destination),
+  }),
+);
+
+export const stripeTransfersRelations = relations(
+  stripeTransfers,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [stripeTransfers.userId],
+      references: [users.id],
+    }),
+    event: one(events, {
+      fields: [stripeTransfers.transferGroup],
+      references: [events.id],
+    }),
+    timeslot: one(timeslots, {
+      fields: [stripeTransfers.timeslotId],
+      references: [timeslots.id],
+    }),
+  }),
+);

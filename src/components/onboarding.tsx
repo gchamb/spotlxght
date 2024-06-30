@@ -1,19 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import GenreSelector from "~/components/genre-selector";
-import {
-  ArrowRight,
-  CalendarCheck,
-  HandCoins,
-  Link,
-  Loader2,
-  LucideLockKeyhole,
-  Star,
-} from "lucide-react";
+import { ArrowRight, Loader2, Star } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { type z } from "zod";
 import { Button } from "~/components/ui/button";
 import { musicianFormSchema, venueFormSchema } from "~/lib/types";
 import {
@@ -28,8 +20,8 @@ import {
 import { Input } from "~/components/ui/input";
 import { createProfile } from "~/server/actions/onboarding-actions";
 import { shortenOrNot } from "~/lib/utils";
-import { onboardUser } from "~/server/actions/stripe";
 import { toast } from "sonner";
+import LinkStripe from "./link-stripe";
 
 export default function Onboarding({ type }: { type: "venue" | "musician" }) {
   const [slide, setSlide] = useState<1 | 2 | 3>(1);
@@ -54,7 +46,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
     },
   });
 
-  const onSubmit = async (
+  const onSubmit = (
     values:
       | z.infer<typeof venueFormSchema>
       | z.infer<typeof musicianFormSchema>,
@@ -117,35 +109,28 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
       }
     }
 
-    try {
-      startTransition(async () => {
-        await createProfile(data);
+    startTransition(async () => {
+      try {
+        const error = await createProfile(data);
+        if (error) {
+          throw new Error(error.message);
+        }
 
         if (type === "musician") {
           setSlide(3);
         }
-      });
-    } catch (err) {
-      if (isVenue) {
-        venueForm.setError("root", {
-          message: err instanceof Error ? err.message : String(err),
-        });
-      } else {
-        musicianForm.setError("root", {
-          message: err instanceof Error ? err.message : String(err),
-        });
+      } catch (err) {
+        if (isVenue) {
+          venueForm.setError("root", {
+            message: err instanceof Error ? err.message : String(err),
+          });
+        } else {
+          musicianForm.setError("root", {
+            message: err instanceof Error ? err.message : String(err),
+          });
+        }
       }
-    }
-  };
-
-  const handleStripeLink = async () => {
-    try {
-      startTransition(async () => {
-        await onboardUser();
-      });
-    } catch (err) {
-      toast(err instanceof Error ? err.message : String(err));
-    }
+    });
   };
 
   if (slide === 1) {
@@ -398,7 +383,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
             </Form>
           )}
         </div>
-        <div className=" flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl bg-underground-dark-grey 2xl:block">
+        <div className="bg-spotlxght-dark-grey flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl 2xl:block">
           <div className="h-[200px] w-full rounded-t-xl">
             {type === "venue" && venueForm.watch("bannerImage") ? (
               <img
@@ -518,74 +503,5 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
     );
   }
 
-  return (
-    <div className="max-screen-xl xl:gap-y-none mx-auto  flex h-full flex-col gap-y-8 ">
-      <div className="mt-8 flex flex-col items-center gap-y-2 xl:mt-16 ">
-        <h1 className="text-4xl font-semibold">Link Account</h1>
-        <span className="text-sm">Securely fund your account</span>
-      </div>
-
-      <div className="max-screen-xl flex flex-col flex-wrap gap-8 md:my-auto md:flex-row">
-        <div className="mx-auto flex max-w-[300px] flex-col items-center gap-y-8  text-center">
-          <Link size={48} />
-
-          <div className="flex flex-col gap-y-4">
-            <h2 className="text-2xl font-semibold">Link Bank Account</h2>
-            <p className="text-sm">
-              Link your bank account via Stripe to receive funds for your
-              completed events while ensuring your information remains
-              protected.
-            </p>
-          </div>
-        </div>
-        <div className="mx-auto flex max-w-[300px] flex-col items-center gap-y-8  text-center">
-          <CalendarCheck size={48} />
-
-          <div className="flex flex-col gap-y-4">
-            <h2 className="text-2xl font-semibold">
-              {type === "venue" ? "Create" : "Browse"} Event
-            </h2>
-            <p className="text-sm">
-              Browse the list of events and apply based on your availability
-              within the provided time slots created by the venue.
-            </p>
-          </div>
-        </div>
-        <div className="mx-auto flex max-w-[300px] flex-col items-center gap-y-8  text-center">
-          <LucideLockKeyhole size={48} />
-
-          <div className="flex flex-col gap-y-4">
-            <h2 className="text-2xl font-semibold">Escrow Funds</h2>
-            <p className="text-sm">
-              After the venue accepts you, funds are placed in escrow for
-              security for both the venue and musician.
-            </p>
-          </div>
-        </div>
-        <div className="mx-auto flex max-w-[300px] flex-col items-center gap-y-8  text-center">
-          <HandCoins size={48} />
-
-          <div className="flex flex-col gap-y-4">
-            <h2 className="text-2xl font-semibold">Musicians are paid</h2>
-            <p className="text-sm">
-              Upon the successful completion of an event, the venue can release
-              the payment to the musician for their excellent performance.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-auto flex h-36 justify-center pb-4 ">
-        <Button
-          variant="default"
-          className=" items-cente flex h-full max-h-[60px] w-full max-w-[600px] gap-x-2 text-3xl font-semibold"
-          onClick={handleStripeLink}
-          disabled={isPending}
-        >
-          {isPending && <Loader2 className="animate-spin" />}
-          Link
-        </Button>
-      </div>
-    </div>
-  );
+  return <LinkStripe />;
 }
