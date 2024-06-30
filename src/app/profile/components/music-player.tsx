@@ -73,18 +73,19 @@ export default function MusicPlayer({
       <div className="flex">
         <div className="w-30 h-30 block">
           <div className="w-30 h-30 relative">
-            <button
-              className="pr-4 pt-7"
-              onClick={() => {
-                setIsPlaying((prev) => !prev);
-              }}
-            >
-              {isPlaying ? (
-                <Pause size={30} className="text-gray-100" />
-              ) : (
-                <Play size={30} className="text-gray-100" />
-              )}
-            </button>
+            <div className="pr-4 pt-7">
+              <button
+                onClick={() => {
+                  setIsPlaying((prev) => !prev);
+                }}
+              >
+                {isPlaying ? (
+                  <Pause size={30} className="text-gray-100" />
+                ) : (
+                  <Play size={30} className="text-gray-100" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
         <div className="w-full pl-3 pr-2">

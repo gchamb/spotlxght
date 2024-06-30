@@ -16,20 +16,28 @@ export const revalidate = 3000;
 
 const musicSamples = [
   {
-    title: "space invaders",
-    blobKey: "3227e3cf-7177-4a6f-9b38-3ae1a24001b5_file_example_WAV_2MG.wav",
+    title: "Electric Soul",
+    blobKey: "powerful-electric-guitar.wav",
   },
   {
-    title: "space invaders part two",
-    blobKey: "56b57c1f-7411-405e-9003-08558023ab4e_file_example_WAV_2MG.wav",
+    title: "No Limit",
+    blobKey: "no-limit.wav",
   },
   {
-    title: "space invaders part three",
-    blobKey: "db1ee8e3-bc34-4add-9c8d-aa2397fb6cb8_file_example_WAV_2MG.wav",
+    title: "Higher",
+    blobKey: "edm-drop.wav",
+  },
+  {
+    title: "Wavering",
+    blobKey: "alternative-pop-guitar.wav",
   },
 ];
 
-const videoSamples = ["band.mp4", "carnival.mp4", "vinyl.mp4"];
+const videoSamples = [
+  "hard-rock-edit.mp4",
+  "light-show-edit.mp4",
+  "on-stage.mp4",
+];
 
 const listingSamples = [
   {
@@ -95,7 +103,7 @@ export default async function LandingPage() {
                         <div className="p-1">
                           <Card>
                             <CardContent className="flex aspect-square items-center justify-center">
-                              <React.Fragment key={index}>
+                              <React.Fragment key={sasUrl}>
                                 <video
                                   controls={true}
                                   className="h-full w-full rounded-lg object-cover"
