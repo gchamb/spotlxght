@@ -11,5 +11,3 @@ export const bannerImagesContainer =
 
 export const profileImagesContainer =
   blobServiceClient.getContainerClient("profile-images");
-
-export const assetsContainer = blobServiceClient.getContainerClient("assets");
