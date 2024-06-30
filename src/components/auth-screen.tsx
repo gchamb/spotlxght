@@ -54,7 +54,7 @@ export function AuthScreen({ screenType, type }: AuthProps) {
 
     let error: Awaited<ReturnType<typeof emailSignInAction> | undefined>;
     if (screenType === "sign-in") {
-      error = await emailSignInAction(values);
+      error = await emailSignInAction({ ...values, type });
     } else {
       error = await emailSignUpAction({ ...values, type });
     }
@@ -67,7 +67,7 @@ export function AuthScreen({ screenType, type }: AuthProps) {
   }
 
   return (
-    <div className="mx-auto grid h-screen w-full max-w-screen-2xl xl:grid-cols-2 ">
+    <div className="mx-auto grid h-3/4 w-full max-w-screen-2xl md:h-dvh xl:grid-cols-2 ">
       <div className="my-auto hidden h-full max-h-[800px] w-full max-w-[750px] pl-4 xl:block">
         <img
           src="/images/concert.jpg"

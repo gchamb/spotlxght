@@ -1,6 +1,11 @@
+import { Metadata } from "next";
 import { columns } from "./components/columns";
 import { DataTable } from "./components/data-table";
 import { getEventListings } from "~/lib/events";
+
+export const metadata: Metadata = {
+  title: "Listings",
+};
 
 export default async function Listings() {
   const data = await getEventListings();

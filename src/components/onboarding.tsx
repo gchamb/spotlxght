@@ -5,7 +5,7 @@ import { ArrowRight, Loader2, Star } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { type z } from "zod";
 import { Button } from "~/components/ui/button";
 import { musicianFormSchema, venueFormSchema } from "~/lib/types";
 import {
@@ -383,7 +383,7 @@ export default function Onboarding({ type }: { type: "venue" | "musician" }) {
             </Form>
           )}
         </div>
-        <div className=" flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl bg-spotlxght-dark-grey 2xl:block">
+        <div className="bg-spotlxght-dark-grey flex hidden h-[650px] max-h-[700px] w-[900px] flex-col rounded-xl 2xl:block">
           <div className="h-[200px] w-full rounded-t-xl">
             {type === "venue" && venueForm.watch("bannerImage") ? (
               <img

@@ -5,6 +5,11 @@ import { applications, events, timeslots, users } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
 import { columns } from "~/app/applications/components/columns";
 import { DataTable } from "~/app/applications/components/data-table";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Applications",
+};
 
 async function getApplications(userId: string) {
   return db
@@ -30,7 +35,7 @@ export default async function Applications() {
   const data = await getApplications(session.user.id);
 
   return (
-    <div className="container w-11/12 max-w-screen-xl py-10">
+    <div className="mx-auto w-11/12 py-10 md:max-w-screen-xl">
       <DataTable columns={columns} data={data} />
     </div>
   );
