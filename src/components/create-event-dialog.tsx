@@ -220,7 +220,7 @@ export default function CreateEventDialog({
               <div className="flex gap-2">
                 <Button
                   disabled={isPending}
-                  className="flex w-full items-center gap-x-2 text-lg font-semibold"
+                  className="flex w-full items-center gap-x-2 font-semibold"
                   onClick={eventOnClose}
                   type="button"
                 >
@@ -228,7 +228,7 @@ export default function CreateEventDialog({
                 </Button>
                 <Button
                   disabled={isPending}
-                  className="flex w-full items-center gap-x-2 text-lg font-semibold"
+                  className="flex w-full items-center gap-x-2 font-semibold"
                   type="submit"
                 >
                   {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
