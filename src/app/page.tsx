@@ -12,6 +12,8 @@ import { Instagram, MoveRight, Twitter } from "lucide-react";
 import Link from "next/link";
 import { getSasUrl } from "~/lib/azure";
 
+export const revalidate = 3000;
+
 const musicSamples = [
   {
     title: "space invaders",
