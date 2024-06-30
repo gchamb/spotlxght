@@ -78,7 +78,7 @@ export default async function LandingPage() {
           <h1 className="mb-14 mt-10 text-center text-xl font-semibold text-slate-200">
             Our Musicians
           </h1>
-          <div className="flex min-h-96 w-full flex-col gap-8 px-8 lg:flex-row">
+          <div className="flex min-h-96 w-full flex-col items-center gap-8 px-8 lg:flex-row">
             <div className="flex h-full w-full items-center justify-center">
               <Carousel className="w-full max-w-sm">
                 <CarouselContent>
@@ -112,7 +112,7 @@ export default async function LandingPage() {
                 <CarouselNext />
               </Carousel>
             </div>
-            <div className="flex h-full w-full flex-col justify-center gap-2 py-10 lg:px-14">
+            <div className="flex h-full w-full flex-col justify-center gap-2 py-10 md:px-14">
               {musicSamples.map(async (sample) => {
                 const sasUrl = await getSasUrl(sample.blobKey, "assets");
                 return (
