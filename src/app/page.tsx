@@ -65,7 +65,7 @@ const listingSamples = [
 export default async function LandingPage() {
   return (
     <>
-      <div className="flex flex-col gap-24 px-8 lg:px-20">
+      <div className="flex flex-col gap-24 px-6 xl:container xl:px-20">
         <div className="mt-20 flex min-h-[28rem] w-full flex-col gap-8 lg:flex-row">
           <div className="relative flex h-full w-full items-center justify-center rounded-2xl drop-shadow-lg">
             <img
@@ -88,8 +88,8 @@ export default async function LandingPage() {
           <h1 className="mb-14 mt-10 text-center text-xl font-semibold text-slate-200">
             Our Musicians
           </h1>
-          <div className="flex min-h-96 w-full flex-col items-center gap-8 px-8 lg:flex-row">
-            <div className="flex h-full w-full items-center justify-center">
+          <div className="flex min-h-96 w-full flex-col items-center gap-8 px-4 lg:flex-row">
+            <div className="flex h-full w-full items-center justify-center px-6 sm:px-0">
               <Carousel className="w-full max-w-sm">
                 <CarouselContent>
                   {Array.from({ length: 3 }).map(async (_, index) => {
@@ -122,7 +122,7 @@ export default async function LandingPage() {
                 <CarouselNext />
               </Carousel>
             </div>
-            <div className="flex h-full w-full flex-col justify-center gap-2 py-10 md:px-14">
+            <div className="flex h-full w-full flex-col justify-center gap-2 py-10 sm:px-8 md:px-14">
               {musicSamples.map(async (sample) => {
                 const sasUrl = await getSasUrl(sample.blobKey, "assets");
                 return (
