@@ -4,6 +4,11 @@ import { DataTable } from "./components/data-table";
 import { redirect } from "next/navigation";
 import { type MyEvent } from "~/lib/types";
 import { getSession } from "~/lib/auth";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "My Events",
+};
 
 async function getEvents(userId: string): Promise<MyEvent[]> {
   return db.query.events.findMany({

@@ -5,6 +5,11 @@ import { applications, events, timeslots, users } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
 import { columns } from "~/app/applications/components/columns";
 import { DataTable } from "~/app/applications/components/data-table";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Applications",
+};
 
 async function getApplications(userId: string) {
   return db
