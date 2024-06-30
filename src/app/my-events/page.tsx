@@ -4,7 +4,7 @@ import { DataTable } from "./components/data-table";
 import { redirect } from "next/navigation";
 import { type MyEvent } from "~/lib/types";
 import { getSession } from "~/lib/auth";
-import { Metadata } from "next";
+import { type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "My Events",
@@ -30,7 +30,7 @@ export default async function MyEvents() {
   const data = await getEvents(session.user.id);
 
   return (
-    <div className="mx-auto w-11/12 py-10 md:max-w-screen-xl">
+    <div className="mx-auto w-11/12 py-10 md:container md:max-w-screen-xl">
       <DataTable columns={columns} data={data} />
     </div>
   );
