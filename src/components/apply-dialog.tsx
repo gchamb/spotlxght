@@ -1,4 +1,3 @@
-import { TimeslotProps } from "~/app/events/components/timeslot-tabs";
 import {
   Dialog,
   DialogContent,
@@ -7,12 +6,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
-import { TimeslotTimes } from "~/lib/types";
+import { type TimeslotTimes } from "~/lib/types";
 import { Button } from "./ui/button";
 import { useState, useTransition } from "react";
 import { applyToTimeslot } from "~/server/actions/event-actions";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
 type TimeslotApplyDialogProps = {
   open: boolean;
@@ -118,14 +116,14 @@ export default function ApplyDialog({
                   setSelectedTimeslot(null);
                   onClose();
                 }}
-                className="w-full text-2xl font-semibold"
+                className="w-full font-semibold"
               >
                 Close
               </Button>
               <form className="w-full" action={applyForTimeslot}>
                 <Button
                   disabled={selectedTimeslot === null || isPending}
-                  className="flex w-full items-center gap-x-2 text-2xl font-semibold"
+                  className="flex w-full items-center gap-x-2 font-semibold"
                   type="submit"
                 >
                   {isPending && <Loader2 className="animate-spin" />}
