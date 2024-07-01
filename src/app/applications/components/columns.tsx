@@ -81,6 +81,27 @@ export const columns: ColumnDef<MyBooking>[] = [
     },
   },
   {
+    accessorKey: "event.date",
+    id: "eventData",
+    header: ({ column }) => (
+      <div className="text-right">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Event Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => {
+      const eventDate = row.original.event.date;
+      console.log(eventDate);
+
+      return <div className="pr-4 text-right font-medium">{eventDate}</div>;
+    },
+  },
+  {
     accessorKey: "timeslot.startTime",
     id: "startTime",
     header: ({ column }) => (
