@@ -170,7 +170,7 @@ export default async function LandingPage() {
       <footer className="mt-36 h-fit bg-spotlxght-dark-grey">
         <div className="container flex min-h-80 flex-col justify-center gap-8 px-10 py-14 text-slate-200 md:flex-row md:px-28">
           <div className="h-full w-full text-center md:text-left">
-            <h1 className="text-2xl font-semibold">spotlxhgt</h1>
+            <h1 className="text-2xl font-semibold">spotlxght</h1>
             <p className="my-2 text-sm font-normal text-slate-300">
               Copyright ©2024 All Rights Reversed
             </p>
